@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using IdentityApplication.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using IdentityApplication.Core;
+using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -18,6 +20,8 @@ builder.Services.AddControllersWithViews();
 #region Authorization
 AddAuthorizationPolicies(builder.Services);
 #endregion
+
+AddScoped();
 
 var app = builder.Build();
 
@@ -54,4 +58,11 @@ void AddAuthorizationPolicies(IServiceCollection services)
     {
         options.AddPolicy(Constants.Policies.RequireUser, policy => policy.RequireClaim(Constants.Roles.User));
     });
+}
+
+void AddScoped()
+{
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 }
