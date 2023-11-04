@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Repositories;
+using IdentityApplication.Business.Contracts;
+using IdentityApplication.Business;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -16,6 +18,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 #region Authorization
 AddAuthorizationPolicies(builder.Services);
@@ -65,5 +70,7 @@ void AddScoped()
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IRoleRepository, RoleRepository>();
     builder.Services.AddScoped<ILocationRepository, LocationRepository>();
-    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+    builder.Services.AddScoped<IEmployeeBusiness, EmployeeBusiness>();
+    builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 }

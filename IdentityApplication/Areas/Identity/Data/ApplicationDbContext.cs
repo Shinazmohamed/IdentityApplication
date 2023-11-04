@@ -6,6 +6,7 @@ namespace IdentityApplication.Areas.Identity.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
+    public DbSet<Employee> Employee => Set<Employee>();
     public DbSet<Location> Location => Set<Location>();
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
