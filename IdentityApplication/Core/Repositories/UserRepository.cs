@@ -1,5 +1,6 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApplication.Core.Repositories
 {
@@ -25,6 +26,12 @@ namespace IdentityApplication.Core.Repositories
             _context.SaveChanges();
 
             return user;
+        }
+        public ICollection<ApplicationUser> GetUsersWithLocations()
+        {
+            return _context.Users
+                .Include(e => e.Location)
+                .ToList();
         }
     }
 }

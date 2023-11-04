@@ -64,5 +64,6 @@ void AddScoped()
 {
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+    builder.Services.AddScoped<ILocationRepository, LocationRepository>();
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 }

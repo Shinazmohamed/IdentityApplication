@@ -21,12 +21,6 @@
                 @Html.HiddenFor(h => Model.User.Id);
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label asp-for="@Model.User.LocationId" class="form-label">Location</label>
-                            <input type="text" class="form-control" asp-for="@Model.User.LocationId" placeholder="" value="@Model.User.LocationId">
-                            <span asp-validation-for="@Model.User.LocationId" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-sm-6">
                             <label asp-for="@Model.User.Email" class="form-label">Email</label>
                             <div class="input-group hashas-validation">
                                 <span class="input-group-text"></span>
@@ -34,16 +28,10 @@
                                 <span asp-validation-for="@Model.User.Email" class="text-danger"></span>
                             </div>
                         </div>
-
                         <div class="col-md-5">
-                            <label for="country" class="form-label">Country</label>
-                            <select class="form-select" id="country">
-                                <option value="">Choose...</option>
-                                <option>United States</option>
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select a valid country.
-                            </div>
+                            <label asp-for="@Model.User.LocationId" class="form-label">Location</label>
+                            @Html.DropDownListFor(c => Model.User.LocationId, Model.Locations, "Choose...", new { @class = "form-select" })
+                            @* @Html.HiddenFor(h => Model.Locations.Ad) *@
                         </div>
 
                         <hr class="my-4">

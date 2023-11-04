@@ -26,7 +26,7 @@
                     <tr>
                         <th scope="row">@user.Id</th>
                         <td>@user.Email</td>
-                        <td>@user.LocationId</td>
+                        <td>@user.Location.Name</td>
                         <td>
                             <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
                         </td>

@@ -4,6 +4,7 @@ using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace IdentityApplication.Controllers
 {
@@ -20,7 +21,7 @@ namespace IdentityApplication.Controllers
 
         public IActionResult Index()
         {
-            var users = _unitOfWork.User.GetUsers();
+            var users = _unitOfWork.User.GetUsersWithLocations();
             return View(users);
         }
 
@@ -29,6 +30,7 @@ namespace IdentityApplication.Controllers
             var user = _unitOfWork.User.GetUser(id);
             var roles = _unitOfWork.Role.GetRoles();
 
+
             var userRoles = await _signInManager.UserManager.GetRolesAsync(user);
 
             var roleItems = roles.Select(role => 
@@ -36,7 +38,15 @@ namespace IdentityApplication.Controllers
                 role.Name, 
                 role.Id, 
                 userRoles.Any(ur => ur.Contains(role.Name)))).ToList();
-            var vm = new EditUserViewModel { User = user, Roles = roleItems };
+
+            var locations = _unitOfWork.Location.GetLocations();
+            var locationItems = locations.Select(location =>
+            new SelectListItem(
+                location.Name,
+                location.Id.ToString(),
+                locations.Any(e => e.Id == user.LocationId))).ToList();
+            
+            var vm = new EditUserViewModel { User = user, Roles = roleItems, Locations = locationItems };
             return View(vm);
         }
 
@@ -81,10 +91,11 @@ namespace IdentityApplication.Controllers
             }
 
             user.Email = request.User.Email;
+            user.LocationId = request.User.LocationId;
 
             _unitOfWork.User.UpdateUser(user);
 
-            return RedirectToAction("Edit", new {Id = request.User.Id});
+            return RedirectToAction("Index");
         }
     }
 }

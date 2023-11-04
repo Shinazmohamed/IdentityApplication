@@ -8,5 +8,6 @@ namespace IdentityApplication.Core.ViewModel
     {
         public ApplicationUser User { get; set; }
         public IList<SelectListItem> Roles { get; set; }
+        public IList<SelectListItem> Locations { get; set; }
     }
 }

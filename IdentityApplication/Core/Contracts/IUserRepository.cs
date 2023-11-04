@@ -7,5 +7,6 @@ namespace IdentityApplication.Core.Contracts
         ICollection<ApplicationUser> GetUsers();
         ApplicationUser GetUser(string id);
         ApplicationUser UpdateUser(ApplicationUser user);
+        ICollection<ApplicationUser> GetUsersWithLocations();
     }
 }
