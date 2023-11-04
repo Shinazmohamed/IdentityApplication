@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using IdentityApplication.Core.Contracts;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account
 {
@@ -30,13 +32,15 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +48,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -101,7 +106,9 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "Location")]
-            public string Location { get; set; }
+            public string SelectedLocation { get; set; } // Change this to hold the selected location
+
+            public List<SelectListItem> Locations { get; set; }
         }
 
 
@@ -109,6 +116,20 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+
+            var locations = _unitOfWork.Location.GetLocations();
+
+            var locationItems = locations.Select(location =>
+           new SelectListItem(
+               location.Name,
+               location.Id.ToString(), false)).ToList();
+
+            // Populate the list of locations
+            Input = new InputModel
+            {
+                Locations = locationItems
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -119,7 +140,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                user.LocationId = Guid.NewGuid();
+                user.LocationId = Guid.Parse(Input.SelectedLocation);
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

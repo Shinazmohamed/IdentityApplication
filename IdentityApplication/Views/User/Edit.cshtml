@@ -30,8 +30,7 @@
                         </div>
                         <div class="col-md-5">
                             <label asp-for="@Model.User.LocationId" class="form-label">Location</label>
-                            @Html.DropDownListFor(c => Model.User.LocationId, Model.Locations, "Choose...", new { @class = "form-select" })
-                            @* @Html.HiddenFor(h => Model.Locations.Ad) *@
+                            @Html.DropDownListFor(c => Model.User.LocationId, Model.Locations, "Choose...", new { @class = "form-select", required = "required" })
                         </div>
 
                         <hr class="my-4">
