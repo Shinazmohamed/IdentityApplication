@@ -35,12 +35,9 @@
         <input type="hidden" asp-for="Id" />
     }
 
-    <p>@isEditMode</p>
-
     <div class="form-group">
         <label asp-for="SelectedLocation"></label>
         @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select" })
-        @Html.ValidationMessageFor(model => model.SelectedLocation)
     </div>
 
     <div class="form-group">
