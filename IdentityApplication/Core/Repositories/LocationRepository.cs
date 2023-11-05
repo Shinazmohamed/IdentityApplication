@@ -1,6 +1,7 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
+using System.Linq;
 
 namespace IdentityApplication.Core.Repositories
 {
@@ -15,6 +16,11 @@ namespace IdentityApplication.Core.Repositories
         public IList<Location> GetLocations()
         {
             return _context.Location.ToList();
+        }
+
+        public Location GetLocationById(Guid Id)
+        {
+            return _context.Location.FirstOrDefault(l => l.Id == Id);
         }
     }
 }

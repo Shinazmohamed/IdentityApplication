@@ -1,22 +1,32 @@
 ﻿using AutoMapper;
+using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
+using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    //[Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
+    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
     public class EmployeeController : Controller
     {
         private readonly IEmployeeBusiness _business;
         private readonly IMapper _mapper;
-        public EmployeeController(IEmployeeBusiness business, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _business = business;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //[Authorize(Policy = $"{Constants.Policies.RequireAdmin}")]
@@ -26,8 +36,18 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create(InsertEmployeeRequest employee)
+        public async Task<IActionResult> Create(InsertEmployeeRequest employee)
         {
+
+            var locations = _unitOfWork.Location.GetLocations();
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            var locationItems = locations.Select(location =>
+                new SelectListItem(
+                    location.Name,
+                    location.Id.ToString(), false)).ToList();
+            employee.SelectedLocation = user.LocationId.ToString();
+            employee.Locations = locationItems;
             return View(employee);
         }
 
@@ -36,8 +56,7 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                var _entity = _mapper.Map<Employee>(model);
-                _business.Create(_entity);
+                _business.Create(model);
                 TempData["SuccessMessage"] = "Employee created successfully.";
                 return RedirectToAction("Create");
             }
@@ -58,8 +77,6 @@ namespace IdentityApplication.Controllers
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAll(filter);
-
-            // Return the data in the format expected by DataTables
             return Json(new
             {
                 draw = filter.draw,
@@ -79,20 +96,19 @@ namespace IdentityApplication.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Edit(InsertEmployeeRequest model)
+        public async Task<IActionResult> Edit(InsertEmployeeRequest request)
         {
             try
             {
-                var _entity = _mapper.Map<Employee>(model);
-                _business.Update(_entity);
+                _business.Update(request);
 
                 TempData["SuccessMessage"] = "Employee updated successfully.";
-                return RedirectToAction("Create", model);
+                return RedirectToAction("Create", request);
             }
             catch (Exception)
             {
                 TempData["ErrorMessage"] = "Employee update failed.";
-                return RedirectToAction("Create", model);
+                return RedirectToAction("Create", request);
             }
         }
 

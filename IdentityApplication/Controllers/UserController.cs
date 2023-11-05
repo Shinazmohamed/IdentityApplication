@@ -1,6 +1,8 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
+using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +10,7 @@ using System.Linq;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

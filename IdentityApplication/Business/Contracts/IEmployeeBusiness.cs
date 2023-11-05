@@ -5,10 +5,10 @@ namespace IdentityApplication.Business.Contracts
 {
     public interface IEmployeeBusiness
     {
-        void Create(Employee request);
+        void Create(InsertEmployeeRequest request);
         Task<PaginationResponse<Employee>> GetAll(PaginationFilter filter);
         Task<Employee?> GetById(string id);
-        void Update(Employee request);
+        void Update(InsertEmployeeRequest request);
         Task Delete(string id);
     }
 }

@@ -21,9 +21,11 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account
 {
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

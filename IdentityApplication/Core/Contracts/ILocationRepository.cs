@@ -5,5 +5,6 @@ namespace IdentityApplication.Core.Contracts
     public interface ILocationRepository
     {
         IList<Location> GetLocations();
+        Location GetLocationById(Guid Id);
     }
 }
