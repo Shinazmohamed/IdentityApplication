@@ -29,7 +29,6 @@ namespace IdentityApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        //[Authorize(Policy = $"{Constants.Policies.RequireAdmin}")]
         public IActionResult Index()
         {
             return View();
@@ -112,6 +111,7 @@ namespace IdentityApplication.Controllers
             }
         }
 
+        [Authorize(Policy = $"{Constants.Policies.RequireAdmin}")]
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
