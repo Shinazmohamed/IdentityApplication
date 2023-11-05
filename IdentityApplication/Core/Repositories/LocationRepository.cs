@@ -17,10 +17,13 @@ namespace IdentityApplication.Core.Repositories
         {
             return _context.Location.ToList();
         }
-
         public Location GetLocationById(Guid Id)
         {
             return _context.Location.FirstOrDefault(l => l.Id == Id);
+        }
+        public Location GetLocationByName(string Name)
+        {
+            return _context.Location.FirstOrDefault(l => l.Name == Name);
         }
     }
 }

@@ -6,5 +6,6 @@ namespace IdentityApplication.Core.Contracts
     {
         IList<Category> GetCategories();
         Category GetCategoryById(Guid Id);
+        Category GetCategoryByName(string Name);
     }
 }

@@ -111,8 +111,20 @@ namespace IdentityApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var _entity = _mapper.Map<InsertEmployeeRequest>(await _business.GetById(id));
-            return RedirectToAction("Create", _entity);
+            var currentData = await _business.GetById(id);
+            var entity = _mapper.Map<InsertEmployeeRequest>(currentData);
+            
+            var category = _unitOfWork.Category.GetCategoryByName(currentData.CategoryName);
+            var subCategory = _unitOfWork.SubCategory.GetSubCategoryByName(currentData.SubCategoryName);
+            var location = _unitOfWork.Location.GetLocationByName(currentData.LocationName);
+            var department = _unitOfWork.Department.GetDepartmentByName(currentData.DepartmentName);
+
+            entity.SelectedCategory = category.Id.ToString();
+            entity.SelectedSubCategory = subCategory.Id.ToString();
+            entity.SelectedDepartment = department.Id.ToString();
+            entity.SelectedLocation = location.Id.ToString();
+
+            return RedirectToAction("Create", entity);
         }
 
         [Authorize]

@@ -19,5 +19,9 @@ namespace IdentityApplication.Core.Repositories
         {
             return _context.Category.FirstOrDefault(l => l.Id == Id);
         }
+        public Category GetCategoryByName(string Name)
+        {
+            return _context.Category.FirstOrDefault(l => l.Name == Name);
+        }
     }
 }

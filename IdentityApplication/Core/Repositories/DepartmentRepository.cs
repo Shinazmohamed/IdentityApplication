@@ -16,10 +16,13 @@ namespace IdentityApplication.Core.Repositories
         {
             return _context.Department.ToList();
         }
-
         public Department GetDepartmentById(Guid Id)
         {
             return _context.Department.FirstOrDefault(l => l.Id == Id);
+        }
+        public Department GetDepartmentByName(string Name)
+        {
+            return _context.Department.FirstOrDefault(l => l.Name == Name);
         }
     }
 }

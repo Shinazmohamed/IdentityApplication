@@ -6,5 +6,6 @@ namespace IdentityApplication.Core.Contracts
     {
         IList<Department> GetDepartments();
         Department GetDepartmentById(Guid Id);
+        Department GetDepartmentByName(string Name);
     }
 }

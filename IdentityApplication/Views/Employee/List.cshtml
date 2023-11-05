@@ -48,51 +48,51 @@
 
 
     <script type="text/javascript">
-            $(document).ready(function () {
-                var table = $('#employeeTable').DataTable({
-                    // DataTables configuration options go here
-                    processing: true, // Note the correct spelling
-                    serverSide: true,
-                    searching: false, // Hide the search input field
-                    ordering: false,  // Hide the sorting arrows and column headers
-                    ajax: {
-                        url: '/employee/GetList', // Replace with your API endpoint
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: function (d) {
-                            var customFilter = {
-                                draw: d.draw,
-                                start: d.start,
-                                length: d.length
-                                // Add other filter properties if needed
-                            };
-                            return JSON.stringify(customFilter);
-                        },
-                        dataSrc: 'data' // This indicates where the data array is in the response
+        $(document).ready(function () {
+            var table = $('#employeeTable').DataTable({
+                // DataTables configuration options go here
+                processing: true, // Note the correct spelling
+                serverSide: true,
+                searching: false, // Hide the search input field
+                ordering: false,  // Hide the sorting arrows and column headers
+                ajax: {
+                    url: '/employee/GetList', // Replace with your API endpoint
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function (d) {
+                        var customFilter = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length
+                            // Add other filter properties if needed
+                        };
+                        return JSON.stringify(customFilter);
                     },
-                    columns: [
-                        { data: 'locationName' },
-                        { data: 'departmentName' },
-                        { data: 'categoryName' },
-                        { data: 'subCategoryName' },
-                        { data: 'e1' },
-                        { data: 'e2' },
-                        { data: 'm1' },
-                        { data: 'm2' },
-                        {
-                            data: 'id',
-                            render: function (data, type, row) {
-                                return '<button class="btn btn-primary btn-edit" data-id="' + data + '">Edit</button>';
-                            }
-                        },
-                        {
-                            data: 'id',
-                            render: function (data, type, row) {
-                                return '<button class="btn btn-danger btn-delete" data-id="' + data + '">Delete</button>';
-                            }
+                    dataSrc: 'data' // This indicates where the data array is in the response
+                },
+                columns: [
+                    { data: 'locationName' },
+                    { data: 'departmentName' },
+                    { data: 'categoryName' },
+                    { data: 'subCategoryName' },
+                    { data: 'e1' },
+                    { data: 'e2' },
+                    { data: 'm1' },
+                    { data: 'm2' },
+                    {
+                        data: 'id',
+                        render: function (data, type, row) {
+                            return '<button class="btn btn-primary btn-edit" data-id="' + data + '">Edit</button>';
                         }
-                    ]
-                });
+                    },
+                    {
+                        data: 'id',
+                        render: function (data, type, row) {
+                            return '<button class="btn btn-danger btn-delete" data-id="' + data + '">Delete</button>';
+                        }
+                    }
+                ]
+            });
 
 
             // Handle Edit button click

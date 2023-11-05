@@ -6,5 +6,6 @@ namespace IdentityApplication.Core.Contracts
     {
         IList<SubCategory> GetSubCategories();
         SubCategory GetSubCategoryById(Guid Id);
+        SubCategory GetSubCategoryByName(string Name);
     }
 }

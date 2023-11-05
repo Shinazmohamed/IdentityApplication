@@ -6,5 +6,6 @@ namespace IdentityApplication.Core.Contracts
     {
         IList<Location> GetLocations();
         Location GetLocationById(Guid Id);
+        Location GetLocationByName(string Name);
     }
 }

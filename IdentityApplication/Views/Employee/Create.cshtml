@@ -9,6 +9,7 @@
     var isEditMode = Model.Id != Guid.Empty;
     var action = isEditMode ? "Edit" : "CreateEmployee";
     var buttonText = isEditMode ? "Update" : "Create";
+    var isAdmin = (User.Claims.Any(e => e.Value == Constants.Roles.Administrator)) ? true : false;
 }
 
 <h2>@(isEditMode ? "Edit Employee" : "Create Employee")</h2>
@@ -27,7 +28,6 @@
     </div>
 }
 
-
 <form method="post" asp-controller="Employee" asp-action="@action">
 
     @if (isEditMode)
@@ -35,16 +35,12 @@
         <input type="hidden" asp-for="Id" />
     }
 
+    <p>@isEditMode</p>
+
     <div class="form-group">
         <label asp-for="SelectedLocation"></label>
-        @if (User.Claims.Any(e => e.Value == Constants.Roles.Administrator))
-        {
-            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select" })
-        }
-        else
-        {
-            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select", disabled = true })
-        }
+        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select" })
+        @Html.ValidationMessageFor(model => model.SelectedLocation)
     </div>
 
     <div class="form-group">
@@ -58,7 +54,7 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="SubCategories"></label>
+        <label asp-for="SelectedSubCategory"></label>
         @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "SubCategory", new { @class = "form-select" })
     </div>
 
@@ -84,3 +80,36 @@
 
     <button type="submit" class="btn btn-primary">@buttonText</button>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var isAdmin = '@isAdmin';
+            var isEditMode = '@isEditMode';
+
+            var locationDropdown = $("#SelectedLocation");
+            var departmentDropdown = $("#SelectedDepartment");
+            var categoryDropdown = $("#SelectedCategory");
+            var subCategoryDropdown = $("#SelectedSubCategory");
+
+            if (isAdmin === 'True') {
+                locationDropdown.prop("disabled", false);
+                departmentDropdown.prop("disabled", false);
+                categoryDropdown.prop("disabled", false);
+                subCategoryDropdown.prop("disabled", false);
+
+            } else {
+                locationDropdown.prop("disabled", true);
+                if (isEditMode === 'True') {
+                    departmentDropdown.prop("disabled", true);
+                    categoryDropdown.prop("disabled", true);
+                    subCategoryDropdown.prop("disabled", true);
+                }
+            }
+        });
+    </script>
+}
