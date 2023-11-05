@@ -3,7 +3,6 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
-using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -47,6 +46,29 @@ namespace IdentityApplication.Controllers
                     location.Id.ToString(), false)).ToList();
             employee.SelectedLocation = user.LocationId.ToString();
             employee.Locations = locationItems;
+
+
+            var departments = _unitOfWork.Department.GetDepartments();
+            var departmentItems = departments.Select(department =>
+                new SelectListItem(
+                    department.Name,
+                    department.Id.ToString(), false)).ToList();
+            employee.Departments = departmentItems;
+
+            var categories = _unitOfWork.Category.GetCategories();
+            var categoryItems = categories.Select(category =>
+                new SelectListItem(
+                    category.Name,
+                    category.Id.ToString(), false)).ToList();
+            employee.Categories = categoryItems;
+
+            var subCategories = _unitOfWork.SubCategory.GetSubCategories();
+            var subCategoryItems = subCategories.Select(subCategory =>
+                new SelectListItem(
+                    subCategory.Name,
+                    subCategory.Id.ToString(), false)).ToList();
+            employee.SubCategories = subCategoryItems;
+
             return View(employee);
         }
 

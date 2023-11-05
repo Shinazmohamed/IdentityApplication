@@ -41,9 +41,27 @@ namespace IdentityApplication.Core.ViewModel
 
         [Required]
         [Display(Name = "Location")]
-        public string SelectedLocation { get; set; } // Change this to hold the selected location
+        public string SelectedLocation { get; set; }
 
         public List<SelectListItem> Locations { get; set; }
+
+        [Required]
+        [Display(Name = "Department")]
+        public string SelectedDepartment { get; set; }
+
+        public List<SelectListItem> Departments { get; set; }
+
+        [Required]
+        [Display(Name = "Category")]
+        public string SelectedCategory { get; set; }
+
+        public List<SelectListItem> Categories { get; set; }
+
+        [Required]
+        [Display(Name = "SubCategory")]
+        public string SelectedSubCategory { get; set; }
+
+        public List<SelectListItem> SubCategories { get; set; }
     }
 
 }
