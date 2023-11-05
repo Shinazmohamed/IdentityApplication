@@ -1,5 +1,10 @@
 ﻿@model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
+@using IdentityApplication.Core;
+@using Microsoft.AspNetCore.Identity
+@using IdentityApplication.Areas.Identity.Data
 
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     var isEditMode = Model.Id != Guid.Empty;
     var action = isEditMode ? "Edit" : "CreateEmployee";
@@ -32,7 +37,14 @@
 
     <div class="form-group">
         <label asp-for="SelectedLocation"></label>
-        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select", disabled = true })
+        @if (User.Claims.Any(e => e.Value == Constants.Roles.Administrator))
+        {
+            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select" })
+        }
+        else
+        {
+            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select", disabled = true })
+        }
     </div>
 
     <div class="form-group">
