@@ -1,0 +1,17 @@
+﻿Support for ASP.NET Core Identity was added to your project.
+
+For setup and configuration information, see https://go.microsoft.com/fwlink/?linkid=2116645.
+
+
+https://www.youtube.com/watch?v=A1Qjg4B0VnQ&list=PLJo5QOn8moNw43NcHM6ZfZ5AMzPuGM8ey&index=1
+
+
+How to import data
+
+1. Rename Table in app settings SPDec2023
+
+2. Restart Application (Open Cmd as admin and run 'ISSRESET'
+
+3. Import data from excel into temperory table 
+
+4. Run the query ( copy data from temp table into SPDec2023 with ID)

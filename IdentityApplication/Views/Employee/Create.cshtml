@@ -1,15 +1,11 @@
 ﻿@model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 @using IdentityApplication.Core;
-@using Microsoft.AspNetCore.Identity
-@using IdentityApplication.Areas.Identity.Data
 
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 @{
     var isEditMode = Model.Id != Guid.Empty;
     var action = isEditMode ? "Edit" : "CreateEmployee";
     var buttonText = isEditMode ? "Update" : "Create";
-    var isAdmin = (User.Claims.Any(e => e.Value == Constants.Roles.Administrator)) ? true : false;
+    var isAdmin = User.IsInRole(Constants.Roles.Administrator) ? true : false;
 }
 
 <h2>@(isEditMode ? "Edit Employee" : "Create Employee")</h2>
@@ -37,22 +33,22 @@
 
     <div class="form-group">
         <label asp-for="SelectedLocation"></label>
-        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, new { @class = "form-select" })
     </div>
 
     <div class="form-group">
         <label asp-for="SelectedDepartment"></label>
-        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Department", new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, new { @class = "form-select" })
     </div>
 
     <div class="form-group">
         <label asp-for="SelectedCategory"></label>
-        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Category", new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, new { @class = "form-select" })
     </div>
 
     <div class="form-group">
         <label asp-for="SelectedSubCategory"></label>
-        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "SubCategory", new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { @class = "form-select" })
     </div>
 
     <div class="form-group">
@@ -85,28 +81,30 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var isAdmin = '@isAdmin';
-            var isEditMode = '@isEditMode';
+            // var isAdmin = '@isAdmin';
+            // var isEditMode = '@isEditMode';
 
-            var locationDropdown = $("#SelectedLocation");
-            var departmentDropdown = $("#SelectedDepartment");
-            var categoryDropdown = $("#SelectedCategory");
-            var subCategoryDropdown = $("#SelectedSubCategory");
+            // var locationDropdown = $("#SelectedLocation");
+            // var departmentDropdown = $("#SelectedDepartment");
+            // var categoryDropdown = $("#SelectedCategory");
+            // var subCategoryDropdown = $("#SelectedSubCategory");
 
-            if (isAdmin === 'True') {
-                locationDropdown.prop("disabled", false);
-                departmentDropdown.prop("disabled", false);
-                categoryDropdown.prop("disabled", false);
-                subCategoryDropdown.prop("disabled", false);
+            // if (isAdmin === 'True') {
+            //     // locationDropdown.prop("disabled", false);
+            //     // locationDropdown.removeAttr("disabled");
+            //     departmentDropdown.prop("disabled", false);
+            //     categoryDropdown.prop("disabled", false);
+            //     subCategoryDropdown.prop("disabled", false);
 
-            } else {
-                locationDropdown.prop("disabled", true);
-                if (isEditMode === 'True') {
-                    departmentDropdown.prop("disabled", true);
-                    categoryDropdown.prop("disabled", true);
-                    subCategoryDropdown.prop("disabled", true);
-                }
-            }
+            // } else {
+            //     // locationDropdown.prop("disabled", true);
+            //     // locationDropdown.attr("disabled", true);
+            //     if (isEditMode === 'True') {
+            //         departmentDropdown.prop("disabled", true);
+            //         categoryDropdown.prop("disabled", true);
+            //         subCategoryDropdown.prop("disabled", true);
+            //     }
+            // }
         });
     </script>
 }

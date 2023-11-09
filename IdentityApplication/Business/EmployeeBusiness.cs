@@ -21,8 +21,8 @@ namespace IdentityApplication.Business
         {
             var selectedLocation = _unitOfWork.Location.GetLocationById(Guid.Parse(request.SelectedLocation));
             var selectedDepartment = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedDepartment));
-            var selectedCategory = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedCategory));
-            var selectedSubCategory = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedSubCategory));
+            var selectedCategory = _unitOfWork.Category.GetCategoryById(Guid.Parse(request.SelectedCategory));
+            var selectedSubCategory = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(request.SelectedSubCategory));
 
             var _entity = _mapper.Map<Employee>(request);
             if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = 0;
@@ -50,8 +50,8 @@ namespace IdentityApplication.Business
         {
             var selectedLocation = _unitOfWork.Location.GetLocationById(Guid.Parse(request.SelectedLocation));
             var selectedDepartment = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedDepartment));
-            var selectedCategory = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedCategory));
-            var selectedSubCategory = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedSubCategory));
+            var selectedCategory = _unitOfWork.Category.GetCategoryById(Guid.Parse(request.SelectedCategory));
+            var selectedSubCategory = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(request.SelectedSubCategory));
 
             var _entity = _mapper.Map<Employee>(request);
             if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = 0;
