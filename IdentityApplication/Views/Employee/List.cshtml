@@ -39,6 +39,21 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="FailedModel" tabindex="-1" role="dialog" aria-labelledby="FailedModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel" style="color: #721c24;">Operation Failed!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="failedMessage"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{
@@ -123,14 +138,21 @@
                         success: function () {
                             // Remove the row from the DataTable using the stored reference
                             table.row($deleteButton.closest('tr')).remove().draw(false);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            // Handle authorization error
+                            if (jqXHR.status === 403) {
+                                $('#failedMessage').text('Authorization error: You do not have permission to perform this action.');
+
+                            } else {
+                                $('#failedMessage').text("Error: Operation failed!");
+                            }
+                            $('#FailedModel').modal('show');
                         }
                     });
-
                     $('#deleteConfirmationModal').modal('hide');
                 });
             });
-
         });
     </script>
-
 }
