@@ -36,92 +36,160 @@ namespace IdentityApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(InsertEmployeeRequest employee)
         {
-
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
             var locations = _unitOfWork.Location.GetLocations();
             var departments = _unitOfWork.Department.GetDepartments();
             var categories = _unitOfWork.Category.GetCategories();
             var subCategories = _unitOfWork.SubCategory.GetSubCategories();
+            var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 
-            var ss = User.IsInRole(Constants.Roles.Administrator);
-
-            if (user?.LocationId != Guid.Empty && !User.IsInRole(Constants.Roles.Administrator))
+            if (user?.LocationId != Guid.Empty && !isAdmin)
             {
-                var itemLocation = locations.Where(e => e.Id == user?.LocationId);
-                var locationItems = itemLocation.Select(location =>
-                    new SelectListItem(
-                        location.Name,
-                        location.Id.ToString(),
-                        false)).ToList();
-                employee.SelectedLocation = user.LocationId.ToString();
-                employee.Locations = locationItems;
+                var itemLocation = locations.FirstOrDefault(e => e.Id == user?.LocationId);
+                employee.SelectedLocation = user?.LocationId.ToString();
+                employee.Locations = new List<SelectListItem>
+                {
+                    new SelectListItem(itemLocation?.Name, itemLocation?.Id.ToString(), false)
+                };
             }
             else
             {
-                var locationItems = locations.Select(location =>
-                    new SelectListItem(
-                        location.Name,
-                        location.Id.ToString(),
-                        false)).ToList();
-                employee.Locations = locationItems;
+                employee.Locations = locations.Select(location =>
+                    new SelectListItem(location.Name, location.Id.ToString(), false)).ToList();
             }
 
-            if (!string.IsNullOrEmpty(employee.SelectedDepartment) && !User.IsInRole(Constants.Roles.Administrator))
+            if (!string.IsNullOrEmpty(employee.SelectedDepartment) && !isAdmin)
             {
-                var itemDepartments = departments.Where(e => e.Id.ToString() == employee.SelectedDepartment);
-                var departmentItems = itemDepartments.Select(department =>
-                    new SelectListItem(
-                        department.Name,
-                        department.Id.ToString(), false)).ToList();
-                employee.Departments = departmentItems;
+                var itemDepartments = departments.FirstOrDefault(e => e.Id.ToString() == employee.SelectedDepartment);
+                employee.Departments = new List<SelectListItem>
+                {
+                    new SelectListItem(itemDepartments?.Name, itemDepartments?.Id.ToString(), false)
+                };
             }
             else
             {
-                var departmentItems = departments.Select(department =>
-                    new SelectListItem(
-                        department.Name,
-                        department.Id.ToString(), false)).ToList();
-                employee.Departments = departmentItems;
+                employee.Departments = departments.Select(department =>
+                    new SelectListItem(department.Name, department.Id.ToString(), false)).ToList();
             }
 
-            if (!string.IsNullOrEmpty(employee.SelectedCategory) && !User.IsInRole(Constants.Roles.Administrator))
+            if (!string.IsNullOrEmpty(employee.SelectedCategory) && !isAdmin)
             {
-                var itemCategories = categories.Where(e => e.Id.ToString() == employee.SelectedCategory);
-                var categoryItems = itemCategories.Select(category =>
-                    new SelectListItem(
-                        category.Name,
-                        category.Id.ToString(), false)).ToList();
-                employee.Categories = categoryItems;
+                var itemCategories = categories.FirstOrDefault(e => e.Id.ToString() == employee.SelectedCategory);
+                employee.Categories = new List<SelectListItem>
+                {
+                    new SelectListItem(itemCategories?.Name, itemCategories?.Id.ToString(), false)
+                };
             }
             else
             {
-                var categoryItems = categories.Select(category =>
-                    new SelectListItem(
-                        category.Name,
-                        category.Id.ToString(), false)).ToList();
-                employee.Categories = categoryItems;
+                employee.Categories = categories.Select(category =>
+                    new SelectListItem(category.Name, category.Id.ToString(), false)).ToList();
             }
 
-            if (!string.IsNullOrEmpty(employee.SelectedSubCategory) && !User.IsInRole(Constants.Roles.Administrator))
+            if (!string.IsNullOrEmpty(employee.SelectedSubCategory) && !isAdmin)
             {
-                var itemSubCategories = subCategories.Where(e => e.Id.ToString() == employee.SelectedSubCategory);
-                var subCategoryItems = itemSubCategories.Select(subCategory =>
-                    new SelectListItem(
-                        subCategory.Name,
-                        subCategory.Id.ToString(), false)).ToList();
-                employee.SubCategories = subCategoryItems;
+                var itemSubCategories = subCategories.FirstOrDefault(e => e.Id.ToString() == employee.SelectedSubCategory);
+                employee.SubCategories = new List<SelectListItem>
+                {
+                    new SelectListItem(itemSubCategories?.Name, itemSubCategories?.Id.ToString(), false)
+                };
             }
             else
             {
-                var subCategoryItems = subCategories.Select(subCategory =>
-                    new SelectListItem(
-                        subCategory.Name,
-                        subCategory.Id.ToString(), false)).ToList();
-                employee.SubCategories = subCategoryItems;
+                employee.SubCategories = subCategories.Select(subCategory =>
+                    new SelectListItem(subCategory?.Name, subCategory?.Id.ToString(), false)).ToList();
             }
 
             return View(employee);
         }
+
+        //public async Task<IActionResult> Create(InsertEmployeeRequest employee)
+        //{
+        //    var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        //    var locations = _unitOfWork.Location.GetLocations();
+        //    var departments = _unitOfWork.Department.GetDepartments();
+        //    var categories = _unitOfWork.Category.GetCategories();
+        //    var subCategories = _unitOfWork.SubCategory.GetSubCategories();
+
+        //    var ss = User.IsInRole(Constants.Roles.Administrator);
+
+        //    if (user?.LocationId != Guid.Empty && !User.IsInRole(Constants.Roles.Administrator))
+        //    {
+        //        var itemLocation = locations.Where(e => e.Id == user?.LocationId);
+        //        var locationItems = itemLocation.Select(location =>
+        //            new SelectListItem(
+        //                location.Name,
+        //                location.Id.ToString(),
+        //                false)).ToList();
+        //        employee.SelectedLocation = user.LocationId.ToString();
+        //        employee.Locations = locationItems;
+        //    }
+        //    else
+        //    {
+        //        var locationItems = locations.Select(location =>
+        //            new SelectListItem(
+        //                location.Name,
+        //                location.Id.ToString(),
+        //                false)).ToList();
+        //        employee.Locations = locationItems;
+        //    }
+
+        //    if (!string.IsNullOrEmpty(employee.SelectedDepartment) && !User.IsInRole(Constants.Roles.Administrator))
+        //    {
+        //        var itemDepartments = departments.Where(e => e.Id.ToString() == employee.SelectedDepartment);
+        //        var departmentItems = itemDepartments.Select(department =>
+        //            new SelectListItem(
+        //                department.Name,
+        //                department.Id.ToString(), false)).ToList();
+        //        employee.Departments = departmentItems;
+        //    }
+        //    else
+        //    {
+        //        var departmentItems = departments.Select(department =>
+        //            new SelectListItem(
+        //                department.Name,
+        //                department.Id.ToString(), false)).ToList();
+        //        employee.Departments = departmentItems;
+        //    }
+
+        //    if (!string.IsNullOrEmpty(employee.SelectedCategory) && !User.IsInRole(Constants.Roles.Administrator))
+        //    {
+        //        var itemCategories = categories.Where(e => e.Id.ToString() == employee.SelectedCategory);
+        //        var categoryItems = itemCategories.Select(category =>
+        //            new SelectListItem(
+        //                category.Name,
+        //                category.Id.ToString(), false)).ToList();
+        //        employee.Categories = categoryItems;
+        //    }
+        //    else
+        //    {
+        //        var categoryItems = categories.Select(category =>
+        //            new SelectListItem(
+        //                category.Name,
+        //                category.Id.ToString(), false)).ToList();
+        //        employee.Categories = categoryItems;
+        //    }
+
+        //    if (!string.IsNullOrEmpty(employee.SelectedSubCategory) && !User.IsInRole(Constants.Roles.Administrator))
+        //    {
+        //        var itemSubCategories = subCategories.Where(e => e.Id.ToString() == employee.SelectedSubCategory);
+        //        var subCategoryItems = itemSubCategories.Select(subCategory =>
+        //            new SelectListItem(
+        //                subCategory.Name,
+        //                subCategory.Id.ToString(), false)).ToList();
+        //        employee.SubCategories = subCategoryItems;
+        //    }
+        //    else
+        //    {
+        //        var subCategoryItems = subCategories.Select(subCategory =>
+        //            new SelectListItem(
+        //                subCategory.Name,
+        //                subCategory.Id.ToString(), false)).ToList();
+        //        employee.SubCategories = subCategoryItems;
+        //    }
+
+        //    return View(employee);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(InsertEmployeeRequest model)
@@ -164,7 +232,6 @@ namespace IdentityApplication.Controllers
                 data = response.Data.Select(e => _mapper.Map<ViewEmployeeModel>(e))
             });
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
