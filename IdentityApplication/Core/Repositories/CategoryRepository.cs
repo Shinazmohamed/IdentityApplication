@@ -17,11 +17,11 @@ namespace IdentityApplication.Core.Repositories
         }
         public Category GetCategoryById(Guid Id)
         {
-            return _context.Category.FirstOrDefault(l => l.Id == Id);
+            return _context.Category.FirstOrDefault(l => l.CategoryId == Id);
         }
         public Category GetCategoryByName(string Name)
         {
-            return _context.Category.FirstOrDefault(l => l.Name == Name);
+            return _context.Category.FirstOrDefault(l => l.CategoryName == Name);
         }
     }
 }

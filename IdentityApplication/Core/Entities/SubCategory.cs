@@ -2,7 +2,7 @@
 {
     public class SubCategory
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public Guid SubCategoryId { get; set; }
+        public string SubCategoryName { get; set; }
     }
 }

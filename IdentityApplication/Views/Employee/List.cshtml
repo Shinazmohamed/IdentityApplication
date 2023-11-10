@@ -1,5 +1,32 @@
-﻿<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+﻿@using IdentityApplication.Core;
+@model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+<div class="row">
+    @if (User.IsInRole(Constants.Roles.Administrator))
+    {
+        <div class="col-md-6">
+            <label for="locationSearch">Search by Location:</label>
+            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select", id="locationSearch" })
+        </div>
+    }
+    <div class="col-md-6">
+        <label for="departmentSearch">Search by Department:</label>
+        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Department", new { @class = "form-select", id="departmentSearch" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <label for="categorySearch">Search by Category:</label>
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Category", new { @class = "form-select", id="categorySearch" })
+    </div>
+    <div class="col-md-6">
+        <label for="subcategorySearch">Search by Sub Category:</label>
+        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "Sub Category", new { @class = "form-select", id="subcategorySearch" })
+    </div>
+</div>
 <table id="employeeTable" class="table table-striped table-bordered">
     <thead>
         <tr>
@@ -79,7 +106,11 @@
                         var customFilter = {
                             draw: d.draw,
                             start: d.start,
-                            length: d.length
+                            length: d.length,
+                            location: $('#locationSearch').val(),
+                            category: $('#categorySearch').val(),
+                            department: $('#departmentSearch').val(),
+                            subcategory: $('#subcategorySearch').val()
                             // Add other filter properties if needed
                         };
                         return JSON.stringify(customFilter);
@@ -109,6 +140,10 @@
                         }
                     }
                 ]
+            });
+
+            $('#locationSearch, #categorySearch, #departmentSearch, #subcategorySearch').on('change', function () {
+                table.draw();
             });
 
 

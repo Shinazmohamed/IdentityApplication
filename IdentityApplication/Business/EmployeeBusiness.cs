@@ -29,15 +29,27 @@ namespace IdentityApplication.Business
             else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = 2;
             else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = 1;
 
-            _entity.LocationName = selectedLocation.Name;
-            _entity.DepartmentName = selectedDepartment.Name;
-            _entity.CategoryName = selectedCategory.Name;
-            _entity.SubCategoryName = selectedSubCategory.Name;
+            _entity.LocationName = selectedLocation.LocationName;
+            _entity.DepartmentName = selectedDepartment.DepartmentName;
+            _entity.CategoryName = selectedCategory.CategoryName;
+            _entity.SubCategoryName = selectedSubCategory.SubCategoryName;
             _unitOfWork.Employee.Create(_entity);
         }
 
         public async Task<PaginationResponse<Employee>> GetAll(PaginationFilter filter)
         {
+            if (!string.IsNullOrEmpty(filter.location))
+                filter.location = _unitOfWork.Location.GetLocationById(Guid.Parse(filter.location))?.LocationName;
+
+            if (!string.IsNullOrEmpty(filter.department))
+                filter.department = _unitOfWork.Department.GetDepartmentById(Guid.Parse(filter.department))?.DepartmentName;
+
+            if (!string.IsNullOrEmpty(filter.category))
+                filter.category = _unitOfWork.Category.GetCategoryById(Guid.Parse(filter.category))?.CategoryName;
+
+            if (!string.IsNullOrEmpty(filter.subcategory))
+                filter.subcategory = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(filter.subcategory))?.SubCategoryName;
+
             return await _unitOfWork.Employee.GetEntitiesWithFilters(filter);
         }
 
@@ -58,10 +70,10 @@ namespace IdentityApplication.Business
             else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = 2;
             else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = 1;
 
-            _entity.LocationName = selectedLocation.Name;
-            _entity.DepartmentName = selectedDepartment.Name;
-            _entity.CategoryName = selectedCategory.Name;
-            _entity.SubCategoryName = selectedSubCategory.Name;
+            _entity.LocationName = selectedLocation.LocationName;
+            _entity.DepartmentName = selectedDepartment.DepartmentName;
+            _entity.CategoryName = selectedCategory.CategoryName;
+            _entity.SubCategoryName = selectedSubCategory.SubCategoryName;
 
             _unitOfWork.Employee.Update(_entity);
         }

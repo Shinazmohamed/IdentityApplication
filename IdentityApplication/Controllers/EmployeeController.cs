@@ -3,6 +3,7 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -45,151 +46,63 @@ namespace IdentityApplication.Controllers
 
             if (user?.LocationId != Guid.Empty && !isAdmin)
             {
-                var itemLocation = locations.FirstOrDefault(e => e.Id == user?.LocationId);
+                var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
                 employee.SelectedLocation = user?.LocationId.ToString();
                 employee.Locations = new List<SelectListItem>
                 {
-                    new SelectListItem(itemLocation?.Name, itemLocation?.Id.ToString(), false)
+                    new SelectListItem(itemLocation?.LocationName, itemLocation?.LocationId.ToString(), false)
                 };
             }
             else
             {
                 employee.Locations = locations.Select(location =>
-                    new SelectListItem(location.Name, location.Id.ToString(), false)).ToList();
+                    new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
             }
 
             if (!string.IsNullOrEmpty(employee.SelectedDepartment) && !isAdmin)
             {
-                var itemDepartments = departments.FirstOrDefault(e => e.Id.ToString() == employee.SelectedDepartment);
+                var itemDepartments = departments.FirstOrDefault(e => e.DepartmentId.ToString() == employee.SelectedDepartment);
                 employee.Departments = new List<SelectListItem>
                 {
-                    new SelectListItem(itemDepartments?.Name, itemDepartments?.Id.ToString(), false)
+                    new SelectListItem(itemDepartments?.DepartmentName, itemDepartments?.DepartmentId.ToString(), false)
                 };
             }
             else
             {
                 employee.Departments = departments.Select(department =>
-                    new SelectListItem(department.Name, department.Id.ToString(), false)).ToList();
+                    new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
             }
 
             if (!string.IsNullOrEmpty(employee.SelectedCategory) && !isAdmin)
             {
-                var itemCategories = categories.FirstOrDefault(e => e.Id.ToString() == employee.SelectedCategory);
+                var itemCategories = categories.FirstOrDefault(e => e.CategoryId.ToString() == employee.SelectedCategory);
                 employee.Categories = new List<SelectListItem>
                 {
-                    new SelectListItem(itemCategories?.Name, itemCategories?.Id.ToString(), false)
+                    new SelectListItem(itemCategories?.CategoryName, itemCategories?.CategoryId.ToString(), false)
                 };
             }
             else
             {
                 employee.Categories = categories.Select(category =>
-                    new SelectListItem(category.Name, category.Id.ToString(), false)).ToList();
+                    new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
             }
 
             if (!string.IsNullOrEmpty(employee.SelectedSubCategory) && !isAdmin)
             {
-                var itemSubCategories = subCategories.FirstOrDefault(e => e.Id.ToString() == employee.SelectedSubCategory);
+                var itemSubCategories = subCategories.FirstOrDefault(e => e.SubCategoryId.ToString() == employee.SelectedSubCategory);
                 employee.SubCategories = new List<SelectListItem>
                 {
-                    new SelectListItem(itemSubCategories?.Name, itemSubCategories?.Id.ToString(), false)
+                    new SelectListItem(itemSubCategories?.SubCategoryName, itemSubCategories?.SubCategoryId.ToString(), false)
                 };
             }
             else
             {
                 employee.SubCategories = subCategories.Select(subCategory =>
-                    new SelectListItem(subCategory?.Name, subCategory?.Id.ToString(), false)).ToList();
+                    new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
             }
 
             return View(employee);
         }
-
-        //public async Task<IActionResult> Create(InsertEmployeeRequest employee)
-        //{
-        //    var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-        //    var locations = _unitOfWork.Location.GetLocations();
-        //    var departments = _unitOfWork.Department.GetDepartments();
-        //    var categories = _unitOfWork.Category.GetCategories();
-        //    var subCategories = _unitOfWork.SubCategory.GetSubCategories();
-
-        //    var ss = User.IsInRole(Constants.Roles.Administrator);
-
-        //    if (user?.LocationId != Guid.Empty && !User.IsInRole(Constants.Roles.Administrator))
-        //    {
-        //        var itemLocation = locations.Where(e => e.Id == user?.LocationId);
-        //        var locationItems = itemLocation.Select(location =>
-        //            new SelectListItem(
-        //                location.Name,
-        //                location.Id.ToString(),
-        //                false)).ToList();
-        //        employee.SelectedLocation = user.LocationId.ToString();
-        //        employee.Locations = locationItems;
-        //    }
-        //    else
-        //    {
-        //        var locationItems = locations.Select(location =>
-        //            new SelectListItem(
-        //                location.Name,
-        //                location.Id.ToString(),
-        //                false)).ToList();
-        //        employee.Locations = locationItems;
-        //    }
-
-        //    if (!string.IsNullOrEmpty(employee.SelectedDepartment) && !User.IsInRole(Constants.Roles.Administrator))
-        //    {
-        //        var itemDepartments = departments.Where(e => e.Id.ToString() == employee.SelectedDepartment);
-        //        var departmentItems = itemDepartments.Select(department =>
-        //            new SelectListItem(
-        //                department.Name,
-        //                department.Id.ToString(), false)).ToList();
-        //        employee.Departments = departmentItems;
-        //    }
-        //    else
-        //    {
-        //        var departmentItems = departments.Select(department =>
-        //            new SelectListItem(
-        //                department.Name,
-        //                department.Id.ToString(), false)).ToList();
-        //        employee.Departments = departmentItems;
-        //    }
-
-        //    if (!string.IsNullOrEmpty(employee.SelectedCategory) && !User.IsInRole(Constants.Roles.Administrator))
-        //    {
-        //        var itemCategories = categories.Where(e => e.Id.ToString() == employee.SelectedCategory);
-        //        var categoryItems = itemCategories.Select(category =>
-        //            new SelectListItem(
-        //                category.Name,
-        //                category.Id.ToString(), false)).ToList();
-        //        employee.Categories = categoryItems;
-        //    }
-        //    else
-        //    {
-        //        var categoryItems = categories.Select(category =>
-        //            new SelectListItem(
-        //                category.Name,
-        //                category.Id.ToString(), false)).ToList();
-        //        employee.Categories = categoryItems;
-        //    }
-
-        //    if (!string.IsNullOrEmpty(employee.SelectedSubCategory) && !User.IsInRole(Constants.Roles.Administrator))
-        //    {
-        //        var itemSubCategories = subCategories.Where(e => e.Id.ToString() == employee.SelectedSubCategory);
-        //        var subCategoryItems = itemSubCategories.Select(subCategory =>
-        //            new SelectListItem(
-        //                subCategory.Name,
-        //                subCategory.Id.ToString(), false)).ToList();
-        //        employee.SubCategories = subCategoryItems;
-        //    }
-        //    else
-        //    {
-        //        var subCategoryItems = subCategories.Select(subCategory =>
-        //            new SelectListItem(
-        //                subCategory.Name,
-        //                subCategory.Id.ToString(), false)).ToList();
-        //        employee.SubCategories = subCategoryItems;
-        //    }
-
-        //    return View(employee);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(InsertEmployeeRequest model)
@@ -215,14 +128,51 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
-            return View();
+            var response = new InsertEmployeeRequest();
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var isAdmin = User.IsInRole(Constants.Roles.Administrator);
+
+            var locations = _unitOfWork.Location.GetLocations();
+            if (!isAdmin)
+            {
+                var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
+                response.SelectedLocation = user?.LocationId.ToString();
+                response.Locations = new List<SelectListItem>
+                {
+                    new SelectListItem(itemLocation?.LocationName, itemLocation?.LocationId.ToString(), false)
+                };
+            }
+            else
+            {
+                response.Locations = locations.Select(location =>
+                    new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
+            }
+
+
+            var departments = _unitOfWork.Department.GetDepartments();
+            response.Departments = departments.Select(department =>
+                    new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
+
+
+            var categories = _unitOfWork.Category.GetCategories();
+            response.Categories = categories.Select(category =>
+                new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
+
+            var subCategories = _unitOfWork.SubCategory.GetSubCategories();
+            response.SubCategories = subCategories.Select(subCategory =>
+                new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
+
+            return View(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            if (!User.IsInRole(Constants.Roles.Administrator)) filter.location = user.LocationId.ToString();
+
             var response = await _business.GetAll(filter);
             return Json(new
             {
@@ -244,10 +194,10 @@ namespace IdentityApplication.Controllers
             var location = _unitOfWork.Location.GetLocationByName(currentData.LocationName);
             var department = _unitOfWork.Department.GetDepartmentByName(currentData.DepartmentName);
 
-            entity.SelectedCategory = category.Id.ToString();
-            entity.SelectedSubCategory = subCategory.Id.ToString();
-            entity.SelectedDepartment = department.Id.ToString();
-            entity.SelectedLocation = location.Id.ToString();
+            entity.SelectedCategory = category.CategoryId.ToString();
+            entity.SelectedSubCategory = subCategory.SubCategoryId.ToString();
+            entity.SelectedDepartment = department.DepartmentId.ToString();
+            entity.SelectedLocation = location.LocationId.ToString();
 
             return RedirectToAction("Create", entity);
         }

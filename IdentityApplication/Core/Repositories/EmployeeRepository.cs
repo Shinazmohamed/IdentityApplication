@@ -56,6 +56,26 @@ namespace IdentityApplication.Core.Repositories
         {
             var query = _context.Employee.AsQueryable(); // Use the DbSet from your context
 
+            if (!string.IsNullOrEmpty(filter.location))
+            {
+                query = query.Where(e => e.LocationName == filter.location);
+            }
+
+            if (!string.IsNullOrEmpty(filter.department))
+            {
+                query = query.Where(e => e.DepartmentName == filter.department);
+            }
+
+            if (!string.IsNullOrEmpty(filter.category))
+            {
+                query = query.Where(e => e.CategoryName == filter.category);
+            }
+
+            if (!string.IsNullOrEmpty(filter.subcategory))
+            {
+                query = query.Where(e => e.SubCategoryName == filter.subcategory);
+            }
+
             // Perform the count and pagination
             var totalCount = await query.CountAsync(); // Use CountAsync for better performance
             var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();

@@ -124,8 +124,8 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
 
             var locationItems = locations.Select(location =>
            new SelectListItem(
-               location.Name,
-               location.Id.ToString(), false)).ToList();
+               location.LocationName,
+               location.LocationId.ToString(), false)).ToList();
 
             // Populate the list of locations
             Input = new InputModel

@@ -19,11 +19,11 @@ namespace IdentityApplication.Core.Repositories
         }
         public Location GetLocationById(Guid Id)
         {
-            return _context.Location.FirstOrDefault(l => l.Id == Id);
+            return _context.Location.FirstOrDefault(l => l.LocationId == Id);
         }
         public Location GetLocationByName(string Name)
         {
-            return _context.Location.FirstOrDefault(l => l.Name == Name);
+            return _context.Location.FirstOrDefault(l => l.LocationName == Name);
         }
     }
 }

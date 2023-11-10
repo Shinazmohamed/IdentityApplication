@@ -45,9 +45,9 @@ namespace IdentityApplication.Controllers
             var locations = _unitOfWork.Location.GetLocations();
             var locationItems = locations.Select(location =>
             new SelectListItem(
-                location.Name,
-                location.Id.ToString(),
-                locations.Any(e => e.Id == user.LocationId))).ToList();
+                location.LocationName,
+                location.LocationId.ToString(),
+                locations.Any(e => e.LocationId == user.LocationId))).ToList();
             
             var vm = new EditUserViewModel { User = user, Roles = roleItems, Locations = locationItems };
             return View(vm);

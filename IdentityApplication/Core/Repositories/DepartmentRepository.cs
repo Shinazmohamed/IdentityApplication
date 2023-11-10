@@ -18,11 +18,11 @@ namespace IdentityApplication.Core.Repositories
         }
         public Department GetDepartmentById(Guid Id)
         {
-            return _context.Department.FirstOrDefault(l => l.Id == Id);
+            return _context.Department.FirstOrDefault(l => l.DepartmentId == Id);
         }
         public Department GetDepartmentByName(string Name)
         {
-            return _context.Department.FirstOrDefault(l => l.Name == Name);
+            return _context.Department.FirstOrDefault(l => l.DepartmentName == Name);
         }
     }
 }
