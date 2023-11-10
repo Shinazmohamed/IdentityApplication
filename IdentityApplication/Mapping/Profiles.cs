@@ -11,17 +11,17 @@ namespace IdentityApplication.Mapping
         {
             CreateMap<Employee, InsertEmployeeRequest>();
             CreateMap<InsertEmployeeRequest, Employee>();
+
             CreateMap<Employee, ViewEmployeeModel>()
-                .ForMember(e =>
-                    e.Id, e => e.MapFrom(src => src.Id));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+                // Map other properties if needed
+                // .ForMember(dest => dest.OtherProperty, opt => opt.MapFrom(src => src.SourceProperty));
 
             CreateMap<ApplicationUser, ListUsersModel>()
-                .ForMember(e =>
-                    e.Id, e => e.MapFrom(src => src.Id))
-                .ForMember(e =>
-                    e.Email, e => e.MapFrom(src => src.Email))
-                .ForMember(e =>
-                    e.Location, e => e.MapFrom(src => src.LocationId));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.LocationName));
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Areas.Identity.Data;
+﻿using AutoMapper;
+using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.ViewModel;
@@ -15,17 +16,21 @@ namespace IdentityApplication.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IMapper _mapper;
 
-        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager)
+        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsersWithLocations();
-            return View(users);
+            var source = _mapper.Map<List<ListUsersModel>>(users);
+            return View(source);
+
         }
 
         public async Task<IActionResult> Edit(string id)
