@@ -11,16 +11,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Department> Department => Set<Department>();
     public DbSet<Category> Category => Set<Category>();
     public DbSet<SubCategory> SubCategory => Set<SubCategory>();
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+
+    private readonly IConfiguration _configuration;
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
         : base(options)
     {
+        _configuration = configuration;
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        string employeeTableName = _configuration["TagEmployeeTableName"];
+        if (!string.IsNullOrEmpty(employeeTableName))
+        {
+            builder.Entity<Employee>().ToTable(employeeTableName);
+        }
+
         base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
     }
 }

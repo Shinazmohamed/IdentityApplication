@@ -14,8 +14,6 @@ namespace IdentityApplication.Mapping
 
             CreateMap<Employee, ViewEmployeeModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
-                // Map other properties if needed
-                // .ForMember(dest => dest.OtherProperty, opt => opt.MapFrom(src => src.SourceProperty));
 
             CreateMap<ApplicationUser, ListUsersModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

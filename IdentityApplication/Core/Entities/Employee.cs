@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IdentityApplication.Core.Entities
 {
-    [Table("SPOct2023")]
     public class Employee
     {
         [Key]
