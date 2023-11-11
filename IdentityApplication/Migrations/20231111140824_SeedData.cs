@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace IdentityApplication.Migrations
 {
+    /// <inheritdoc />
     public partial class SeedData : Migration
     {
         private string UserRoleId = Guid.NewGuid().ToString();
@@ -874,6 +877,5 @@ namespace IdentityApplication.Migrations
                 (NEWID(), N'TENDERIZER'),
                 (NEWID(), N'Soother');");
         }
-
     }
 }

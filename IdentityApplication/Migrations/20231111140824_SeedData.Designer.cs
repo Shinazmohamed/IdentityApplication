@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231111112503_SeedData")]
+    [Migration("20231111140824_SeedData")]
     partial class SeedData
     {
         /// <inheritdoc />
@@ -160,7 +160,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SPDec2023", (string)null);
+                    b.ToTable("SPOct2023", (string)null);
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Location", b =>

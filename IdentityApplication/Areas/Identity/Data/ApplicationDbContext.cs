@@ -20,14 +20,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
-    
     {
-        string employeeTableName = _configuration["TagEmployeeTableName"];
+        base.OnModelCreating(builder);
+
+        string employeeTableName = _configuration.GetSection("AppSettings")["TagEmployeeTableName"];
         if (!string.IsNullOrEmpty(employeeTableName))
         {
             builder.Entity<Employee>().ToTable(employeeTableName);
         }
-
-        base.OnModelCreating(builder);
     }
 }

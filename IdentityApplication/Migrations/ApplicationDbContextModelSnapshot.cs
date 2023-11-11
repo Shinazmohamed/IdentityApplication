@@ -157,7 +157,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SPDec2023", (string)null);
+                    b.ToTable("SPOct2023", (string)null);
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Location", b =>

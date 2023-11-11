@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231111112437_InitiateMigration")]
-    partial class InitiateMigration
+    [Migration("20231111140713_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -160,7 +160,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SPDec2023", (string)null);
+                    b.ToTable("SPOct2023", (string)null);
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Location", b =>

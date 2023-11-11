@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IdentityApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class InitiateMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,7 +62,7 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SPDec2023",
+                name: "SPOct2023",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -78,7 +78,7 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SPDec2023", x => x.Id);
+                    table.PrimaryKey("PK_SPOct2023", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -301,7 +301,7 @@ namespace IdentityApplication.Migrations
                 name: "Department");
 
             migrationBuilder.DropTable(
-                name: "SPDec2023");
+                name: "SPOct2023");
 
             migrationBuilder.DropTable(
                 name: "SubCategory");
