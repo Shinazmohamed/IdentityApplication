@@ -24,17 +24,24 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="List">Employee</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Employee</a>
+                                <ul class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="Create">Create Employee</a>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="List">View Employee</a>
+                                </ul>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">User</a>
+                               <ul class="dropdown-menu">
+                                    <a class="dropdown-item" id="register" asp-area="Identity" asp-page="/Account/Register">Register User</a>
+                                   <li><hr class="dropdown-divider"></li>
+                                    <a class="dropdown-item" asp-controller="User" asp-action="Index">View Users</a>
+                               </ul>
+                           </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Create">Create Employee</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register User</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="User" asp-action="Index">Users</a>
+                                <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
                             </li>
                         </ul>
                     </div>
