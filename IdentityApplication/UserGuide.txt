@@ -15,3 +15,12 @@ How to import data
 3. Import data from excel into temperory table 
 
 4. Run the query ( copy data from temp table into SPDec2023 with ID)
+
+
+
+
+
+
+
+https://www.youtube.com/watch?v=YFADgMqgis4&list=PLzHIrc5EQ2stnGlRsAhR8AS7kZCPevPLA&index=10
+https://www.youtube.com/watch?v=GbNhnksUS0k

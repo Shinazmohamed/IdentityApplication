@@ -19,12 +19,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-#region Authorization
-AddAuthorizationPolicies(builder.Services);
-#endregion
 
 AddScoped();
 
@@ -58,18 +53,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
-
-void AddAuthorizationPolicies(IServiceCollection services)
-{
-    services.AddAuthorization(options =>
-    {
-        options.AddPolicy(Constants.Policies.RequireAdmin, policy => policy.RequireClaim(Constants.Roles.Administrator));
-    });
-    services.AddAuthorization(options =>
-    {
-        options.AddPolicy(Constants.Policies.RequireUser, policy => policy.RequireClaim(Constants.Roles.User));
-    });
-}
 
 void AddScoped()
 {

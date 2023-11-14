@@ -199,10 +199,9 @@ namespace IdentityApplication.Controllers
             entity.SelectedDepartment = department.DepartmentId.ToString();
             entity.SelectedLocation = location.LocationId.ToString();
 
-            return RedirectToAction("Create", entity);
+            return Json(entity);
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(InsertEmployeeRequest request)
         {
@@ -210,23 +209,39 @@ namespace IdentityApplication.Controllers
             {
                 _business.Update(request);
 
-                TempData["SuccessMessage"] = "Employee updated successfully.";
-                return RedirectToAction("Create", request);
+                TempData["SuccessMessage"] = "Record updated successfully.";
+                return RedirectToAction("List");
             }
             catch (Exception)
             {
-                TempData["ErrorMessage"] = "Employee update failed.";
-                return RedirectToAction("Create", request);
+                TempData["ErrorMessage"] = "Record update failed.";
+                return RedirectToAction("List");
             }
         }
 
-        [Authorize(Policy = $"{Constants.Policies.RequireAdmin}")]
-        [HttpDelete]
-        public async Task<IActionResult> Delete(string id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(string Id)
         {
-            await _business.Delete(id);
+            try
+            {
+                if (User.HasClaim("Permission", "RequireAdmin"))
+                {
+                    await _business.Delete(Id);
 
-            return Ok(id);
+                    TempData["SuccessMessage"] = "Record deleted successfully.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Authorization error: You do not have permission to perform this action.";
+                }
+
+                return RedirectToAction("List");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Record delete failed.";
+                return RedirectToAction("List");
+            }
         }
     }
 }

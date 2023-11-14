@@ -21,6 +21,7 @@ namespace IdentityApplication.Migrations
             SeedRolesSQL(migrationBuilder);
             SeedUser(migrationBuilder);
             SeedUserRoles(migrationBuilder);
+            SeedClaims(migrationBuilder);
         }
         private void SeedRolesSQL(MigrationBuilder migrationBuilder)
         {
@@ -876,6 +877,12 @@ namespace IdentityApplication.Migrations
                 (NEWID(), N'Ring'),
                 (NEWID(), N'TENDERIZER'),
                 (NEWID(), N'Soother');");
+        }
+        private void SeedClaims(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($@"
+                INSERT INTO [AspNetRoleClaims] (RoleId, ClaimType, ClaimValue)
+                VALUES ('{AdminRoleId}', 'Permission', 'RequireAdmin');");
         }
     }
 }
