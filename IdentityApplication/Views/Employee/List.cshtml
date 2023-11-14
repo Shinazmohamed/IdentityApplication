@@ -4,6 +4,14 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3" id="successMessage">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <div class="row">
     @if (User.IsInRole(Constants.Roles.Administrator))
     {
@@ -83,6 +91,65 @@
     </div>
 </div>
 
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="employeeModalLabel">Edit Employee</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-controller="Employee" asp-action="Edit">
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="SelectedLocation" class="form-label"></label>
+                        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, new { @class = "form-select" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SelectedDepartment" class="form-label"></label>
+                        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, new { @class = "form-select" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SelectedCategory" class="form-label"></label>
+                        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, new { @class = "form-select" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SelectedSubCategory" class="form-label"></label>
+                        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { @class = "form-select" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="E1" class="form-label"></label>
+                        <input asp-for="E1" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="E2" class="form-label"></label>
+                        <input asp-for="E2" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="M1" class="form-label"></label>
+                        <input asp-for="M1" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="M2" class="form-label"></label>
+                        <input asp-for="M2" class="form-control" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -92,6 +159,11 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            setTimeout(function () {
+                $("#successMessage").fadeOut("slow");
+            }, 3000);
+
             var table = $('#employeeTable').DataTable({
                 // DataTables configuration options go here
                 processing: true, // Note the correct spelling
@@ -146,13 +218,33 @@
                 table.draw();
             });
 
-
             // Handle Edit button click
             $('#employeeTable').on('click', '.btn-edit', function () {
                 var id = $(this).data('id');
-                // Redirect to the edit page with the employee ID
-                window.location.href = '/employee/Edit?id=' + id; // Replace with your edit page URL
+                // Fetch employee data via AJAX
+                $.ajax({
+                    url: '/employee/Edit?id=' + id, // Replace with your API endpoint
+                    method: 'GET',
+                    success: function (employee) {
+
+                        $('#Id').val(id);
+                        $('#SelectedLocation').val(employee.selectedLocation).trigger('change');
+                        $('#SelectedDepartment').val(employee.selectedDepartment).trigger('change');
+                        $('#SelectedCategory').val(employee.selectedCategory).trigger('change');
+                        $('#SelectedSubCategory').val(employee.selectedSubCategory).trigger('change');
+                        $('#E1').val(employee.e1);
+                        $('#E2').val(employee.e2);
+                        $('#M1').val(employee.m1);
+                        $('#M2').val(employee.m2);
+
+                        $('#employeeModal').modal('show');
+                    },
+                    error: function () {
+                        // Handle error
+                    }
+                });
             });
+
 
             // Handle Delete button click
             $('#employeeTable').on('click', '.btn-delete', function () {
