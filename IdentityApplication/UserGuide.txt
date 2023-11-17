@@ -17,9 +17,20 @@ How to import data
 4. Run the query ( copy data from temp table into SPDec2023 with ID)
 
 
+Setup Application
+
+1. Update-Database 
 
 
+Credentials
 
+Username - admin@test.com
+Password - Admin@123
+Role - Administrator
+
+Username - user@test.com
+Password - Admin@123
+Role - User
 
 
 https://www.youtube.com/watch?v=YFADgMqgis4&list=PLzHIrc5EQ2stnGlRsAhR8AS7kZCPevPLA&index=10

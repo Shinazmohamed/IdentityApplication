@@ -1,13 +1,6 @@
 ﻿@model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
-@using IdentityApplication.Core;
 
-@{
-    var isEditMode = Model.Id != Guid.Empty;
-    var action = isEditMode ? "Edit" : "CreateEmployee";
-    var isAdmin = User.IsInRole(Constants.Roles.Administrator) ? true : false;
-}
-
-<h2>@(isEditMode ? "Edit Employee" : "Create Employee")</h2>
+<h2>Create Employee</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -23,13 +16,7 @@
     </div>
 }
 
-<form method="post" asp-controller="Employee" asp-action="@action">
-
-    @if (isEditMode)
-    {
-        <input type="hidden" asp-for="Id" />
-    }
-
+<form method="post" asp-controller="Employee" asp-action="CreateEmployee">
     <div class="mb-3">
         <label asp-for="SelectedLocation" class="form-label"></label>
         @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, new { @class = "form-select" })
@@ -78,33 +65,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            // var isAdmin = '@isAdmin';
-            // var isEditMode = '@isEditMode';
-
-            // var locationDropdown = $("#SelectedLocation");
-            // var departmentDropdown = $("#SelectedDepartment");
-            // var categoryDropdown = $("#SelectedCategory");
-            // var subCategoryDropdown = $("#SelectedSubCategory");
-
-            // if (isAdmin === 'True') {
-            //     // locationDropdown.prop("disabled", false);
-            //     // locationDropdown.removeAttr("disabled");
-            //     departmentDropdown.prop("disabled", false);
-            //     categoryDropdown.prop("disabled", false);
-            //     subCategoryDropdown.prop("disabled", false);
-
-            // } else {
-            //     // locationDropdown.prop("disabled", true);
-            //     // locationDropdown.attr("disabled", true);
-            //     if (isEditMode === 'True') {
-            //         departmentDropdown.prop("disabled", true);
-            //         categoryDropdown.prop("disabled", true);
-            //         subCategoryDropdown.prop("disabled", true);
-            //     }
-            // }
-        });
-    </script>
 }

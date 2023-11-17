@@ -107,8 +107,14 @@ namespace IdentityApplication.Core.Repositories
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity));
 
-                _context.Employee.Update(entity);
-                _context.SaveChanges();
+                var existingEmployee = _context.Employee.Find(entity.Id); // Assuming Id is the primary key
+                if (existingEmployee != null)
+                {
+                    // Update existingEmployee properties with new values
+                    _context.Employee.Update(existingEmployee);
+                    _context.SaveChanges();
+                }
+
             }
             catch (DbUpdateException ex)
             {
