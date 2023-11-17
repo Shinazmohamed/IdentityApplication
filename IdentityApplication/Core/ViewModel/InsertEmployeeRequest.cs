@@ -5,7 +5,7 @@ namespace IdentityApplication.Core.ViewModel
 {
     public class InsertEmployeeRequest
     {
-        public Guid? Id { get; set; }
+        public string? EmployeeId { get; set; }
 
         [Display(Name = "E1")]
         public string? E1 { get; set; }

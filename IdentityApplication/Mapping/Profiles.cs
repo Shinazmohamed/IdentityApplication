@@ -9,8 +9,11 @@ namespace IdentityApplication.Mapping
     {
         public Profiles()
         {
-            CreateMap<Employee, InsertEmployeeRequest>();
-            CreateMap<InsertEmployeeRequest, Employee>();
+            CreateMap<Employee, InsertEmployeeRequest>()
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<InsertEmployeeRequest, Employee>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.EmployeeId));
 
             CreateMap<Employee, ViewEmployeeModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));

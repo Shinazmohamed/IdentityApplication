@@ -111,7 +111,7 @@ namespace IdentityApplication.Core.Repositories
                 if (existingEmployee != null)
                 {
                     // Update existingEmployee properties with new values
-                    _context.Employee.Update(existingEmployee);
+                    _context.Entry(existingEmployee).CurrentValues.SetValues(entity);
                     _context.SaveChanges();
                 }
 
