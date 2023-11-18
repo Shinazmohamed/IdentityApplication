@@ -8,17 +8,15 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">Id</th>
                     <th scope="col">Email</th>
                     <th scope="col">Location</th>
                     <th scope="col">Handle</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach(var user in Model)
+                @foreach (var user in Model)
                 {
                     <tr>
-                        <th scope="row">@user.Id</th>
                         <td>@user.Email</td>
                         <td>@user.Location</td>
                         <td>
