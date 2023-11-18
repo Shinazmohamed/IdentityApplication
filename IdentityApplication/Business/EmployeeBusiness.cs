@@ -25,7 +25,7 @@ namespace IdentityApplication.Business
             var selectedSubCategory = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(request.SelectedSubCategory));
 
             var _entity = _mapper.Map<Employee>(request);
-            if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = 0;
+            if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = null;
             else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = 2;
             else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = 1;
 

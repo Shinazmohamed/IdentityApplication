@@ -9,83 +9,69 @@ namespace IdentityApplication.Core.Repositories
     public class EmployeeRepository : IEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
-
-        public EmployeeRepository(ApplicationDbContext context)
+        private readonly ILogger<EmployeeRepository> _logger;
+        public EmployeeRepository(ApplicationDbContext context, ILogger<EmployeeRepository> logger)
         {
             _context = context;
-        }
-
-        protected string GetFullErrorTextAndRollbackEntityChanges(DbUpdateException exception)
-        {
-            if (_context is DbContext dbContext)
-            {
-                var entries = dbContext.ChangeTracker.Entries()
-                    .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
-
-                entries.ForEach(entry =>
-                {
-                    try
-                    {
-                        entry.State = EntityState.Unchanged;
-                    }
-                    catch (Exception)
-                    {
-                        //ignored
-                    }
-                });
-            }
-
-            try
-            {
-                _context.SaveChanges();
-                return exception.ToString();
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            _logger = logger;
         }
 
         public void Create(Employee employee)
         {
-            _context.Employee.Add(employee);
-            _context.SaveChanges();
+            try
+            {
+                _context.Employee.Add(employee);
+                _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                throw;
+            }
         }
 
         public async Task<PaginationResponse<Employee>> GetEntitiesWithFilters(PaginationFilter filter)
         {
-            var query = _context.Employee.AsQueryable(); // Use the DbSet from your context
-
-            if (!string.IsNullOrEmpty(filter.location))
+            try
             {
-                query = query.Where(e => e.LocationName == filter.location);
-            }
+                var query = _context.Employee.AsQueryable(); // Use the DbSet from your context
 
-            if (!string.IsNullOrEmpty(filter.department))
+                if (!string.IsNullOrEmpty(filter.location))
+                {
+                    query = query.Where(e => e.LocationName == filter.location);
+                }
+
+                if (!string.IsNullOrEmpty(filter.department))
+                {
+                    query = query.Where(e => e.DepartmentName == filter.department);
+                }
+
+                if (!string.IsNullOrEmpty(filter.category))
+                {
+                    query = query.Where(e => e.CategoryName == filter.category);
+                }
+
+                if (!string.IsNullOrEmpty(filter.subcategory))
+                {
+                    query = query.Where(e => e.SubCategoryName == filter.subcategory);
+                }
+
+                // Perform the count and pagination
+                var totalCount = await query.CountAsync();
+                var filteredEntities = await query.OrderBy(e => e.Id).Skip(filter.start).Take(filter.length).ToListAsync();
+
+                return new PaginationResponse<Employee>(
+                    filteredEntities,
+                    totalCount,
+                    filter.draw,
+                    filter.length
+                );
+            }
+            catch (Exception e)
             {
-                query = query.Where(e => e.DepartmentName == filter.department);
+                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                throw;
             }
-
-            if (!string.IsNullOrEmpty(filter.category))
-            {
-                query = query.Where(e => e.CategoryName == filter.category);
-            }
-
-            if (!string.IsNullOrEmpty(filter.subcategory))
-            {
-                query = query.Where(e => e.SubCategoryName == filter.subcategory);
-            }
-
-            // Perform the count and pagination
-            var totalCount = await query.CountAsync(); // Use CountAsync for better performance
-            var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
-
-            return new PaginationResponse<Employee>(
-                filteredEntities,
-                totalCount,
-                filter.draw,
-                filter.length
-            );
         }
 
         public async Task<Employee> Get(object id)
@@ -94,9 +80,10 @@ namespace IdentityApplication.Core.Repositories
             {
                 return await _context.Employee.FindAsync(id);
             }
-            catch (DbUpdateException ex)
+            catch (Exception e)
             {
-                throw new Exception(GetFullErrorTextAndRollbackEntityChanges(ex), ex.InnerException);
+                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                throw;
             }
         }
 
@@ -110,15 +97,24 @@ namespace IdentityApplication.Core.Repositories
                 var existingEmployee = _context.Employee.Find(entity.Id); // Assuming Id is the primary key
                 if (existingEmployee != null)
                 {
-                    // Update existingEmployee properties with new values
-                    _context.Entry(existingEmployee).CurrentValues.SetValues(entity);
+                    existingEmployee.LocationName = entity.LocationName;
+                    existingEmployee.DepartmentName = entity.DepartmentName;
+                    existingEmployee.CategoryName = entity.CategoryName;
+                    existingEmployee.SubCategoryName = entity.SubCategoryName;
+                    existingEmployee.E1 = entity.E1;
+                    existingEmployee.E2 = entity.E2;
+                    existingEmployee.C = entity.C;
+                    existingEmployee.M1 = entity.M1;
+                    existingEmployee.M2 = entity.M2;
+
                     _context.SaveChanges();
                 }
 
             }
-            catch (DbUpdateException ex)
+            catch (Exception e)
             {
-                throw new Exception(GetFullErrorTextAndRollbackEntityChanges(ex), ex.InnerException);
+                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                throw;
             }
         }
 
@@ -131,9 +127,10 @@ namespace IdentityApplication.Core.Repositories
                 _context.SaveChanges();
 
             }
-            catch (DbUpdateException ex)
+            catch (Exception e)
             {
-                throw new Exception(GetFullErrorTextAndRollbackEntityChanges(ex), ex.InnerException);
+                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                throw;
             }
         }
     }
