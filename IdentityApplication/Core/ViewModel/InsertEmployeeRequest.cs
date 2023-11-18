@@ -5,6 +5,7 @@ namespace IdentityApplication.Core.ViewModel
 {
     public class InsertEmployeeRequest
     {
+        [Display(Name = "Id")]
         public string? EmployeeId { get; set; }
 
         [Display(Name = "E1")]
@@ -38,7 +39,7 @@ namespace IdentityApplication.Core.ViewModel
         public List<SelectListItem> Categories { get; set; }
 
         [Required]
-        [Display(Name = "SubCategory")]
+        [Display(Name = "Sub Category")]
         public string SelectedSubCategory { get; set; }
 
         public List<SelectListItem> SubCategories { get; set; }

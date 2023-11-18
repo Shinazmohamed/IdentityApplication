@@ -43,22 +43,23 @@
 <table id="employeeTable" class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Location Name</th>
-            <th>Department Name</th>
-            <th>Category Name</th>
-            <th>SubCategory Name</th>
-            <th>E1</th>
-            <th>E2</th>
+            <th>@Html.DisplayNameFor(model => model.EmployeeId)</th>
+            <th>@Html.DisplayNameFor(model => model.SelectedLocation)</th>
+            <th>@Html.DisplayNameFor(model => model.SelectedDepartment)</th>
+            <th>@Html.DisplayNameFor(model => model.SelectedCategory)</th>
+            <th>@Html.DisplayNameFor(model => model.SelectedSubCategory)</th>
+            <th>@Html.DisplayNameFor(model => model.E1)</th>
+            <th>@Html.DisplayNameFor(model => model.E2)</th>
             <th>C</th>
-            <th>M1</th>
-            <th>M2</th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.M1)</th>
+            <th>@Html.DisplayNameFor(model => model.M2)</th>
+            <th>Handle</th>
         </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
+
 
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -70,7 +71,7 @@
             <form method="post" asp-controller="Employee" asp-action="Delete">
                 <div class="modal-body">
                     <input type="hidden" id="Id" name="Id" />
-                    <p>Are you sure you want to delete this employee?</p>
+                    <p>Are you sure you want to delete this record?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
