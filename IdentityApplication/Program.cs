@@ -6,6 +6,7 @@ using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Repositories;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Business;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -23,7 +24,14 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 AddScoped();
 
+//Add support to logging with SERILOG
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
+
 var app = builder.Build();
+
+//Add support to logging request with SERILOG
+app.UseSerilogRequestLogging();
 
 using (var serviceScope = app.Services.CreateScope())
 {
@@ -38,6 +46,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
