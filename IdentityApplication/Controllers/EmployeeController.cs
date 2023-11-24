@@ -59,47 +59,14 @@ namespace IdentityApplication.Controllers
                     new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
             }
 
-            if (!string.IsNullOrEmpty(employee.SelectedDepartment) && !isAdmin)
-            {
-                var itemDepartments = departments.FirstOrDefault(e => e.DepartmentId.ToString() == employee.SelectedDepartment);
-                employee.Departments = new List<SelectListItem>
-                {
-                    new SelectListItem(itemDepartments?.DepartmentName, itemDepartments?.DepartmentId.ToString(), false)
-                };
-            }
-            else
-            {
-                employee.Departments = departments.Select(department =>
-                    new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
-            }
+            employee.Departments = departments.Select(department =>
+                new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
 
-            if (!string.IsNullOrEmpty(employee.SelectedCategory) && !isAdmin)
-            {
-                var itemCategories = categories.FirstOrDefault(e => e.CategoryId.ToString() == employee.SelectedCategory);
-                employee.Categories = new List<SelectListItem>
-                {
-                    new SelectListItem(itemCategories?.CategoryName, itemCategories?.CategoryId.ToString(), false)
-                };
-            }
-            else
-            {
-                employee.Categories = categories.Select(category =>
-                    new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
-            }
+            employee.Categories = categories.Select(category =>
+                new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
 
-            if (!string.IsNullOrEmpty(employee.SelectedSubCategory) && !isAdmin)
-            {
-                var itemSubCategories = subCategories.FirstOrDefault(e => e.SubCategoryId.ToString() == employee.SelectedSubCategory);
-                employee.SubCategories = new List<SelectListItem>
-                {
-                    new SelectListItem(itemSubCategories?.SubCategoryName, itemSubCategories?.SubCategoryId.ToString(), false)
-                };
-            }
-            else
-            {
-                employee.SubCategories = subCategories.Select(subCategory =>
-                    new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
-            }
+            employee.SubCategories = subCategories.Select(subCategory =>
+                new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
 
             return View(employee);
         }
@@ -188,7 +155,7 @@ namespace IdentityApplication.Controllers
         {
             var currentData = await _business.GetById(id);
             var entity = _mapper.Map<InsertEmployeeRequest>(currentData);
-            
+
             var category = _unitOfWork.Category.GetCategoryByName(currentData.CategoryName);
             var subCategory = _unitOfWork.SubCategory.GetSubCategoryByName(currentData.SubCategoryName);
             var location = _unitOfWork.Location.GetLocationByName(currentData.LocationName);

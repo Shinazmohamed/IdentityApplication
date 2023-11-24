@@ -82,64 +82,69 @@
     </div>
 </div>
 
-<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="employeeModalLabel">Edit Employee</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" asp-controller="Employee" asp-action="Edit">
 
-                    <input type="hidden" asp-for="EmployeeId" class="form-control" />
+    <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="employeeModalLabel">Edit Employee</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-controller="Employee" asp-action="Edit">
 
-                    <div class="mb-3">
-                        <label asp-for="SelectedLocation" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, new { @class = "form-select" })
-                    </div>
+                        <input type="hidden" asp-for="EmployeeId" class="form-control" />
 
-                    <div class="mb-3">
-                        <label asp-for="SelectedDepartment" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, new { @class = "form-select" })
-                    </div>
 
-                    <div class="mb-3">
-                        <label asp-for="SelectedCategory" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, new { @class = "form-select" })
-                    </div>
+                        @{var isAdmin = User.IsInRole(Constants.Roles.Administrator); }
 
-                    <div class="mb-3">
-                        <label asp-for="SelectedSubCategory" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { @class = "form-select" })
-                    </div>
+                        <div class="mb-3">
+                            <label asp-for="SelectedLocation" class="form-label"></label>
+                            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, (isAdmin) ? new { @class = "form-select" } : new { @class = "form-select", disabled = true })
+                        </div>
 
-                    <div class="mb-3">
-                        <label asp-for="E1" class="form-label"></label>
-                        <input asp-for="E1" class="form-control" />
-                    </div>
+                        <div class="mb-3">
+                            <label asp-for="SelectedDepartment" class="form-label"></label>
+                            @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, (isAdmin) ? new { @class = "form-select" } : new { @class = "form-select", disabled = true })
+                        </div>
 
-                    <div class="mb-3">
-                        <label asp-for="E2" class="form-label"></label>
-                        <input asp-for="E2" class="form-control" />
-                    </div>
+                        <div class="mb-3">
+                            <label asp-for="SelectedCategory" class="form-label"></label>
+                            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, (isAdmin) ? new { @class = "form-select" } : new { @class = "form-select", disabled = true })
+                        </div>
 
-                    <div class="mb-3">
-                        <label asp-for="M1" class="form-label"></label>
-                        <input asp-for="M1" class="form-control" />
-                    </div>
+                        <div class="mb-3">
+                            <label asp-for="SelectedSubCategory" class="form-label"></label>
+                            @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, (isAdmin) ? new { @class = "form-select" } : new { @class = "form-select", disabled = true })
+                        </div>
 
-                    <div class="mb-3">
-                        <label asp-for="M2" class="form-label"></label>
-                        <input asp-for="M2" class="form-control" />
-                    </div>
+                        <div class="mb-3">
+                            <label asp-for="E1" class="form-label"></label>
+                            <input asp-for="E1" class="form-control" />
+                        </div>
 
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                        <div class="mb-3">
+                            <label asp-for="E2" class="form-label"></label>
+                            <input asp-for="E2" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="M1" class="form-label"></label>
+                            <input asp-for="M1" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="M2" class="form-label"></label>
+                            <input asp-for="M2" class="form-control" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
 
 @section Scripts {
     @{
