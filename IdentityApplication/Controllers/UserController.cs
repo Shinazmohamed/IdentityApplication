@@ -101,6 +101,10 @@ namespace IdentityApplication.Controllers
             }
 
             user.Email = request.User.Email;
+            user.UserName = request.User.Email;
+
+            user.NormalizedEmail = request.User.Email;
+            user.NormalizedUserName = request.User.Email;
             user.LocationId = request.User.LocationId;
 
             _unitOfWork.User.UpdateUser(user);
