@@ -22,22 +22,22 @@
     {
         <div class="col-md-6">
             <label for="locationSearch">Search by Location:</label>
-            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Location", new { @class = "form-select", id = "locationSearch" })
+            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "All", new { @class = "form-select", id = "locationSearch" })
         </div>
     }
     <div class="col-md-6">
         <label for="departmentSearch">Search by Department:</label>
-        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Department", new { @class = "form-select", id = "departmentSearch" })
+        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "All", new { @class = "form-select", id = "departmentSearch" })
     </div>
 </div>
 <div class="row">
     <div class="col-md-6">
         <label for="categorySearch">Search by Category:</label>
-        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Category", new { @class = "form-select", id = "categorySearch" })
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { @class = "form-select", id = "categorySearch" })
     </div>
     <div class="col-md-6">
         <label for="subcategorySearch">Search by Sub Category:</label>
-        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "Sub Category", new { @class = "form-select", id = "subcategorySearch" })
+        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "All", new { @class = "form-select", id = "subcategorySearch" })
     </div>
 </div>
 <table id="employeeTable" class="table table-striped table-bordered">
