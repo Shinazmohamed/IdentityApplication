@@ -119,14 +119,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-
-            var locations = _unitOfWork.Location.GetLocations();
-
-            var locationItems = locations.Select(location =>
-           new SelectListItem(
-               location.LocationName,
-               location.LocationId.ToString(), false)).ToList();
-
+            var locationItems = GetLocations();
             // Populate the list of locations
             Input = new InputModel
             {
@@ -180,8 +173,25 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                 }
             }
 
+            var locationItems = GetLocations();
+            // Populate the list of locations
+            Input = new InputModel
+            {
+                Locations = locationItems
+            };
+
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private List<SelectListItem> GetLocations()
+        {
+            var locations = _unitOfWork.Location.GetLocations();
+
+            return locations.Select(location =>
+                new SelectListItem(
+                location.LocationName,
+                location.LocationId.ToString(), false)).ToList();
         }
 
         private ApplicationUser CreateUser()
