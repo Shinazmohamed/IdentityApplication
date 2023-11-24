@@ -58,7 +58,7 @@ namespace IdentityApplication.Core.Repositories
 
                 // Perform the count and pagination
                 var totalCount = await query.CountAsync();
-                var filteredEntities = await query.OrderBy(e => e.Id).Skip(filter.start).Take(filter.length).ToListAsync();
+                var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
 
                 return new PaginationResponse<Employee>(
                     filteredEntities,

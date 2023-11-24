@@ -17,7 +17,7 @@ How to import data
 4. Run the query ( copy data from temp table into SPDec2023 with ID)
 
 
-Setup Application
+Setup Application (Run this command in Package Manager Console)
 
 1. Update-Database 
 

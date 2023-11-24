@@ -17,12 +17,14 @@ namespace IdentityApplication.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, IMapper mapper)
+        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -104,6 +106,31 @@ namespace IdentityApplication.Controllers
             _unitOfWork.User.UpdateUser(user);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(EditUserViewModel request)
+        {
+            var user = _unitOfWork.User.GetUser(request.User.Id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetPassword = await _userManager.ResetPasswordAsync(user, token, "Welcome!");
+            if (!resetPassword.Succeeded)
+            {
+                foreach(var error in resetPassword.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+                return Ok(ModelState);
+            }
+
+            TempData["SuccessMessage"] = "Password reset successful.";
+            return RedirectToAction("Edit", request.User.Id);
         }
     }
 }
