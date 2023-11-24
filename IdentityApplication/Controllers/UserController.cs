@@ -63,53 +63,64 @@ namespace IdentityApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
         {
-            var user = _unitOfWork.User.GetUser(request.User.Id);
-            if(user == null)
+            try
             {
-                return NotFound();
-            }
-
-            var rolesToAdd = new List<string>();
-            var rolesToRemove = new List<string>();
-
-            var userRolesInDb = await _signInManager.UserManager.GetRolesAsync(user);
-            foreach(var role in request.Roles) 
-            {
-                var assignedInDb = userRolesInDb.FirstOrDefault(ur => ur == role.Text);
-                if (role.Selected)
+                var user = _unitOfWork.User.GetUser(request.User.Id);
+                if (user == null)
                 {
-                    if (assignedInDb == null)
-                        rolesToAdd.Add(role.Text);
-                    
+                    return NotFound();
                 }
-                else
+
+                var rolesToAdd = new List<string>();
+                var rolesToRemove = new List<string>();
+
+                var userRolesInDb = await _signInManager.UserManager.GetRolesAsync(user);
+                foreach (var role in request.Roles)
                 {
-                    if (assignedInDb != null)
-                        rolesToRemove.Add(role.Text);
-                    
+                    var assignedInDb = userRolesInDb.FirstOrDefault(ur => ur == role.Text);
+                    if (role.Selected)
+                    {
+                        if (assignedInDb == null)
+                            rolesToAdd.Add(role.Text);
+
+                    }
+                    else
+                    {
+                        if (assignedInDb != null)
+                            rolesToRemove.Add(role.Text);
+
+                    }
                 }
-            }
 
-            if (rolesToAdd.Any())
+                if (rolesToAdd.Any())
+                {
+                    await _signInManager.UserManager.AddToRolesAsync(user, rolesToAdd);
+                }
+
+                if (rolesToRemove.Any())
+                {
+                    await _signInManager.UserManager.RemoveFromRolesAsync(user, rolesToRemove);
+                }
+
+                user.Email = request.User.Email;
+                user.UserName = request.User.Email;
+
+                user.NormalizedEmail = request.User.Email;
+                user.NormalizedUserName = request.User.Email;
+                user.LocationId = request.User.LocationId;
+
+                _unitOfWork.User.UpdateUser(user);
+
+                TempData["SuccessMessage"] = "Password reset is successfull.";
+
+            }
+            catch
             {
-                await _signInManager.UserManager.AddToRolesAsync(user, rolesToAdd);
+                TempData["ErrorMessage"] = "Password reset is unsuccessfull";
             }
 
-            if (rolesToRemove.Any())
-            {
-                await _signInManager.UserManager.RemoveFromRolesAsync(user, rolesToRemove);
-            }
 
-            user.Email = request.User.Email;
-            user.UserName = request.User.Email;
-
-            user.NormalizedEmail = request.User.Email;
-            user.NormalizedUserName = request.User.Email;
-            user.LocationId = request.User.LocationId;
-
-            _unitOfWork.User.UpdateUser(user);
-
-            return RedirectToAction("Index");
+            return RedirectToAction("Edit", new { id = request.User.Id });
         }
 
         [HttpPost]
@@ -122,19 +133,16 @@ namespace IdentityApplication.Controllers
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-            var resetPassword = await _userManager.ResetPasswordAsync(user, token, "Welcome!");
+            var resetPassword = await _userManager.ResetPasswordAsync(user, token, "Admin@123");
             if (!resetPassword.Succeeded)
             {
-                foreach(var error in resetPassword.Errors)
-                {
-                    ModelState.AddModelError(error.Code, error.Description);
-                }
-                return Ok(ModelState);
+                TempData["ErrorMessage"] = "Password reset is unsuccessfull";
             }
-
-            TempData["SuccessMessage"] = "Password reset successful.";
-            return RedirectToAction("Edit", request.User.Id);
+            else
+            {
+                TempData["SuccessMessage"] = "Password reset is successfull.";
+            }
+            return RedirectToAction("Edit", new { id = request.User.Id });
         }
     }
 }
