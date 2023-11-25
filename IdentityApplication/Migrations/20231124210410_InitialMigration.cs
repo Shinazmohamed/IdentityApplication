@@ -62,7 +62,7 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SPOct2023",
+                name: "SPNOV2023",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -72,13 +72,13 @@ namespace IdentityApplication.Migrations
                     SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     E1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     E2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    C = table.Column<float>(type: "real", nullable: true),
+                    C = table.Column<double>(type: "float", nullable: true),
                     M1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     M2 = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SPOct2023", x => x.Id);
+                    table.PrimaryKey("PK_SPNOV2023", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -143,6 +143,31 @@ namespace IdentityApplication.Migrations
                         column: x => x.LocationId,
                         principalTable: "Location",
                         principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryMapping",
+                columns: table => new
+                {
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryMapping", x => new { x.CategoryId, x.SubCategoryId });
+                    table.ForeignKey(
+                        name: "FK_CategoryMapping_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryMapping_SubCategory_SubCategoryId",
+                        column: x => x.SubCategoryId,
+                        principalTable: "SubCategory",
+                        principalColumn: "SubCategoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -274,6 +299,11 @@ namespace IdentityApplication.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryMapping_SubCategoryId",
+                table: "CategoryMapping",
+                column: "SubCategoryId");
         }
 
         /// <inheritdoc />
@@ -295,22 +325,25 @@ namespace IdentityApplication.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "CategoryMapping");
 
             migrationBuilder.DropTable(
                 name: "Department");
 
             migrationBuilder.DropTable(
-                name: "SPOct2023");
-
-            migrationBuilder.DropTable(
-                name: "SubCategory");
+                name: "SPNOV2023");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Category");
+
+            migrationBuilder.DropTable(
+                name: "SubCategory");
 
             migrationBuilder.DropTable(
                 name: "Location");

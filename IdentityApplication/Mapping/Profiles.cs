@@ -22,6 +22,14 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.LocationName));
+
+            CreateMap<CreateSubCategoryRequest, CategoryMapping>()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SelectedSubCategory));
+
+            CreateMap<CategoryMapping, ListCategoryMappingModel>()
+                .ForMember(dest => dest.SelectedCategory, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.SelectedSubCategory, opt => opt.MapFrom(src => src.SubCategoryId));
         }
 
     }

@@ -3,7 +3,6 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
-using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -141,13 +140,14 @@ namespace IdentityApplication.Controllers
             if (!User.IsInRole(Constants.Roles.Administrator)) filter.location = user.LocationId.ToString();
 
             var response = await _business.GetAll(filter);
-            return Json(new
+            var dataSrc = new
             {
                 draw = filter.draw,
                 recordsTotal = response.TotalCount,
                 recordsFiltered = response.TotalCount, // Use the total count as recordsFiltered
                 data = response.Data.Select(e => _mapper.Map<ViewEmployeeModel>(e))
-            });
+            };
+            return Json(dataSrc);
         }
 
         [HttpGet]
