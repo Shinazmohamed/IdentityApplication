@@ -34,15 +34,21 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">User</a>
-                               <ul class="dropdown-menu">
+                                <ul class="dropdown-menu">
                                     <a class="dropdown-item" id="register" asp-area="Identity" asp-page="/Account/Register">Register User</a>
-                                   <li><hr class="dropdown-divider"></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <a class="dropdown-item" asp-controller="User" asp-action="Index">View Users</a>
-                               </ul>
-                           </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="SubCategory" asp-action="Index">Manage Sub Category</a>
+                                </ul>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Sub Category</a>
+                                <ul class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="SubCategory" asp-action="Index">Create</a>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <a class="dropdown-item" asp-controller="CategorySubCategoryMapping" asp-action="Index">Mapping</a>
+                                </ul>
+                            </li>
+
                             <li class="nav-item">
                                 <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
                             </li>
@@ -59,10 +65,10 @@
         </main>
     </div>
 
-@*     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - IdentityApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    @*     <footer class="border-top footer text-muted">
+    <div class="container">
+    &copy; 2023 - IdentityApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
     </footer> *@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

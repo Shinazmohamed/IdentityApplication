@@ -4,7 +4,7 @@
     {
         public Guid SubCategoryId { get; set; }
         public string SubCategoryName { get; set; }
-
-        public List<CategoryMapping> CategorySubcategories { get; set; }
+        public Guid? CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }

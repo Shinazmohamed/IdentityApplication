@@ -11,32 +11,38 @@ namespace IdentityApplication.Business
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public SubCategoryBusiness(IUnitOfWork unitofwork, IMapper mapper)
+        public SubCategoryBusiness(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _unitOfWork = unitofwork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        public async Task CreateMapping(CreateSubCategoryRequest request)
+        public async Task Create(CreateSubCategoryRequest request)
         {
-            var entity = _mapper.Map<CategoryMapping>(request);
-            _unitOfWork.SubCategory.CreateMapping(entity);
+            var entity = _mapper.Map<SubCategory>(request);
+            _unitOfWork.SubCategory.Create(entity);
         }
 
-        public async Task UpdateMapping(CreateSubCategoryRequest request)
+        public async Task Update(CreateSubCategoryRequest request)
         {
-            var entity = _mapper.Map<CategoryMapping>(request);
-            _unitOfWork.SubCategory.UpdateMapping(entity);
+            var entity = _mapper.Map<SubCategory>(request);
+            _unitOfWork.SubCategory.Update(entity);
         }
 
-        public async Task DeleteMapping(string id)
+        public async Task Delete(string id)
         {
-            await _unitOfWork.SubCategory.DeleteMapping(Guid.Parse(id));
+            await _unitOfWork.SubCategory.Delete(Guid.Parse(id));
         }
 
-        public async Task<PaginationResponse<ListCategoryMappingModel>> GetAll(PaginationFilter filter)
+        public async Task<PaginationResponse<ListSubCategoryModel>> GetAllWithFilters(PaginationFilter filter)
         {
             return await _unitOfWork.SubCategory.GetEntitiesWithFilters(filter);
+        }
+
+        public List<ListSubCategoryModel> GetSubCategoriesById(string Id)
+        {
+            var subcategories = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(Id));
+            return _mapper.Map<List<ListSubCategoryModel>>(subcategories);
         }
     }
 }

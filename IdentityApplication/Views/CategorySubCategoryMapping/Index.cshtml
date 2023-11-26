@@ -2,7 +2,7 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model CreateSubCategoryRequest
+@model CreateCategorySubCategoryRequest
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
@@ -20,12 +20,15 @@
     </div>
 }
 
-<form method="post" asp-controller="SubCategory" asp-action="Create" id="subcategoryform">
+<form method="post" asp-controller="CategorySubCategoryMapping" asp-action="Create" id="subcategoryform">
     <div class="row">
         <div class="col-md-6">
-            <input type="hidden" id="Id" name="Id" />
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
+            <label for="categorySearch">Category:</label>
+            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { @class = "form-select", id = "categorySearch" })
+        </div>
+        <div class="col-md-6">
+            <label for="subcategorySearch">Sub Category:</label>
+            @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "All", new { @class = "form-select", id = "subcategorySearch" })
         </div>
     </div>
     <br />
@@ -45,7 +48,9 @@
 <table id="subcategoryTable" class="table table-striped table-bordered">
     <thead>
         <tr>
+            <th>Category Id</th>
             <th>Sub Category Id</th>
+            <th>Category</th>
             <th>Sub Category</th>
             <th>Handle</th>
         </tr>
@@ -61,7 +66,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            @using (Html.BeginForm("Delete", "SubCategory", FormMethod.Post, new { id = "deleteConfirmationForm" }))
+            @using (Html.BeginForm("Delete", "CategorySubCategoryMapping", FormMethod.Post, new { id = "deleteConfirmationForm" }))
             {
                 <div class="modal-body">
                     <input type="hidden" id="mappingId" name="mappingId" />
@@ -104,7 +109,7 @@
                 searching: false,
                 ordering: false,
                 ajax: {
-                    url: '/SubCategory/GetList',
+                    url: '/CategorySubCategoryMapping/GetList',
                     type: 'POST',
                     contentType: 'application/json',
                     data: function (d) {
@@ -118,10 +123,12 @@
                     dataSrc: 'data'
                 },
                 columns: [
-                    { data: 'id', visible: false },
-                    { data: 'name' },
+                    { data: 'categoryId', visible: false },
+                    { data: 'subCategoryId', visible: false },
+                    { data: 'selectedCategory' },
+                    { data: 'selectedSubCategory' },
                     {
-                        data: 'id',
+                        data: 'subCategoryId',
                         render: function (data, type, row) {
                             return '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ' +
                                 '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>';
@@ -130,20 +137,22 @@
                 ]
             });
 
+            // Handle Edit button click
             $('#subcategoryTable').on('click', '.btn-edit', function () {
                 $('#save').hide();
                 $('#update').show();
 
                 var rowData = table.row($(this).parents('tr')).data();
-                $('#Id').val(rowData.id);
-                $('#Name').val(rowData.name);
+                $('#categorySearch').val(rowData.categoryId).trigger('change');
+                $('#subcategorySearch').val(rowData.subCategoryId).trigger('change');
             });
 
             // Handle Delete button click
             $('#subcategoryTable').on('click', '.btn-delete', function () {
                 var rowData = table.row($(this).parents('tr')).data();
 
-                $('#mappingId').val(rowData.id);
+                $('#mappingId').val(rowData.subCategoryId);
+                console.log(rowData.id);
                 $('#deleteConfirmationModal').modal('show');
             });
 
@@ -162,7 +171,7 @@
 
             var form = document.getElementById('subcategoryform');
 
-            form.action = '/SubCategory/Update';
+            form.action = '/CategorySubCategoryMapping/Update';
 
             // Submit the form
             form.submit();

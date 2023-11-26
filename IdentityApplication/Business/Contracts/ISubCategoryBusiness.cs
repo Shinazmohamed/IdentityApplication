@@ -4,9 +4,10 @@ namespace IdentityApplication.Business.Contracts
 {
     public interface ISubCategoryBusiness
     {
-        Task CreateMapping(CreateSubCategoryRequest request);
-        Task UpdateMapping(CreateSubCategoryRequest request);
-        Task<PaginationResponse<ListCategoryMappingModel>> GetAll(PaginationFilter filter);
-        Task DeleteMapping(string id);
+        Task Create(CreateSubCategoryRequest request);
+        Task Update(CreateSubCategoryRequest request);
+        Task<PaginationResponse<ListSubCategoryModel>> GetAllWithFilters(PaginationFilter filter);
+        Task Delete(string id);
+        List<ListSubCategoryModel> GetSubCategoriesById(string Id);
     }
 }

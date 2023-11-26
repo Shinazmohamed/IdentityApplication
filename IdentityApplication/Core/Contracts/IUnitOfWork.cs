@@ -9,5 +9,6 @@
         IDepartmentRepository Department { get; }
         ICategoryRepository Category { get; }
         ISubCategoryRepository SubCategory { get; }
+        ICategorySubCategoryRepository CategorySubCategory { get; }
     }
 }

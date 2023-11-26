@@ -73,7 +73,10 @@ void AddScoped()
     builder.Services.AddScoped<IEmployeeBusiness, EmployeeBusiness>();
     builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
     builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-    builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
+    builder.Services.AddScoped<ICategorySubCategoryRepository, CategorySubCategoryRepository>();
     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+    builder.Services.AddScoped<ICategorySubCategoryBusiness, CategorySubCategoryBusiness>();
+    builder.Services.AddScoped<ICategoryBusiness, CategoryBusiness>();
     builder.Services.AddScoped<ISubCategoryBusiness, SubCategoryBusiness>();
+    builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
 }

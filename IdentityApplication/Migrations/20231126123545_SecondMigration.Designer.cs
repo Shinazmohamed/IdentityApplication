@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231124210410_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20231126123545_SecondMigration")]
+    partial class SecondMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,24 +110,6 @@ namespace IdentityApplication.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("IdentityApplication.Core.Entities.CategoryMapping", b =>
-                {
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CategoryId", "SubCategoryId");
-
-                    b.HasIndex("SubCategoryId");
-
-                    b.ToTable("CategoryMapping");
-                });
-
             modelBuilder.Entity("IdentityApplication.Core.Entities.Department", b =>
                 {
                     b.Property<Guid>("DepartmentId")
@@ -202,11 +184,16 @@ namespace IdentityApplication.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("SubCategoryName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SubCategoryId");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("SubCategory");
                 });
@@ -359,23 +346,14 @@ namespace IdentityApplication.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("IdentityApplication.Core.Entities.CategoryMapping", b =>
+            modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
                 {
                     b.HasOne("IdentityApplication.Core.Entities.Category", "Category")
-                        .WithMany("CategorySubcategories")
+                        .WithMany("SubCategories")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IdentityApplication.Core.Entities.SubCategory", "SubCategory")
-                        .WithMany("CategorySubcategories")
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
-
-                    b.Navigation("SubCategory");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -431,12 +409,7 @@ namespace IdentityApplication.Migrations
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
                 {
-                    b.Navigation("CategorySubcategories");
-                });
-
-            modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
-                {
-                    b.Navigation("CategorySubcategories");
+                    b.Navigation("SubCategories");
                 });
 #pragma warning restore 612, 618
         }

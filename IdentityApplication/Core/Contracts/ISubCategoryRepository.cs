@@ -5,12 +5,12 @@ namespace IdentityApplication.Core.Contracts
 {
     public interface ISubCategoryRepository
     {
-        void CreateMapping(CategoryMapping category);
-        void UpdateMapping(CategoryMapping entity);
+        void Create(SubCategory subCategory);
+        void Update(SubCategory entity);
         IList<SubCategory> GetSubCategories();
         SubCategory GetSubCategoryById(Guid Id);
         SubCategory GetSubCategoryByName(string Name);
-        Task<PaginationResponse<ListCategoryMappingModel>> GetEntitiesWithFilters(PaginationFilter filter);
-        Task DeleteMapping(Guid id);
+        Task<PaginationResponse<ListSubCategoryModel>> GetEntitiesWithFilters(PaginationFilter filter);
+        Task Delete(Guid id);
     }
 }

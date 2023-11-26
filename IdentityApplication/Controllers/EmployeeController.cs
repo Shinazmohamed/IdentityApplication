@@ -3,6 +3,7 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,7 @@ namespace IdentityApplication.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
         public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _business = business;
@@ -40,7 +42,6 @@ namespace IdentityApplication.Controllers
             var locations = _unitOfWork.Location.GetLocations();
             var departments = _unitOfWork.Department.GetDepartments();
             var categories = _unitOfWork.Category.GetCategories();
-            var subCategories = _unitOfWork.SubCategory.GetSubCategories();
             var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 
             if (user?.LocationId != Guid.Empty && !isAdmin)
@@ -64,8 +65,7 @@ namespace IdentityApplication.Controllers
             employee.Categories = categories.Select(category =>
                 new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
 
-            employee.SubCategories = subCategories.Select(subCategory =>
-                new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
+            employee.SubCategories = new List<SelectListItem>();
 
             return View(employee);
         }
@@ -129,6 +129,11 @@ namespace IdentityApplication.Controllers
             var subCategories = _unitOfWork.SubCategory.GetSubCategories();
             response.SubCategories = subCategories.Select(subCategory =>
                 new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
+
+            //response.SubCategories = new List<SelectListItem>
+            //{
+            //    new SelectListItem { Value = "", Text = "All" }
+            //};
 
             return View(response);
         }

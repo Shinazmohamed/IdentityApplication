@@ -29,13 +29,14 @@
 
     <div class="mb-3">
         <label asp-for="SelectedCategory" class="form-label"></label>
-        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, new { @class = "form-select", id = "categoryDropdown" })
     </div>
 
     <div class="mb-3">
         <label asp-for="SelectedSubCategory" class="form-label"></label>
-        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { @class = "form-select", id = "subcategoryDropdown" })
     </div>
+
 
     <div class="mb-3">
         <label asp-for="E1" class="form-label"></label>
@@ -65,4 +66,29 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#categoryDropdown').change(function () {
+                var selectedCategory = $(this).val();
+                $.ajax({
+                    url: '/Category/GetSubcategories?id=' + selectedCategory,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        $('#subcategoryDropdown').empty();
+                        $.each(data, function (index, item) {
+                            $('#subcategoryDropdown').append($('<option>', {
+                                value: item.value,
+                                text: item.text
+                            }));
+                        });
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.error('Error fetching subcategories:', textStatus, errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
 }
