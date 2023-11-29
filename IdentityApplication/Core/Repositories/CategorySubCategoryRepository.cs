@@ -56,6 +56,7 @@ namespace IdentityApplication.Core.Repositories
             {
                 var query = _context.SubCategory
                     .Include(cm => cm.Category)
+                    .OrderBy(e => e.SubCategoryId)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filter.category))

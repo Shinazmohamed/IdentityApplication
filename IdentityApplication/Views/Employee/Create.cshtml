@@ -19,17 +19,17 @@
 <form method="post" asp-controller="Employee" asp-action="CreateEmployee">
     <div class="mb-3">
         <label asp-for="SelectedLocation" class="form-label"></label>
-        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Select a location", new { @class = "form-select" })
     </div>
 
     <div class="mb-3">
         <label asp-for="SelectedDepartment" class="form-label"></label>
-        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Select a  department", new { @class = "form-select" })
     </div>
 
     <div class="mb-3">
         <label asp-for="SelectedCategory" class="form-label"></label>
-        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, new { @class = "form-select", id = "categoryDropdown" })
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Select a category", new { @class = "form-select", id = "categoryDropdown" })
     </div>
 
     <div class="mb-3">

@@ -19,23 +19,29 @@ namespace IdentityApplication.Core.Repositories
 
         public void Create(SubCategory subCategory)
         {
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                var existingMapping = _context.SubCategory
-                    .FirstOrDefault(e => e.SubCategoryName == subCategory.SubCategoryName);
-
-                if (existingMapping != null)
+                try
                 {
-                    throw new ArgumentNullException(nameof(existingMapping));
-                }
+                    var existingMapping = _context.SubCategory
+                        .FirstOrDefault(e => e.SubCategoryName == subCategory.SubCategoryName);
 
-                _context.SubCategory.Add(subCategory);
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
-                throw;
+                    if (existingMapping != null)
+                    {
+                        throw new ArgumentNullException(nameof(existingMapping));
+                    }
+
+                    _context.SubCategory.Add(subCategory);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
+                    throw;
+                }
             }
         }
 
@@ -59,7 +65,7 @@ namespace IdentityApplication.Core.Repositories
         {
             try
             {
-                var query = _context.SubCategory.AsQueryable();
+                var query = _context.SubCategory.OrderBy(e => e.SubCategoryId).AsQueryable();
 
                 if (!string.IsNullOrEmpty(filter.subcategory))
                 {

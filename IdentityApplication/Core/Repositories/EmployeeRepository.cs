@@ -18,15 +18,21 @@ namespace IdentityApplication.Core.Repositories
 
         public void Create(Employee employee)
         {
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                _context.Employee.Add(employee);
-                _context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
-                throw;
+                try
+                {
+                    _context.Employee.Add(employee);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                    throw;
+                }
             }
         }
 
@@ -34,7 +40,7 @@ namespace IdentityApplication.Core.Repositories
         {
             try
             {
-                var query = _context.Employee.AsQueryable(); // Use the DbSet from your context
+                var query = _context.Employee.OrderBy(e => e.Id).AsQueryable(); // Use the DbSet from your context
 
                 if (!string.IsNullOrEmpty(filter.location))
                 {
@@ -89,32 +95,38 @@ namespace IdentityApplication.Core.Repositories
 
         public void Update(Employee entity)
         {
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                if (entity == null)
-                    throw new ArgumentNullException(nameof(entity));
-
-                var existingEmployee = _context.Employee.Find(entity.Id); // Assuming Id is the primary key
-                if (existingEmployee != null)
+                try
                 {
-                    existingEmployee.LocationName = entity.LocationName;
-                    existingEmployee.DepartmentName = entity.DepartmentName;
-                    existingEmployee.CategoryName = entity.CategoryName;
-                    existingEmployee.SubCategoryName = entity.SubCategoryName;
-                    existingEmployee.E1 = entity.E1;
-                    existingEmployee.E2 = entity.E2;
-                    existingEmployee.C = entity.C;
-                    existingEmployee.M1 = entity.M1;
-                    existingEmployee.M2 = entity.M2;
+                    if (entity == null)
+                        throw new ArgumentNullException(nameof(entity));
 
-                    _context.SaveChanges();
+                    var existingEmployee = _context.Employee.Find(entity.Id); // Assuming Id is the primary key
+                    if (existingEmployee != null)
+                    {
+                        existingEmployee.LocationName = entity.LocationName;
+                        existingEmployee.DepartmentName = entity.DepartmentName;
+                        existingEmployee.CategoryName = entity.CategoryName;
+                        existingEmployee.SubCategoryName = entity.SubCategoryName;
+                        existingEmployee.E1 = entity.E1;
+                        existingEmployee.E2 = entity.E2;
+                        existingEmployee.C = entity.C;
+                        existingEmployee.M1 = entity.M1;
+                        existingEmployee.M2 = entity.M2;
+
+                        _context.SaveChanges();
+
+                        transaction.Commit();
+                    }
+
                 }
-
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
-                throw;
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                    throw;
+                }
             }
         }
 
