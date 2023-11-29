@@ -61,6 +61,11 @@ namespace IdentityApplication.Core.Repositories
             {
                 var query = _context.SubCategory.AsQueryable();
 
+                if (!string.IsNullOrEmpty(filter.subcategory))
+                {
+                    query = query.Where(e => e.SubCategoryName == filter.subcategory);
+                }
+
                 var totalCount = await query.CountAsync();
                 var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
 

@@ -116,7 +116,9 @@
                         var customFilter = {
                             draw: d.draw,
                             start: d.start,
-                            length: d.length
+                            length: d.length,
+                            category: $('#categorySearch').val(),
+                            subcategory: $('#subcategorySearch').val()
                         };
                         return JSON.stringify(customFilter);
                     },
@@ -135,6 +137,10 @@
                         }
                     }
                 ]
+            });
+
+            $('#categorySearch, #subcategorySearch').on('change', function () {
+                table.draw();
             });
 
             // Handle Edit button click

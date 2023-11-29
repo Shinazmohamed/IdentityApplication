@@ -33,7 +33,7 @@
         <div class="col-md-6">
             <button type="submit" class="btn btn-success" id="save">Save</button>
             <button type="button" class="btn btn-success" id="update" onclick="updateRecord()">Update</button>
-            <button type="button" id="search" class="btn btn-success">Search</button>
+            <button type="button" onclick="search()" class="btn btn-success">Search</button>
             <button type="button" id="reset" class="btn btn-success">Reset All</button>
         </div>
     </div>
@@ -84,6 +84,7 @@
 
 
     <script type="text/javascript">
+        var table;
         $(document).ready(function () {
 
             setTimeout(function () {
@@ -98,7 +99,7 @@
                 $("#errorMessage").fadeOut("slow");
             }, 3000);
 
-            var table = $('#subcategoryTable').DataTable({
+            table  = $('#subcategoryTable').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
@@ -111,7 +112,8 @@
                         var customFilter = {
                             draw: d.draw,
                             start: d.start,
-                            length: d.length
+                            length: d.length,
+                            subcategory: $('#Name').val()
                         };
                         return JSON.stringify(customFilter);
                     },
@@ -150,22 +152,20 @@
             $(document).on('click', '#reset', function () {
                 $('#save').show();
                 $('#update').hide();
-
-                document.getElementById("categorySearch").selectedIndex = 0;
-                document.getElementById("subcategorySearch").selectedIndex = 0;
+                $('#Name').val('')
                 table.draw();
             });
         });
 
 
         function updateRecord() {
-
             var form = document.getElementById('subcategoryform');
-
             form.action = '/SubCategory/Update';
-
-            // Submit the form
             form.submit();
+        }
+
+        function search() {
+            table.draw();
         }
     </script>
 }
