@@ -35,8 +35,15 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SubCategoryId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.SubCategoryName));
 
-
             CreateMap<Category, ListCategoryModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.CategoryName));
+
+            CreateMap<CreateCategoryRequest, Category>()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<Category, CreateCategoryRequest>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.CategoryName));
         }
