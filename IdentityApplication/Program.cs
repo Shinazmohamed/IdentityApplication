@@ -79,4 +79,6 @@ void AddScoped()
     builder.Services.AddScoped<ICategoryBusiness, CategoryBusiness>();
     builder.Services.AddScoped<ISubCategoryBusiness, SubCategoryBusiness>();
     builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
+    builder.Services.AddScoped<IMenuBusiness, MenuBusiness>();
+    builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 }

@@ -12,8 +12,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Department> Department => Set<Department>();
     public DbSet<Category> Category => Set<Category>();
     public DbSet<SubCategory> SubCategory => Set<SubCategory>();
+    public DbSet<Menu> Menu => Set<Menu>();
+    public DbSet<SubMenu> SubMenu => Set<SubMenu>();
 
     private readonly IConfiguration _configuration;
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
         : base(options)
     {
@@ -35,5 +38,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                .WithOne(sc => sc.Category)
                .HasForeignKey(sc => sc.CategoryId)
                .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Menu>()
+                .HasMany(c => c.SubMenus)
+                .WithOne(sc => sc.Menu)
+                .HasForeignKey(sc => sc.MenuId)
+                .OnDelete(DeleteBehavior.Cascade);
     }
 }

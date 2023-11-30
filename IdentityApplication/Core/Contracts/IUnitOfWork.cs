@@ -10,5 +10,6 @@
         ICategoryRepository Category { get; }
         ISubCategoryRepository SubCategory { get; }
         ICategorySubCategoryRepository CategorySubCategory { get; }
+        IMenuRepository Menu { get; }
     }
 }

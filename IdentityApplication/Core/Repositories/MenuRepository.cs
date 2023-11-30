@@ -1,0 +1,24 @@
+﻿using IdentityApplication.Areas.Identity.Data;
+using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace IdentityApplication.Core.Repositories
+{
+    public class MenuRepository : IMenuRepository
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<MenuRepository> _logger;
+        public MenuRepository(ApplicationDbContext context, ILogger<MenuRepository> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+        public IList<Menu> GetMenus()
+        {
+            return _context.Menu
+                .Include(e => e.SubMenus)
+                .ToList();
+        }
+    }
+}

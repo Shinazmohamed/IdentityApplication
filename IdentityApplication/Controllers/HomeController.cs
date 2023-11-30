@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Core.ViewModel;
+﻿using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core.ViewModel;
 using IdentityApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ namespace IdentityApplication.Controllers
         public IActionResult Index()
         {
 
-            return View(new MenuModel());
+            return View();
         }
 
         public IActionResult Privacy()
