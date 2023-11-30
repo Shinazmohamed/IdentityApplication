@@ -1,10 +1,13 @@
 ﻿using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class CategoryController : Controller
     {
         private readonly ICategoryBusiness _business;

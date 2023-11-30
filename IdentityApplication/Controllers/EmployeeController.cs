@@ -3,7 +3,6 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
-using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -36,8 +35,9 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create(InsertEmployeeRequest employee)
+        public async Task<IActionResult> Create()
         {
+            var employee = new InsertEmployeeRequest();
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
             var locations = _unitOfWork.Location.GetLocations();
             var departments = _unitOfWork.Department.GetDepartments();

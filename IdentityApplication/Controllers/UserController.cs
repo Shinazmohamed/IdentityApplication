@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
 
 namespace IdentityApplication.Controllers
 {
@@ -144,5 +143,16 @@ namespace IdentityApplication.Controllers
             }
             return RedirectToAction("Edit", new { id = request.User.Id });
         }
+
+        public IActionResult Profile()
+        {
+            return Redirect("http://localhost:5258/Identity/Account/Manage");
+        }
+
+        public IActionResult Register()
+        {        
+            return Redirect("http://localhost:5258/Identity/Account/Register");
+        }
+
     }
 }

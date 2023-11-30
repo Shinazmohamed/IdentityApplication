@@ -1,23 +1,23 @@
-﻿using AutoMapper;
-using IdentityApplication.Business.Contracts;
+﻿using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class CategorySubCategoryMappingController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICategorySubCategoryBusiness _business;
-        private readonly ICategoryBusiness _categoryBusiness;
 
-        public CategorySubCategoryMappingController(IUnitOfWork unitOfWork, ICategorySubCategoryBusiness business, ICategoryBusiness categoryBusiness)
+        public CategorySubCategoryMappingController(IUnitOfWork unitOfWork, ICategorySubCategoryBusiness business)
         {
             _unitOfWork = unitOfWork;
             _business = business;
-            _categoryBusiness = categoryBusiness;
         }
 
         public IActionResult Index()

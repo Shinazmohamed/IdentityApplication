@@ -1,9 +1,12 @@
 ﻿using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class SubCategoryController : Controller
     {
         private readonly ISubCategoryBusiness _business;

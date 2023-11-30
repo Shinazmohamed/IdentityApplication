@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using IdentityApplication.Core.ViewModel;
+
+@{
+    var model = new MenuModel(); 
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,46 +24,40 @@
                 </button>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Employee</a>
-                                <ul class="dropdown-menu">
-                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="Create">Create Employee</a>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <a class="dropdown-item" asp-area="" asp-controller="Employee" asp-action="List">View Employee</a>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">User</a>
-                                <ul class="dropdown-menu">
-                                    <a class="dropdown-item" id="register" asp-area="Identity" asp-page="/Account/Register">Register User</a>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <a class="dropdown-item" asp-controller="User" asp-action="Index">View Users</a>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Sub Category</a>
-                                <ul class="dropdown-menu">
-                                    <a class="dropdown-item" asp-area="" asp-controller="SubCategory" asp-action="Index">Create</a>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <a class="dropdown-item" asp-controller="CategorySubCategoryMapping" asp-action="Index">Mapping</a>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Category</a>
-                                <ul class="dropdown-menu">
-                                    <a class="dropdown-item" asp-area="" asp-controller="Category" asp-action="Index">Create</a>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
-                            </li>
-                        </ul>
-                    </div>
+                    @if (model != null && model.MenuItems != null && model.MenuItems.Any())
+                    {
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav flex-grow-1">
+                                @foreach (var menuItem in model.MenuItems)
+                                {
+                                    <li class="nav-item @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "dropdown" : "")">
+                                        <a class="nav-link @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "dropdown-toggle" : "text-dark")"
+                                        @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "data-bs-toggle=dropdown" : "")
+                                           href="#"
+                                           role="button"
+                                           aria-expanded="false">
+                                            @menuItem.DisplayName
+                                        </a>
+
+                                        @if (menuItem.SubMenu != null && menuItem.SubMenu.Any())
+                                        {
+                                            <ul class="dropdown-menu">
+                                                @foreach (var subMenuItem in menuItem.SubMenu)
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                           href="@Url.Action(subMenuItem.Method, subMenuItem.Controller )">
+                                                            @subMenuItem.DisplayName
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
                 }
                 <partial name="_LoginPartial" />
             </div>
