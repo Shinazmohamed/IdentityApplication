@@ -1,8 +1,4 @@
-﻿@using IdentityApplication.Business.Contracts
-@using IdentityApplication.Core.ViewModel;
-
-@inject IMenuBusiness _business;
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -14,54 +10,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Nolimit Tag Employee</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    var model = new MenuModel(_business);
-                    @if (model != null && model.MenuItems != null && model.MenuItems.Any())
-                    {
-                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                            <ul class="navbar-nav flex-grow-1">
-                                @foreach (var menuItem in model.MenuItems)
-                                {
-                                    <li class="nav-item @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "dropdown" : "")">
-                                        <a class="nav-link @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "dropdown-toggle" : "text-dark")"
-                                        @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "data-bs-toggle=dropdown" : "")
-                                           href="#"
-                                           role="button"
-                                           aria-expanded="false">
-                                            @menuItem.DisplayName
-                                        </a>
-
-                                        @if (menuItem.SubMenu != null && menuItem.SubMenu.Any())
-                                        {
-                                            <ul class="dropdown-menu">
-                                                @foreach (var subMenuItem in menuItem.SubMenu)
-                                                {
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                           href="@Url.Action(subMenuItem.Method, subMenuItem.Controller )">
-                                                            @subMenuItem.DisplayName
-                                                        </a>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        }
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    }
-                }
-                <partial name="_LoginPartial" />
-            </div>
-        </nav>
+        @await Component.InvokeAsync("NavigationMenu")
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -69,11 +18,11 @@
         </main>
     </div>
 
-    @*     <footer class="border-top footer text-muted">
-    <div class="container">
-    &copy; 2023 - IdentityApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-    </footer> *@
+    <footer class="border-top footer text-muted">
+        <div class="container">
+        &copy; 2023 - IdentityApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
