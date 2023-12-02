@@ -20,46 +20,26 @@ namespace IdentityApplication.Core.Repositories
                 .Include(e => e.SubMenus)
                 .ToList();
         }
-
         public IList<Menu> GetMenuById(string roleId)
         {
-            //var roleId = "40c2f45d-8a22-499c-b1e9-41c0cf2ad320";
-
-            var res = _context.Menu
-                .Include(e => e.SubMenus)
-                    .ThenInclude(s => s.SubMenuRoles.Where(i => i.Id == roleId))
+            var menusWithFilteredSubMenus = _context.Menu
+                .Include(menu => menu.SubMenus)
+                    .ThenInclude(subMenu => subMenu.SubMenuRoles.Where(role => role.Id == roleId))
+                .Where(menu => menu.SubMenus.Any(subMenu => subMenu.SubMenuRoles.Any(role => role.Id == roleId)))
                 .ToList();
 
-            var ress = _context.Menu
-                .Where(menu => menu.SubMenus
-                    .Any(subMenu => subMenu.SubMenuRoles
-                        .Any(subMenuRole => subMenuRole.Id == roleId)))
-                .ToList();
-
-
-            var itemsToRemove = new List<SubMenu>();
-
-            foreach (var item in ress)
+            foreach (var menu in menusWithFilteredSubMenus)
             {
-                foreach (var sub in item.SubMenus)
-                {
-                    if (!sub.SubMenuRoles.Any())
-                    {
-                        itemsToRemove.Add(sub);
-                    }
-                }
+                var subMenusToRemove = menu.SubMenus.Where(subMenu => !subMenu.SubMenuRoles.Any()).ToList();
 
-                // Remove items outside of the inner loop
-                foreach (var toRemove in itemsToRemove)
+                foreach (var subMenuToRemove in subMenusToRemove)
                 {
-                    item.SubMenus.Remove(toRemove);
+                    menu.SubMenus.Remove(subMenuToRemove);
                 }
-
-                // Clear the list for the next iteration
-                itemsToRemove.Clear();
             }
 
-            return ress;
+            return menusWithFilteredSubMenus;
         }
+
     }
 }

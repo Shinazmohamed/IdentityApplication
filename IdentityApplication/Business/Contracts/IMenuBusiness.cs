@@ -4,6 +4,6 @@ namespace IdentityApplication.Business.Contracts
 {
     public interface IMenuBusiness
     {
-        List<MenuViewModel> GetMenus(Guid? roleId);
+        Task<List<MenuViewModel>> GetMenus();
     }
 }

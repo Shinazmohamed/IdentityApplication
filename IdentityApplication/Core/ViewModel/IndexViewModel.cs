@@ -9,11 +9,11 @@ namespace IdentityApplication.Core.ViewModel
         public IndexViewModel(IMenuBusiness business)
         {
             _business = business ?? throw new ArgumentNullException(nameof(business));
-            MenuItems = GetMenus();
+            MenuItems = GetMenus().Result;
         }
-        private List<MenuViewModel> GetMenus()
+        private async Task<List<MenuViewModel>> GetMenus()
         {
-            return _business.GetMenus(Guid.NewGuid());
+            return await _business.GetMenus();
         }
     }
 

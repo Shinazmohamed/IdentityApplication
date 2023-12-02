@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityApplication.Business
 {
@@ -9,19 +12,35 @@ namespace IdentityApplication.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public MenuBusiness(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public MenuBusiness(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public List<MenuViewModel> GetMenus(Guid? roleId)
+        public async Task<List<MenuViewModel>> GetMenus()
         {
-            var menus = _unitOfWork.Menu.GetMenus();
-            var mapped = _mapper.Map<List<MenuViewModel>>(menus);
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var isAdmin = await _userManager.IsInRoleAsync(user, Constants.Roles.Administrator);
+            if (isAdmin)
+            {
+                var menus = _unitOfWork.Menu.GetMenus();
+                return _mapper.Map<List<MenuViewModel>>(menus);
+            }
+            else
+            {
+                var role = await _userManager.GetRolesAsync(user);
+                var roles = _unitOfWork.Role.GetRoles();
+                var currentRole = roles.Where(ur => ur.Name == role.FirstOrDefault()).FirstOrDefault();
 
-            return mapped;
+                var rolemenus = _unitOfWork.Menu.GetMenuById(currentRole.Id);
+                return _mapper.Map<List<MenuViewModel>>(rolemenus);
+            }
+
         }
     }
 }
