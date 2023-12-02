@@ -11,7 +11,7 @@
         </button>
         @if (User.Identity.IsAuthenticated)
         {
-            var model = new MenuModel(_business);
+            var model = new IndexViewModel(_business);
             @if (model != null && model.MenuItems != null && model.MenuItems.Any())
             {
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">

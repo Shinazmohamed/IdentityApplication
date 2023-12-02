@@ -16,10 +16,10 @@ namespace IdentityApplication.Business
             _mapper = mapper;
         }
 
-        public List<ViewMenuModel> GetMenus(Guid? roleId)
+        public List<MenuViewModel> GetMenus(Guid? roleId)
         {
             var menus = _unitOfWork.Menu.GetMenus();
-            var mapped = _mapper.Map<List<ViewMenuModel>>(menus);
+            var mapped = _mapper.Map<List<MenuViewModel>>(menus);
 
             return mapped;
         }

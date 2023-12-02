@@ -48,12 +48,12 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.CategoryName));
 
 
-            CreateMap<Menu, ViewMenuModel>()
+            CreateMap<Menu, MenuViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MenuId))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.SubMenu, opt => opt.MapFrom(src => src.SubMenus));
 
-            CreateMap<SubMenu, ViewSubMenuModel>()
+            CreateMap<SubMenu, SubMenuViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MenuId))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Controller, opt => opt.MapFrom(src => src.Controller))

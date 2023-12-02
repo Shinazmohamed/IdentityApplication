@@ -1,13 +1,13 @@
 ﻿namespace IdentityApplication.Core.ViewModel
 {
-    public class ViewMenuModel
+    public class MenuViewModel
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
-        public IList<ViewSubMenuModel>? SubMenu { get; set; }
+        public IList<SubMenuViewModel>? SubMenu { get; set; }
     }
 
-    public class ViewSubMenuModel
+    public class SubMenuViewModel
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
