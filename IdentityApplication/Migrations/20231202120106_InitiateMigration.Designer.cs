@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231202105153_SubMenuRoleMigrations")]
-    partial class SubMenuRoleMigrations
+    [Migration("20231202120106_InitiateMigration")]
+    partial class InitiateMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

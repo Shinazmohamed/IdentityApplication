@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231126100215_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20231202120125_SeedData")]
+    partial class SeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -160,7 +160,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SPNOV2023", (string)null);
+                    b.ToTable("SPDec2023", (string)null);
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Location", b =>
@@ -178,13 +178,28 @@ namespace IdentityApplication.Migrations
                     b.ToTable("Location");
                 });
 
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Menu", b =>
+                {
+                    b.Property<Guid>("MenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MenuId");
+
+                    b.ToTable("Menu");
+                });
+
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
                 {
                     b.Property<Guid>("SubCategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SubCategoryName")
@@ -196,6 +211,47 @@ namespace IdentityApplication.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("SubCategory");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenu", b =>
+                {
+                    b.Property<Guid>("SubMenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Controller")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("MenuId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SubMenuId");
+
+                    b.HasIndex("MenuId");
+
+                    b.ToTable("SubMenu");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenuRole", b =>
+                {
+                    b.Property<Guid>("SubMenuId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("SubMenuId", "Id");
+
+                    b.ToTable("SubMenuRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -351,10 +407,29 @@ namespace IdentityApplication.Migrations
                     b.HasOne("IdentityApplication.Core.Entities.Category", "Category")
                         .WithMany("SubCategories")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenu", b =>
+                {
+                    b.HasOne("IdentityApplication.Core.Entities.Menu", "Menu")
+                        .WithMany("SubMenus")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Menu");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenuRole", b =>
+                {
+                    b.HasOne("IdentityApplication.Core.Entities.SubMenu", "SubMenu")
+                        .WithMany("SubMenuRoles")
+                        .HasForeignKey("SubMenuId")
+                        .IsRequired();
+
+                    b.Navigation("SubMenu");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -411,6 +486,16 @@ namespace IdentityApplication.Migrations
             modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
                 {
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Menu", b =>
+                {
+                    b.Navigation("SubMenus");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenu", b =>
+                {
+                    b.Navigation("SubMenuRoles");
                 });
 #pragma warning restore 612, 618
         }

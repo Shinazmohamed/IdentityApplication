@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IdentityApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitiateMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,7 +62,19 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SPNOV2023",
+                name: "Menu",
+                columns: table => new
+                {
+                    MenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Menu", x => x.MenuId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SPDec2023",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -78,7 +90,7 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SPNOV2023", x => x.Id);
+                    table.PrimaryKey("PK_SPDec2023", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,7 +120,7 @@ namespace IdentityApplication.Migrations
                 {
                     SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -150,6 +162,27 @@ namespace IdentityApplication.Migrations
                         column: x => x.LocationId,
                         principalTable: "Location",
                         principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubMenu",
+                columns: table => new
+                {
+                    SubMenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Controller = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubMenu", x => x.SubMenuId);
+                    table.ForeignKey(
+                        name: "FK_SubMenu_Menu_MenuId",
+                        column: x => x.MenuId,
+                        principalTable: "Menu",
+                        principalColumn: "MenuId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -238,6 +271,23 @@ namespace IdentityApplication.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SubMenuRoles",
+                columns: table => new
+                {
+                    SubMenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubMenuRoles", x => new { x.SubMenuId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_SubMenuRoles_SubMenu_SubMenuId",
+                        column: x => x.SubMenuId,
+                        principalTable: "SubMenu",
+                        principalColumn: "SubMenuId");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -286,6 +336,11 @@ namespace IdentityApplication.Migrations
                 name: "IX_SubCategory_CategoryId",
                 table: "SubCategory",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubMenu_MenuId",
+                table: "SubMenu",
+                column: "MenuId");
         }
 
         /// <inheritdoc />
@@ -310,10 +365,13 @@ namespace IdentityApplication.Migrations
                 name: "Department");
 
             migrationBuilder.DropTable(
-                name: "SPNOV2023");
+                name: "SPDec2023");
 
             migrationBuilder.DropTable(
                 name: "SubCategory");
+
+            migrationBuilder.DropTable(
+                name: "SubMenuRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -325,7 +383,13 @@ namespace IdentityApplication.Migrations
                 name: "Category");
 
             migrationBuilder.DropTable(
+                name: "SubMenu");
+
+            migrationBuilder.DropTable(
                 name: "Location");
+
+            migrationBuilder.DropTable(
+                name: "Menu");
         }
     }
 }

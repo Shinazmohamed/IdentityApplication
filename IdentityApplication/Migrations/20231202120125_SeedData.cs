@@ -885,5 +885,11 @@ namespace IdentityApplication.Migrations
                 INSERT INTO [AspNetRoleClaims] (RoleId, ClaimType, ClaimValue)
                 VALUES ('{AdminRoleId}', 'Permission', 'RequireAdmin');");
         }
+        private void SeedSubMenuRole(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($@"
+                INSERT INTO [SubMenuRole] (SubMenuId, Id)
+                VALUES ('{UserRoleId}');");
+        }
     }
 }
