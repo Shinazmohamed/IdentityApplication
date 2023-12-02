@@ -16,29 +16,45 @@ namespace IdentityApplication.Core.Repositories
         }
         public IList<Menu> GetMenus()
         {
-            return _context.Menu
-                .Include(e => e.SubMenus)
-                .ToList();
+            try
+            {
+                return _context.Menu
+                       .Include(e => e.SubMenus)
+                       .ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                throw;
+            }
         }
         public IList<Menu> GetMenuById(string roleId)
         {
-            var menusWithFilteredSubMenus = _context.Menu
-                .Include(menu => menu.SubMenus)
-                    .ThenInclude(subMenu => subMenu.SubMenuRoles.Where(role => role.Id == roleId))
-                .Where(menu => menu.SubMenus.Any(subMenu => subMenu.SubMenuRoles.Any(role => role.Id == roleId)))
-                .ToList();
-
-            foreach (var menu in menusWithFilteredSubMenus)
+            try
             {
-                var subMenusToRemove = menu.SubMenus.Where(subMenu => !subMenu.SubMenuRoles.Any()).ToList();
+                var menusWithFilteredSubMenus = _context.Menu
+                    .Include(menu => menu.SubMenus)
+                        .ThenInclude(subMenu => subMenu.SubMenuRoles.Where(role => role.Id == roleId))
+                    .Where(menu => menu.SubMenus.Any(subMenu => subMenu.SubMenuRoles.Any(role => role.Id == roleId)))
+                    .ToList();
 
-                foreach (var subMenuToRemove in subMenusToRemove)
+                foreach (var menu in menusWithFilteredSubMenus)
                 {
-                    menu.SubMenus.Remove(subMenuToRemove);
-                }
-            }
+                    var subMenusToRemove = menu.SubMenus.Where(subMenu => !subMenu.SubMenuRoles.Any()).ToList();
 
-            return menusWithFilteredSubMenus;
+                    foreach (var subMenuToRemove in subMenusToRemove)
+                    {
+                        menu.SubMenus.Remove(subMenuToRemove);
+                    }
+                }
+
+                return menusWithFilteredSubMenus;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                throw;
+            }
         }
 
     }
