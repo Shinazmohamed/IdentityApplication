@@ -13,6 +13,16 @@ namespace IdentityApplication.Migrations
         private string UserId = Guid.NewGuid().ToString();
         private string LocationId = Guid.NewGuid().ToString();
         private string CategoryId = Guid.NewGuid().ToString();
+
+        private string employeeMenu = Guid.NewGuid().ToString();
+        private string userMenu = Guid.NewGuid().ToString();
+        private string categoryMenu = Guid.NewGuid().ToString();
+        private string subcategoryMenu = Guid.NewGuid().ToString();
+
+        private string createEmployeeSubMenu = Guid.NewGuid().ToString();
+        private string listEmployeeSubMenu = Guid.NewGuid().ToString();
+        private string profileUserSubMenu = Guid.NewGuid().ToString();
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             SeedLocations(migrationBuilder);
@@ -23,6 +33,9 @@ namespace IdentityApplication.Migrations
             SeedUser(migrationBuilder);
             SeedUserRoles(migrationBuilder);
             SeedClaims(migrationBuilder);
+            SeedMenu(migrationBuilder);
+            SeedSubMenu(migrationBuilder);
+            SeedSubMenuRole(migrationBuilder);
         }
         private void SeedRolesSQL(MigrationBuilder migrationBuilder)
         {
@@ -885,11 +898,35 @@ namespace IdentityApplication.Migrations
                 INSERT INTO [AspNetRoleClaims] (RoleId, ClaimType, ClaimValue)
                 VALUES ('{AdminRoleId}', 'Permission', 'RequireAdmin');");
         }
+        private void SeedMenu(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($@"
+                INSERT INTO [Menu] (MenuId, DisplayName) VALUES 
+                ('{employeeMenu}', 'Employee'),  
+                ('{userMenu}', 'User'),
+                ('{categoryMenu}', 'Category'),
+                ('{subcategoryMenu}', 'Sub Category');");
+        }
+        private void SeedSubMenu(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($@"
+                INSERT INTO [SubMenu] (SubMenuId, DisplayName, Controller, Method, MenuId) VALUES 
+                    ('{createEmployeeSubMenu}', 'Create Employee', 'Employee', 'Create', '{employeeMenu}'),
+                    ('{listEmployeeSubMenu}', 'List Employee', 'Employee', 'List', '{employeeMenu}'),
+                    (NEWID(), 'Register', 'User', 'Register', '{userMenu}'),
+                    (NEWID(), 'List', 'User', 'Index', '{userMenu}'),
+                    ('{profileUserSubMenu}', 'Profile', 'User', 'Profile', '{userMenu}'),
+                    (NEWID(), 'Create', 'Category', 'Index', '{categoryMenu}'),
+                    (NEWID(), 'Create', 'SubCategory', 'Index', '{subcategoryMenu}'),
+                    (NEWID(), 'Mapping', 'CategorySubCategoryMapping', 'Index', '{subcategoryMenu}');");
+        }
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [SubMenuRole] (SubMenuId, Id)
-                VALUES ('{UserRoleId}');");
+                INSERT INTO [SubMenuRoles] (SubMenuId, Id) VALUES 
+                    ('{createEmployeeSubMenu}','{UserRoleId}'),
+                    ('{listEmployeeSubMenu}','{UserRoleId}'),
+                    ('{profileUserSubMenu}','{UserRoleId}');");
         }
     }
 }
