@@ -11,5 +11,7 @@ namespace IdentityApplication.Core.Entities
         public string Method { get; set; }
         public Guid? MenuId { get; set; }
         public Menu? Menu { get; set; }
+
+        public List<SubMenuRole> SubMenuRoles { get; set; }
     }
 }

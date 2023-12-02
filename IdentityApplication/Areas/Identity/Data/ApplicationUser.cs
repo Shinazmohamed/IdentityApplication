@@ -11,6 +11,6 @@ public class ApplicationUser : IdentityUser
 
 public class ApplicationRole : IdentityRole
 {
-
+    public List<SubMenuRole> SubMenuRoles { get; set; }
 }
 

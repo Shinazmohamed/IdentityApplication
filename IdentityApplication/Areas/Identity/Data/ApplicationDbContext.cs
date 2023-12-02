@@ -14,6 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<SubCategory> SubCategory => Set<SubCategory>();
     public DbSet<Menu> Menu => Set<Menu>();
     public DbSet<SubMenu> SubMenu => Set<SubMenu>();
+    public DbSet<SubMenuRole> SubMenuRoles => Set<SubMenuRole>();
 
     private readonly IConfiguration _configuration;
 
@@ -44,5 +45,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .WithOne(sc => sc.Menu)
                 .HasForeignKey(sc => sc.MenuId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<SubMenuRole>()
+            .HasKey(sr => new { sr.SubMenuId, sr.Id });
+
+        builder.Entity<SubMenuRole>()
+            .HasOne(sr => sr.SubMenu)
+            .WithMany(s => s.SubMenuRoles)
+            .HasForeignKey(sr => sr.SubMenuId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
+
+        builder.Entity<SubMenuRole>()
+            .HasOne(sr => sr.Role)
+            .WithMany(r => r.SubMenuRoles)
+            .HasForeignKey(sr => sr.Id)
+            .OnDelete(DeleteBehavior.ClientSetNull);
     }
 }

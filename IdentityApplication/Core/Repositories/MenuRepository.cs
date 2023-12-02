@@ -16,9 +16,20 @@ namespace IdentityApplication.Core.Repositories
         }
         public IList<Menu> GetMenus()
         {
+            GetMenuById();
+
             return _context.Menu
                 .Include(e => e.SubMenus)
                 .ToList();
+        }
+
+        public IList<Menu> GetMenuById()
+        {
+            var res = _context.Menu
+                .Include(e => e.SubMenus)
+                .ThenInclude(e => e.SubMenuRoles)
+                .ToList();
+            return res;
         }
     }
 }
