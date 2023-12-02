@@ -1,11 +1,12 @@
-﻿using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core.ViewModel;
+﻿using IdentityApplication.Core;
 using IdentityApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

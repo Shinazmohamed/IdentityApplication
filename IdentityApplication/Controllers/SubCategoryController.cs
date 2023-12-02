@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
     public class SubCategoryController : Controller
     {
         private readonly ISubCategoryBusiness _business;
@@ -16,11 +16,13 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Index()
         {
             return View();
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
@@ -49,6 +51,7 @@ namespace IdentityApplication.Controllers
             }
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateSubCategoryRequest request)
         {
@@ -65,6 +68,7 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Update(CreateSubCategoryRequest request)
         {
@@ -81,6 +85,7 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Delete(string mappingId)
         {

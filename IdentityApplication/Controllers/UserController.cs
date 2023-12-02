@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -26,6 +26,7 @@ namespace IdentityApplication.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsersWithLocations();
@@ -34,6 +35,7 @@ namespace IdentityApplication.Controllers
 
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public async Task<IActionResult> Edit(string id)
         {
             var user = _unitOfWork.User.GetUser(id);
@@ -59,6 +61,7 @@ namespace IdentityApplication.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
         {
@@ -110,18 +113,19 @@ namespace IdentityApplication.Controllers
 
                 _unitOfWork.User.UpdateUser(user);
 
-                TempData["SuccessMessage"] = "Password reset is successfull.";
+                TempData["SuccessMessage"] = "User is updated successfull.";
 
             }
             catch
             {
-                TempData["ErrorMessage"] = "Password reset is unsuccessfull";
+                TempData["ErrorMessage"] = "User is updated unsuccessfull";
             }
 
 
             return RedirectToAction("Edit", new { id = request.User.Id });
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
         {
@@ -149,6 +153,7 @@ namespace IdentityApplication.Controllers
             return Redirect("http://localhost:5258/Identity/Account/Manage");
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Register()
         {        
             return Redirect("http://localhost:5258/Identity/Account/Register");

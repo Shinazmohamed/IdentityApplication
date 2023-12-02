@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
     public class CategoryController : Controller
     {
         private readonly ICategoryBusiness _business;
@@ -16,6 +16,7 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Index()
         {
             return View();
@@ -47,6 +48,7 @@ namespace IdentityApplication.Controllers
             }
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
@@ -61,6 +63,7 @@ namespace IdentityApplication.Controllers
             return Json(jsonD);
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCategoryRequest request)
         {
@@ -77,6 +80,7 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Update(CreateCategoryRequest request)
         {
@@ -93,6 +97,7 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Delete(string mappingId)
         {
