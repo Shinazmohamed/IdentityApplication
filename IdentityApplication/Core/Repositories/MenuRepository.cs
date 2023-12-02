@@ -16,20 +16,50 @@ namespace IdentityApplication.Core.Repositories
         }
         public IList<Menu> GetMenus()
         {
-            GetMenuById();
-
             return _context.Menu
                 .Include(e => e.SubMenus)
                 .ToList();
         }
 
-        public IList<Menu> GetMenuById()
+        public IList<Menu> GetMenuById(string roleId)
         {
+            //var roleId = "40c2f45d-8a22-499c-b1e9-41c0cf2ad320";
+
             var res = _context.Menu
                 .Include(e => e.SubMenus)
-                .ThenInclude(e => e.SubMenuRoles)
+                    .ThenInclude(s => s.SubMenuRoles.Where(i => i.Id == roleId))
                 .ToList();
-            return res;
+
+            var ress = _context.Menu
+                .Where(menu => menu.SubMenus
+                    .Any(subMenu => subMenu.SubMenuRoles
+                        .Any(subMenuRole => subMenuRole.Id == roleId)))
+                .ToList();
+
+
+            var itemsToRemove = new List<SubMenu>();
+
+            foreach (var item in ress)
+            {
+                foreach (var sub in item.SubMenus)
+                {
+                    if (!sub.SubMenuRoles.Any())
+                    {
+                        itemsToRemove.Add(sub);
+                    }
+                }
+
+                // Remove items outside of the inner loop
+                foreach (var toRemove in itemsToRemove)
+                {
+                    item.SubMenus.Remove(toRemove);
+                }
+
+                // Clear the list for the next iteration
+                itemsToRemove.Clear();
+            }
+
+            return ress;
         }
     }
 }

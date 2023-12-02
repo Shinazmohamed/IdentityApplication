@@ -60,5 +60,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(r => r.SubMenuRoles)
             .HasForeignKey(sr => sr.Id)
             .OnDelete(DeleteBehavior.ClientSetNull);
+
+        builder.Ignore<ApplicationRole>();
     }
 }
