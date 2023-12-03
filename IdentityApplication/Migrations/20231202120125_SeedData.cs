@@ -18,6 +18,7 @@ namespace IdentityApplication.Migrations
         private string userMenu = Guid.NewGuid().ToString();
         private string categoryMenu = Guid.NewGuid().ToString();
         private string subcategoryMenu = Guid.NewGuid().ToString();
+        private string menu = Guid.NewGuid().ToString();
 
         private string createEmployeeSubMenu = Guid.NewGuid().ToString();
         private string listEmployeeSubMenu = Guid.NewGuid().ToString();
@@ -905,6 +906,7 @@ namespace IdentityApplication.Migrations
                 ('{employeeMenu}', 'Employee'),  
                 ('{userMenu}', 'User'),
                 ('{categoryMenu}', 'Category'),
+                ('{menu}', 'Menu'),
                 ('{subcategoryMenu}', 'Sub Category');");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
@@ -918,6 +920,7 @@ namespace IdentityApplication.Migrations
                     ('{profileUserSubMenu}', 'Profile', 'User', 'Profile', '{userMenu}'),
                     (NEWID(), 'Create', 'Category', 'Index', '{categoryMenu}'),
                     (NEWID(), 'Create', 'SubCategory', 'Index', '{subcategoryMenu}'),
+                    (NEWID(), 'Create menu', 'SubMenu', 'Index', '{menu}'),
                     (NEWID(), 'Mapping', 'CategorySubCategoryMapping', 'Index', '{subcategoryMenu}');");
         }
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)

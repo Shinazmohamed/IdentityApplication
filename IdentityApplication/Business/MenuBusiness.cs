@@ -26,6 +26,10 @@ namespace IdentityApplication.Business
         public async Task<List<MenuViewModel>> GetMenus()
         {
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            if(user is null)
+            {
+                return null;
+            }
             var isAdmin = await _userManager.IsInRoleAsync(user, Constants.Roles.Administrator);
             if (isAdmin)
             {
