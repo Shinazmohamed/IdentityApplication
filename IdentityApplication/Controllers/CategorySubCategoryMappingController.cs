@@ -35,7 +35,6 @@ namespace IdentityApplication.Controllers
 
             return View(response);
         }
-
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
@@ -49,7 +48,6 @@ namespace IdentityApplication.Controllers
             };
             return Json(jsonD);
         }
-
         [HttpPost]
         public async Task<IActionResult> Create(CreateCategorySubCategoryRequest request)
         {
@@ -65,7 +63,6 @@ namespace IdentityApplication.Controllers
 
             return RedirectToAction("Index");
         }
-
         [HttpPost]
         public async Task<IActionResult> Update(CreateCategorySubCategoryRequest request)
         {
@@ -81,7 +78,6 @@ namespace IdentityApplication.Controllers
 
             return RedirectToAction("Index");
         }
-
         [HttpPost]
         public async Task<IActionResult> Delete(string mappingId)
         {

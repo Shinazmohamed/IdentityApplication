@@ -130,15 +130,11 @@ namespace IdentityApplication.Controllers
             response.SubCategories = subCategories.Select(subCategory =>
                 new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
 
-            //response.SubCategories = new List<SelectListItem>
-            //{
-            //    new SelectListItem { Value = "", Text = "All" }
-            //};
-
             return View(response);
         }
 
         [HttpPost]
+
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);

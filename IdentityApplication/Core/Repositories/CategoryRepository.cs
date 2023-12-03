@@ -2,7 +2,9 @@
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace IdentityApplication.Core.Repositories
 {
@@ -10,28 +12,42 @@ namespace IdentityApplication.Core.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CategoryRepository> _logger;
-        public CategoryRepository(ApplicationDbContext context, ILogger<CategoryRepository> logger)
+        private readonly IMemoryCache _cache;
+        public CategoryRepository(ApplicationDbContext context, ILogger<CategoryRepository> logger, IMemoryCache cache)
         {
             _context = context;
             _logger = logger;
-        }
-        public IList<Category> GetCategories()
-        {
-            return _context.Category.ToList();
+            _cache = cache;
         }
 
+        public IList<Category> GetCategories()
+        {
+            const string cacheKey = "Categories";
+
+            if (_cache.TryGetValue(cacheKey, out IList<Category> cachedCategories))
+            {
+                return cachedCategories;
+            }
+
+            var categories = _context.Category.ToList();
+
+            _cache.Set(cacheKey, categories, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
+
+            return categories;
+        }
         public Category GetCategoryById(Guid Id)
         {
             return _context.Category
                 .Include(e => e.SubCategories)
                 . FirstOrDefault(l => l.CategoryId == Id);
         }
-
         public Category GetCategoryByName(string Name)
         {
             return _context.Category.FirstOrDefault(l => l.CategoryName == Name);
         }
-
         public async Task<PaginationResponse<ListCategoryModel>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try
@@ -65,7 +81,6 @@ namespace IdentityApplication.Core.Repositories
                 throw;
             }
         }
-
         public void Create(Category request)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -93,7 +108,6 @@ namespace IdentityApplication.Core.Repositories
                 }
             }
         }
-
         public async Task Delete(Guid id)
         {
             try
@@ -109,7 +123,6 @@ namespace IdentityApplication.Core.Repositories
                 throw;
             }
         }
-
         public void Update(Category entity)
         {
             using (var transaction = _context.Database.BeginTransaction())

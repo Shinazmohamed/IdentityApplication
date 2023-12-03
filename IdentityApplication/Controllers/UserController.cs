@@ -34,7 +34,6 @@ namespace IdentityApplication.Controllers
             return View(source);
 
         }
-
         [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public async Task<IActionResult> Edit(string id)
         {
@@ -60,7 +59,6 @@ namespace IdentityApplication.Controllers
             var vm = new EditUserViewModel { User = user, Roles = roleItems, Locations = locationItems };
             return View(vm);
         }
-
         [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
@@ -124,7 +122,6 @@ namespace IdentityApplication.Controllers
 
             return RedirectToAction("Edit", new { id = request.User.Id });
         }
-
         [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
@@ -147,12 +144,10 @@ namespace IdentityApplication.Controllers
             }
             return RedirectToAction("Edit", new { id = request.User.Id });
         }
-
         public IActionResult Profile()
         {
             return Redirect("http://localhost:5258/Identity/Account/Manage");
         }
-
         [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Register()
         {        

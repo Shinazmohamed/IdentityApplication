@@ -37,20 +37,6 @@ namespace IdentityApplication.Controllers
             return Json(jsonD);
         }
 
-        [HttpPost]
-        public IActionResult GetSubcategories(string Id)
-        {
-            try
-            {
-                return Json(_business.GetSubCategoriesById(Id));
-            }
-            catch (Exception)
-            {
-                TempData["ErrorMessage"] = "No Records found.";
-                return NotFound();
-            }
-        }
-
         [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateSubCategoryRequest request)
