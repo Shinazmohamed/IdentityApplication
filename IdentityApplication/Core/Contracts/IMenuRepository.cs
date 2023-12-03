@@ -4,7 +4,8 @@ namespace IdentityApplication.Core.Contracts
 {
     public interface IMenuRepository
     {
-        IList<Menu> GetMenus();
-        IList<Menu> GetMenuById(string roleId);
+        List<Menu> GetMenus();
+        List<Menu> GetMenuById(string roleId);
+        void Create(Menu request);
     }
 }

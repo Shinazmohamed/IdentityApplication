@@ -1,0 +1,91 @@
+﻿@model IdentityApplication.Core.ViewModel.CreateMenuRequest;
+@{
+}
+
+<h2>Create Menu</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form method="post" asp-controller="SubMenu" asp-action="Create">
+    <div class="mb-3 row">
+        <label asp-for="DisplayName" class="col-sm-2 col-form-label">Display Name</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control" asp-for="DisplayName">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label asp-for="IsParent" class="col-sm-2 col-form-label">Is Parent</label>
+        <div class="col-sm-3">
+            <input class="form-check-input" type="checkbox" asp-for="IsParent" checked id="isParentCheckbox">
+        </div>
+    </div>
+    <div id="additionalFields" style="display: @(Model.IsParent ? "none" : "block")">
+        <div class="mb-3 row">
+            <label asp-for="Controller" class="col-sm-2 col-form-label">Controller</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" asp-for="Controller">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label asp-for="Method" class="col-sm-2 col-form-label">Method</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" asp-for="Method">
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label asp-for="SelectedMenu" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-3">
+                @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { @class = "form-select" })
+            </div>
+        </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // Hide/show additional fields based on the initial state of the checkbox
+            toggleAdditionalFields();
+
+            // Handle the change event of the checkbox
+            $("#isParentCheckbox").change(function () {
+                toggleAdditionalFields();
+            });
+
+            function toggleAdditionalFields() {
+                var isChecked = $("#isParentCheckbox").prop("checked");
+                $("#additionalFields").toggle(!isChecked);
+            }
+
+
+            setTimeout(function () {
+                $("#successMessage").fadeOut("slow");
+                $("#errorMessage").fadeOut("slow");
+            }, 3000);
+        });
+
+    </script>
+
+}
+

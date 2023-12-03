@@ -81,4 +81,7 @@ void AddScoped()
     builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
     builder.Services.AddScoped<IMenuBusiness, MenuBusiness>();
     builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+
+    builder.Services.AddScoped<ISubMenuBusiness, SubMenuBusiness>();
+    builder.Services.AddScoped<ISubMenuRepository, SubMenuRepository>();
 }

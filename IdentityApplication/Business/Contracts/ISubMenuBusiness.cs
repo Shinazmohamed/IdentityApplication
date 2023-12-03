@@ -3,10 +3,9 @@ using IdentityApplication.Core.ViewModel;
 
 namespace IdentityApplication.Business.Contracts
 {
-    public interface IMenuBusiness
+    public interface ISubMenuBusiness
     {
-        Task<List<MenuViewModel>> GetMenus();
+        List<SubMenu> GetAll();
         void Create(CreateMenuRequest request);
-        List<Menu> GetAll();
     }
 }

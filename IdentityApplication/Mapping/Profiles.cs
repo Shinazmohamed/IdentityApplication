@@ -58,6 +58,10 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Controller, opt => opt.MapFrom(src => src.Controller))
                 .ForMember(dest => dest.Method, opt => opt.MapFrom(src => src.Method));
+
+            CreateMap<CreateMenuRequest, Menu>();
+            CreateMap<CreateMenuRequest, SubMenu>()
+                .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.SelectedMenu));
         }
 
     }

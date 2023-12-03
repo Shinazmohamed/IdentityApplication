@@ -3,6 +3,7 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Identity;
 
@@ -41,6 +42,17 @@ namespace IdentityApplication.Business
                 return _mapper.Map<List<MenuViewModel>>(rolemenus);
             }
 
+        }
+
+        public List<Menu> GetAll()
+        {
+            return _unitOfWork.Menu.GetMenus();
+        }
+
+        public void Create(CreateMenuRequest request)
+        {
+            var entity = _mapper.Map<Menu>(request);
+            _unitOfWork.Menu.Create(entity);
         }
     }
 }

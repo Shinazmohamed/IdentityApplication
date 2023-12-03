@@ -18,13 +18,13 @@ namespace IdentityApplication.Core.Repositories
             _logger = logger;
             _cache = cache;
         }
-        public IList<Menu> GetMenus()
+        public List<Menu> GetMenus()
         {
             try
             {
                 const string cacheKey = "Menus";
 
-                if (_cache.TryGetValue(cacheKey, out IList<Menu> cachedMenus))
+                if (_cache.TryGetValue(cacheKey, out List<Menu> cachedMenus))
                 {
                     return cachedMenus;
                 }
@@ -46,7 +46,7 @@ namespace IdentityApplication.Core.Repositories
                 throw;
             }
         }
-        public IList<Menu> GetMenuById(string roleId)
+        public List<Menu> GetMenuById(string roleId)
         {
             try
             {
@@ -72,6 +72,26 @@ namespace IdentityApplication.Core.Repositories
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
                 throw;
+            }
+        }
+
+        public void Create(Menu request)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.Menu.Add(request);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                    throw;
+                }
             }
         }
 

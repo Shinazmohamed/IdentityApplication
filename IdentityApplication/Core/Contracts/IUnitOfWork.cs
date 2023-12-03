@@ -11,5 +11,6 @@
         ISubCategoryRepository SubCategory { get; }
         ICategorySubCategoryRepository CategorySubCategory { get; }
         IMenuRepository Menu { get; }
+        ISubMenuRepository SubMenu { get; }
     }
 }
