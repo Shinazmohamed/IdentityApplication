@@ -115,7 +115,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
-                if(user == null)
+                if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
@@ -133,6 +133,11 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                     {
                         var roleClaim = string.Join(",", roles);
                         claims.Add(new Claim("Roles", roleClaim));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "No role assigned. Please contact administrator.");
+                        return Page();
                     }
                     await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, claims);
 

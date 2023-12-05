@@ -102,7 +102,7 @@ namespace IdentityApplication.Core.Repositories
                     if (entity == null)
                         throw new ArgumentNullException(nameof(entity));
 
-                    var existingEmployee = _context.Employee.Find(entity.Id); // Assuming Id is the primary key
+                    var existingEmployee = _context.Employee.Find(entity.Id);
                     if (existingEmployee != null)
                     {
                         existingEmployee.LocationName = entity.LocationName;
@@ -115,11 +115,10 @@ namespace IdentityApplication.Core.Repositories
                         existingEmployee.M1 = entity.M1;
                         existingEmployee.M2 = entity.M2;
 
-                        _context.SaveChanges();
-
-                        transaction.Commit();
+                        _context.SaveChanges();                        
                     }
 
+                    transaction.Commit();
                 }
                 catch (Exception e)
                 {

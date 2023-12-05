@@ -97,15 +97,6 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
-
             [Required]
             [Display(Name = "Location")]
             public string SelectedLocation { get; set; } // Change this to hold the selected location
@@ -163,8 +154,11 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        TempData["SuccessMessage"] = "User created successfully.";
+                        await OnGetAsync();
+                        return Page();
+                        //await _signInManager.SignInAsync(user, isPersistent: false);
+                        //return LocalRedirect(returnUrl);
                     }
                 }
                 foreach (var error in result.Errors)
