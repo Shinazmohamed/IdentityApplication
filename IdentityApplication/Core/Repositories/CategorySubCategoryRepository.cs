@@ -64,7 +64,7 @@ namespace IdentityApplication.Core.Repositories
 
                 if (!string.IsNullOrEmpty(filter.subcategory))
                 {
-                    query = query.Where(e => e.SubCategoryName == filter.subcategory);
+                    query = query.Where(e => e.SubCategoryId == Guid.Parse(filter.subcategory));
                 }
 
                 var totalCount = await query.CountAsync();

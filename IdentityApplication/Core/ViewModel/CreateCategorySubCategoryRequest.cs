@@ -13,5 +13,6 @@ namespace IdentityApplication.Core.ViewModel
         [Display(Name = "Sub Category")]
         public string SelectedSubCategory { get; set; }
         public List<SelectListItem> SubCategories { get; set; }
+        public string SelectedSubCategoryId { get; set; }
     }
 }

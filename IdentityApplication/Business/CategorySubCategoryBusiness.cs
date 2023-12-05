@@ -17,9 +17,19 @@ namespace IdentityApplication.Business
             _mapper = mapper;
         }
 
-        public async Task UpdateMapping(CreateCategorySubCategoryRequest request)
+        public async Task CreateMapping(CreateCategorySubCategoryRequest request)
         {
             var entity = _mapper.Map<SubCategory>(request);
+            _unitOfWork.CategorySubCategory.Update(entity);
+        }
+
+        public async Task UpdateMapping(CreateCategorySubCategoryRequest request)
+        {
+            var entity = new SubCategory()
+            {
+                SubCategoryId = Guid.Parse(request.SelectedSubCategoryId),
+                CategoryId = Guid.Parse(request.SelectedCategory)
+            };
             _unitOfWork.CategorySubCategory.Update(entity);
         }
 

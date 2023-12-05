@@ -35,6 +35,7 @@ namespace IdentityApplication.Controllers
 
             return View(response);
         }
+
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
@@ -48,12 +49,13 @@ namespace IdentityApplication.Controllers
             };
             return Json(jsonD);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateCategorySubCategoryRequest request)
         {
             try
             {
-                await _business.UpdateMapping(request);
+                await _business.CreateMapping(request);
                 TempData["SuccessMessage"] = "Sub Category Mapped Successfully.";
             }
             catch
@@ -63,6 +65,7 @@ namespace IdentityApplication.Controllers
 
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public async Task<IActionResult> Update(CreateCategorySubCategoryRequest request)
         {

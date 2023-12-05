@@ -1,11 +1,9 @@
 ﻿@using IdentityApplication.Core.ViewModel
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @model CreateCategorySubCategoryRequest
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -24,11 +22,12 @@
     <div class="row">
         <div class="col-md-6">
             <label for="categorySearch">Category:</label>
-            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { @class = "form-select", id = "categorySearch" })
+            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { id = "categorySearch" })
         </div>
         <div class="col-md-6">
             <label for="subcategorySearch">Sub Category:</label>
-            @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "All", new { @class = "form-select", id = "subcategorySearch" })
+            @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "All", new { id = "subcategorySearch" })
+            <input asp-for="SelectedSubCategoryId" type="hidden" />
         </div>
     </div>
     <br />
@@ -86,10 +85,16 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    
 
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+        $('select').selectize({
+          sortField: 'text'
+        });
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
@@ -117,8 +122,8 @@
                             draw: d.draw,
                             start: d.start,
                             length: d.length,
-                            category: $('#categorySearch').val(),
-                            subcategory: $('#subcategorySearch').val()
+                            category: $('#categorySearch')[0].selectize.getValue(),
+                            subcategory: $('#subcategorySearch')[0].selectize.getValue()
                         };
                         return JSON.stringify(customFilter);
                     },
@@ -149,8 +154,18 @@
                 $('#update').show();
 
                 var rowData = table.row($(this).parents('tr')).data();
-                $('#categorySearch').val(rowData.categoryId).trigger('change');
-                $('#subcategorySearch').val(rowData.subCategoryId).trigger('change');
+                // $('#categorySearch').val(rowData.categoryId).trigger('change');
+                // $('#subcategorySearch').val(rowData.subCategoryId).trigger('change');
+
+                // $('#categorySearch').val(rowData.categoryId);
+                $('#SelectedSubCategoryId').val(rowData.subCategoryId);
+
+                // Trigger 'change' event on the Selectize-enhanced dropdowns
+                $('#categorySearch')[0].selectize.setValue(rowData.categoryId);
+                $('#subcategorySearch')[0].selectize.setValue(rowData.subCategoryId);
+
+                var subcategorySelectize = $('#subcategorySearch')[0].selectize;
+                subcategorySelectize.disable();
             });
 
             // Handle Delete button click
@@ -165,8 +180,11 @@
                 $('#save').show();
                 $('#update').hide();
 
-                document.getElementById("categorySearch").selectedIndex = 0;
-                document.getElementById("subcategorySearch").selectedIndex = 0;
+                $('#categorySearch')[0].selectize.clear();
+                $('#subcategorySearch')[0].selectize.clear();
+
+                var subcategorySelectize = $('#subcategorySearch')[0].selectize;
+                subcategorySelectize.enable();
                 table.draw();
             });
         });
