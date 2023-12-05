@@ -30,6 +30,7 @@ namespace IdentityApplication.Core.Repositories
                 }
 
                 var menus = _context.Menu
+                        .OrderBy(e => e.Sort)
                        .Include(e => e.SubMenus)
                        .ToList();
 
@@ -51,6 +52,7 @@ namespace IdentityApplication.Core.Repositories
             try
             {
                 var menusWithFilteredSubMenus = _context.Menu
+                    .OrderBy(e => e.Sort)
                     .Include(menu => menu.SubMenus)
                         .ThenInclude(subMenu => subMenu.SubMenuRoles.Where(role => role.Id == roleId))
                     .Where(menu => menu.SubMenus.Any(subMenu => subMenu.SubMenuRoles.Any(role => role.Id == roleId)))

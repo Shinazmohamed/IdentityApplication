@@ -7,6 +7,8 @@ namespace IdentityApplication.Core.Entities
         [Key]
         public Guid MenuId { get; set; }
         public string DisplayName { get; set; }
+        public int? Sort { get; set; }
+
 
         public List<SubMenu> SubMenus { get; set; }
     }

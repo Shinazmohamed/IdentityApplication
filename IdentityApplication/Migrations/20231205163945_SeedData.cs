@@ -902,12 +902,12 @@ namespace IdentityApplication.Migrations
         private void SeedMenu(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [Menu] (MenuId, DisplayName) VALUES 
-                ('{employeeMenu}', 'Employee'),  
-                ('{userMenu}', 'User'),
-                ('{categoryMenu}', 'Category'),
-                ('{menu}', 'Menu'),
-                ('{subcategoryMenu}', 'Sub Category');");
+                INSERT INTO [Menu] (MenuId, DisplayName, sort) VALUES 
+                ('{employeeMenu}', 'Employee', 1),  
+                ('{userMenu}', 'User', 2),
+                ('{categoryMenu}', 'Category', 3),
+                ('{menu}', 'Menu', 5),
+                ('{subcategoryMenu}', 'Sub Category', 4);");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {
@@ -928,8 +928,7 @@ namespace IdentityApplication.Migrations
             migrationBuilder.Sql($@"
                 INSERT INTO [SubMenuRoles] (SubMenuId, Id) VALUES 
                     ('{createEmployeeSubMenu}','{UserRoleId}'),
-                    ('{listEmployeeSubMenu}','{UserRoleId}'),
-                    ('{profileUserSubMenu}','{UserRoleId}');");
+                    ('{listEmployeeSubMenu}','{UserRoleId}');");
         }
     }
 }

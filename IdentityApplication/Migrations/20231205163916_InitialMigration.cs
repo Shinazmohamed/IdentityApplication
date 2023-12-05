@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IdentityApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class InitiateMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,7 +66,8 @@ namespace IdentityApplication.Migrations
                 columns: table => new
                 {
                     MenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sort = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

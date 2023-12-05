@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231202120125_SeedData")]
+    [Migration("20231205163945_SeedData")]
     partial class SeedData
     {
         /// <inheritdoc />
@@ -187,6 +187,9 @@ namespace IdentityApplication.Migrations
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Sort")
+                        .HasColumnType("int");
 
                     b.HasKey("MenuId");
 

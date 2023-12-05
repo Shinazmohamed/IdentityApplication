@@ -175,7 +175,7 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                _business.Update(request);
+                await _business.Update(request, User.IsInRole(Constants.Roles.Administrator));
 
                 TempData["SuccessMessage"] = "Record updated successfully.";
                 return RedirectToAction("List");

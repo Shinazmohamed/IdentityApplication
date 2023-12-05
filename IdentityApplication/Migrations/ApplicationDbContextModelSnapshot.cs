@@ -185,6 +185,9 @@ namespace IdentityApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Sort")
+                        .HasColumnType("int");
+
                     b.HasKey("MenuId");
 
                     b.ToTable("Menu");
