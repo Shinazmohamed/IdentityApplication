@@ -136,7 +136,6 @@ namespace IdentityApplication.Core.Repositories
                 var entity = await _context.Employee.FindAsync(id);
                 _context.Employee.Remove(entity);
                 _context.SaveChanges();
-
             }
             catch (Exception e)
             {
