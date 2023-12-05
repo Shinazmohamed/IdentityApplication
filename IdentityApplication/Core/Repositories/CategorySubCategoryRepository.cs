@@ -41,10 +41,8 @@ namespace IdentityApplication.Core.Repositories
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
-
-                    // If there's an exception, roll back the transaction
                     transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
                     throw;
                 }
             }
