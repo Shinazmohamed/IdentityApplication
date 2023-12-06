@@ -148,19 +148,13 @@
                 table.draw();
             });
 
-            // Handle Edit button click
             $('#subcategoryTable').on('click', '.btn-edit', function () {
                 $('#save').hide();
                 $('#update').show();
 
                 var rowData = table.row($(this).parents('tr')).data();
-                // $('#categorySearch').val(rowData.categoryId).trigger('change');
-                // $('#subcategorySearch').val(rowData.subCategoryId).trigger('change');
 
-                // $('#categorySearch').val(rowData.categoryId);
                 $('#SelectedSubCategoryId').val(rowData.subCategoryId);
-
-                // Trigger 'change' event on the Selectize-enhanced dropdowns
                 $('#categorySearch')[0].selectize.setValue(rowData.categoryId);
                 $('#subcategorySearch')[0].selectize.setValue(rowData.subCategoryId);
 
@@ -168,7 +162,6 @@
                 subcategorySelectize.disable();
             });
 
-            // Handle Delete button click
             $('#subcategoryTable').on('click', '.btn-delete', function () {
                 var rowData = table.row($(this).parents('tr')).data();
 
