@@ -7,6 +7,7 @@ using System.Diagnostics;
 namespace IdentityApplication.Controllers
 {
     [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
+    [ValidateAntiForgeryToken]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

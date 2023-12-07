@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.OutputCaching;
 namespace IdentityApplication.Controllers
 {
     [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
+    [ValidateAntiForgeryToken]
     public class CategoryController : Controller
     {
         private readonly ICategoryBusiness _business;

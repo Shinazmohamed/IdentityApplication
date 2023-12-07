@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
+    [ValidateAntiForgeryToken]
     public class SubMenuController : Controller
     {
         private readonly ISubMenuBusiness _business;

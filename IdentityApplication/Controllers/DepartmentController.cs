@@ -3,7 +3,7 @@
 namespace IdentityApplication.Controllers
 {
     [ValidateAntiForgeryToken]
-    public class MenuController : Controller
+    public class DepartmentController : Controller
     {
         public IActionResult Index()
         {

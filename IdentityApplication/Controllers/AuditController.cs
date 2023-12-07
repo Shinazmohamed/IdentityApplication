@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace IdentityApplication.Controllers
 {
     [Authorize]
+    [ValidateAntiForgeryToken]
     public class AuditController : Controller
     {
         private readonly IAuditBusiness _business;
