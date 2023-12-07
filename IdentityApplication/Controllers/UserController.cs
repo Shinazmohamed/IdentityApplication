@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace IdentityApplication.Controllers
 {
     [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
-    [ValidateAntiForgeryToken]
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

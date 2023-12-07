@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IdentityApplication.Core;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
-    [ValidateAntiForgeryToken]
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class MenuController : Controller
     {
         public IActionResult Index()

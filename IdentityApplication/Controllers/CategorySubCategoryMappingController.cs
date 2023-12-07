@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace IdentityApplication.Controllers
 {
     [Authorize(Roles = $"{Constants.Roles.Administrator}")]
-    [ValidateAntiForgeryToken]
     public class CategorySubCategoryMappingController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

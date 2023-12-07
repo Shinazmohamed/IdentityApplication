@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace IdentityApplication.Controllers
 {
     [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
-    [ValidateAntiForgeryToken]
     public class SubCategoryController : Controller
     {
         private readonly ISubCategoryBusiness _business;

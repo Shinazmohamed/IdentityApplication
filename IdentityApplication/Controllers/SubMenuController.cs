@@ -1,12 +1,13 @@
 ﻿using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core.Entities;
+using IdentityApplication.Core;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [ValidateAntiForgeryToken]
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class SubMenuController : Controller
     {
         private readonly ISubMenuBusiness _business;

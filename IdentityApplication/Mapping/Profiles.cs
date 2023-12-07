@@ -62,7 +62,16 @@ namespace IdentityApplication.Mapping
             CreateMap<CreateMenuRequest, Menu>();
             CreateMap<CreateMenuRequest, SubMenu>()
                 .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.SelectedMenu));
+
             CreateMap<Audit, ListAuditModel>();
+
+            CreateMap<CreateDepartmentViewModel, Department>()
+                .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<Department, ListDepartmentViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DepartmentId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.DepartmentName));
         }
 
     }
