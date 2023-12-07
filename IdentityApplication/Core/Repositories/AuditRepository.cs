@@ -24,10 +24,9 @@ namespace IdentityApplication.Core.Repositories
             try
             {
                 var query = _context.AuditLogs.OrderBy(e => e.Id).AsQueryable();
-
                 var totalCount = await query.CountAsync();
                 var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
-                var resultViewModel = filteredEntities.Select(entity => _mapper.Map<ListAuditModel>(entity)).ToList();
+                var resultViewModel = filteredEntities.Select(entity => _mapper.Map<ListAuditModel>(entity)).Take(250).ToList();
 
                 return new PaginationResponse<ListAuditModel>(
                     resultViewModel,
