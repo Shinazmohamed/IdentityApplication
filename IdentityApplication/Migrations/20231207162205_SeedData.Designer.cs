@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231206135309_AuditLogMigration")]
-    partial class AuditLogMigration
+    [Migration("20231207162205_SeedData")]
+    partial class SeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -145,7 +145,12 @@ namespace IdentityApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Category");
                 });
@@ -445,6 +450,17 @@ namespace IdentityApplication.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
+                {
+                    b.HasOne("IdentityApplication.Core.Entities.Department", "Department")
+                        .WithMany("Categories")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
                 {
                     b.HasOne("IdentityApplication.Core.Entities.Category", "Category")
@@ -529,6 +545,11 @@ namespace IdentityApplication.Migrations
             modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
                 {
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Department", b =>
+                {
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Menu", b =>

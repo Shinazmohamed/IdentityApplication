@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
     public class AuditController : Controller
     {
         private readonly IAuditBusiness _business;
@@ -21,7 +21,6 @@ namespace IdentityApplication.Controllers
             return View();
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {

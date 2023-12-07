@@ -33,6 +33,16 @@ namespace IdentityApplication.Business
             _unitOfWork.CategorySubCategory.Update(entity);
         }
 
+        public async Task DeleteMapping(string subCategoryId)
+        {
+            var entity = new SubCategory()
+            {
+                SubCategoryId = Guid.Parse(subCategoryId),
+                CategoryId = null
+            };
+            _unitOfWork.CategorySubCategory.Update(entity);
+        }
+
         public async Task<PaginationResponse<ListCategorySubCategoryModel>> GetAll(PaginationFilter filter)
         {
             return await _unitOfWork.CategorySubCategory.GetEntitiesWithFilters(filter);

@@ -26,15 +26,23 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "AuditLogs",
                 columns: table => new
                 {
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TableName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OldValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NewValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AffectedColumns = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PrimaryKey = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.CategoryId);
+                    table.PrimaryKey("PK_AuditLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,21 +124,21 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SubCategory",
+                name: "Category",
                 columns: table => new
                 {
-                    SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SubCategory", x => x.SubCategoryId);
+                    table.PrimaryKey("PK_Category", x => x.CategoryId);
                     table.ForeignKey(
-                        name: "FK_SubCategory_Category_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Category",
-                        principalColumn: "CategoryId",
+                        name: "FK_Category_Department_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Department",
+                        principalColumn: "DepartmentId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -184,6 +192,25 @@ namespace IdentityApplication.Migrations
                         column: x => x.MenuId,
                         principalTable: "Menu",
                         principalColumn: "MenuId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubCategory",
+                columns: table => new
+                {
+                    SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubCategory", x => x.SubCategoryId);
+                    table.ForeignKey(
+                        name: "FK_SubCategory_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -334,6 +361,11 @@ namespace IdentityApplication.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Category_DepartmentId",
+                table: "Category",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubCategory_CategoryId",
                 table: "SubCategory",
                 column: "CategoryId");
@@ -363,7 +395,7 @@ namespace IdentityApplication.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Department");
+                name: "AuditLogs");
 
             migrationBuilder.DropTable(
                 name: "SPDec2023");
@@ -388,6 +420,9 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.DropTable(
                 name: "Location");
+
+            migrationBuilder.DropTable(
+                name: "Department");
 
             migrationBuilder.DropTable(
                 name: "Menu");

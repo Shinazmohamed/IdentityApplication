@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231205163916_InitialMigration")]
+    [Migration("20231207162115_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -95,6 +95,46 @@ namespace IdentityApplication.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Audit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AffectedColumns")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NewValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrimaryKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
+
             modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
                 {
                     b.Property<Guid>("CategoryId")
@@ -105,7 +145,12 @@ namespace IdentityApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Category");
                 });
@@ -405,6 +450,17 @@ namespace IdentityApplication.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
+                {
+                    b.HasOne("IdentityApplication.Core.Entities.Department", "Department")
+                        .WithMany("Categories")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
                 {
                     b.HasOne("IdentityApplication.Core.Entities.Category", "Category")
@@ -489,6 +545,11 @@ namespace IdentityApplication.Migrations
             modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
                 {
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Department", b =>
+                {
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Menu", b =>

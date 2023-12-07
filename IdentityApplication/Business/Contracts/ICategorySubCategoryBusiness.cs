@@ -7,5 +7,6 @@ namespace IdentityApplication.Business.Contracts
         Task UpdateMapping(CreateCategorySubCategoryRequest request);
         Task CreateMapping(CreateCategorySubCategoryRequest request);
         Task<PaginationResponse<ListCategorySubCategoryModel>> GetAll(PaginationFilter filter);
+        Task DeleteMapping(string subCategoryId);
     }
 }

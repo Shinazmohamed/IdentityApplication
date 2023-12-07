@@ -13,12 +13,14 @@ namespace IdentityApplication.Migrations
         private string UserId = Guid.NewGuid().ToString();
         private string LocationId = Guid.NewGuid().ToString();
         private string CategoryId = Guid.NewGuid().ToString();
+        private string DepartmentId = Guid.NewGuid().ToString();
 
         private string employeeMenu = Guid.NewGuid().ToString();
         private string userMenu = Guid.NewGuid().ToString();
         private string categoryMenu = Guid.NewGuid().ToString();
         private string subcategoryMenu = Guid.NewGuid().ToString();
         private string menu = Guid.NewGuid().ToString();
+        private string audit = Guid.NewGuid().ToString();
 
         private string createEmployeeSubMenu = Guid.NewGuid().ToString();
         private string listEmployeeSubMenu = Guid.NewGuid().ToString();
@@ -100,67 +102,67 @@ namespace IdentityApplication.Migrations
                 INSERT INTO [Department] VALUES 
                 (NEWID(), 'GENTS'),
                 (NEWID(), 'LADIES'),
-                (NEWID(), 'ACCESSORIES'),
+                ('{ DepartmentId }', 'ACCESSORIES'),
                 (NEWID(), 'HOMEWARE'),
                 (NEWID(), 'KIDS');");
         }
         private void SeedCategory(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [Category] VALUES 
-                ('{CategoryId}', 'Girls'),
-                (NEWID(), N'Maternity wear'),
-                (NEWID(), N'STORAGE'),
-                (NEWID(), N'HOME TEXTILES'),
-                (NEWID(), N'Sleep wear'),
-                (NEWID(), N'Baby Care Accessories'),
-                (NEWID(), N'Boys Accessories'),
-                (NEWID(), N'SPORTS ACCESSORIES'),
-                (NEWID(), N'Color Cosmetics'),
-                (NEWID(), N'HOME ESSENTIALS'),
-                (NEWID(), N'Boys'),
-                (NEWID(), N'Toys'),
-                (NEWID(), N'Winter wear'),
-                (NEWID(), N'Bath ware'),
-                (NEWID(), N'Undergarments'),
-                (NEWID(), N'Phone Accessories'),
-                (NEWID(), N'KITCHEN ESSENTIALS'),
-                (NEWID(), N'Swim & beach waer'),
-                (NEWID(), N'Formal wear'),
-                (NEWID(), N'HOME DÉCOR'),
-                (NEWID(), N'Casual wear'),
-                (NEWID(), N'DINING'),
-                (NEWID(), N'Gents Accessories'),
-                (NEWID(), N'Bedding'),
-                (NEWID(), N'Bags'),
-                (NEWID(), N'HOME APPLIANCES'),
-                (NEWID(), N'Ethnic wear'),
-                (NEWID(), N'FURNITURES'),
-                (NEWID(), N'Baby Girls'),
-                (NEWID(), N'Travel wear'),
-                (NEWID(), N'Skin Care'),
-                (NEWID(), N'Foot Wear'),
-                (NEWID(), N'HAIR CARE'),
-                (NEWID(), N'Newborn'),
-                (NEWID(), N'SHAPE WEAR'),
-                (NEWID(), N'Shades'),
-                (NEWID(), N'Personal Care Accessories'),
-                (NEWID(), N'Baby Boys'),
-                (NEWID(), N'JEWELLERY'),
-                (NEWID(), N'Ladies Accessories'),
-                (NEWID(), N'Hair Accessories'),
-                (NEWID(), N'Party wear'),
-                (NEWID(), N'Infants  Unisex'),
-                (NEWID(), N'Wallet & Purse'),
-                (NEWID(), N'Sports & leisure wear'),
-                (NEWID(), N'Fragrance'),
-                (NEWID(), N'Stationaries'),
-                (NEWID(), N'Home ware'),
-                (NEWID(), N'Functional'),
-                (NEWID(), N'Kids accessories'),
-                (NEWID(), N'Lingerie'),
-                (NEWID(), N'Girls Accessories'),
-                (NEWID(), N'Home Accessories');");
+                INSERT INTO [Category] (CategoryId, CategoryName, DepartmentId) VALUES 
+                ('{ CategoryId }', 'Girls', '{ DepartmentId }'),
+                (NEWID(), N'Maternity wear', '{DepartmentId}'),
+                (NEWID(), N'STORAGE', '{DepartmentId}'),
+                (NEWID(), N'HOME TEXTILES', '{DepartmentId}'),
+                (NEWID(), N'Sleep wear', '{DepartmentId}'),
+                (NEWID(), N'Baby Care Accessories', '{DepartmentId}'),
+                (NEWID(), N'Boys Accessories', '{DepartmentId}'),
+                (NEWID(), N'SPORTS ACCESSORIES', '{DepartmentId}'),
+                (NEWID(), N'Color Cosmetics', '{DepartmentId}'),
+                (NEWID(), N'HOME ESSENTIALS', '{DepartmentId}'),
+                (NEWID(), N'Boys', '{DepartmentId}'),
+                (NEWID(), N'Toys', '{DepartmentId}'),
+                (NEWID(), N'Winter wear', '{DepartmentId}'),
+                (NEWID(), N'Bath ware', '{DepartmentId}'),
+                (NEWID(), N'Undergarments', '{DepartmentId}'),
+                (NEWID(), N'Phone Accessories', '{DepartmentId}'),
+                (NEWID(), N'KITCHEN ESSENTIALS', '{DepartmentId}'),
+                (NEWID(), N'Swim & beach waer', '{DepartmentId}'),
+                (NEWID(), N'Formal wear', '{DepartmentId}'),
+                (NEWID(), N'HOME DÉCOR', '{DepartmentId}'),
+                (NEWID(), N'Casual wear', '{DepartmentId}'),
+                (NEWID(), N'DINING', '{DepartmentId}'),
+                (NEWID(), N'Gents Accessories', '{DepartmentId}'),
+                (NEWID(), N'Bedding', '{DepartmentId}'),
+                (NEWID(), N'Bags', '{DepartmentId}'),
+                (NEWID(), N'HOME APPLIANCES', '{DepartmentId}'),
+                (NEWID(), N'Ethnic wear', '{DepartmentId}'),
+                (NEWID(), N'FURNITURES', '{DepartmentId}'),
+                (NEWID(), N'Baby Girls', '{DepartmentId}'),
+                (NEWID(), N'Travel wear', '{DepartmentId}'),
+                (NEWID(), N'Skin Care', '{DepartmentId}'),
+                (NEWID(), N'Foot Wear', '{DepartmentId}'),
+                (NEWID(), N'HAIR CARE', '{DepartmentId}'),
+                (NEWID(), N'Newborn', '{DepartmentId}'),
+                (NEWID(), N'SHAPE WEAR', '{DepartmentId}'),
+                (NEWID(), N'Shades', '{DepartmentId}'),
+                (NEWID(), N'Personal Care Accessories', '{DepartmentId}'),
+                (NEWID(), N'Baby Boys', '{DepartmentId}'),
+                (NEWID(), N'JEWELLERY', '{DepartmentId}'),
+                (NEWID(), N'Ladies Accessories', '{DepartmentId}'),
+                (NEWID(), N'Hair Accessories', '{DepartmentId}'),
+                (NEWID(), N'Party wear', '{DepartmentId}'),
+                (NEWID(), N'Infants  Unisex', '{DepartmentId}'),
+                (NEWID(), N'Wallet & Purse', '{DepartmentId}'),
+                (NEWID(), N'Sports & leisure wear', '{DepartmentId}'),
+                (NEWID(), N'Fragrance', '{DepartmentId}'),
+                (NEWID(), N'Stationaries', '{DepartmentId}'),
+                (NEWID(), N'Home ware', '{DepartmentId}'),
+                (NEWID(), N'Functional', '{DepartmentId}'),
+                (NEWID(), N'Kids accessories', '{DepartmentId}'),
+                (NEWID(), N'Lingerie', '{DepartmentId}'),
+                (NEWID(), N'Girls Accessories', '{DepartmentId}'),
+                (NEWID(), N'Home Accessories', '{DepartmentId}');");
         }
         private void SeedSubCategory(MigrationBuilder migrationBuilder)
         {
@@ -903,11 +905,12 @@ namespace IdentityApplication.Migrations
         {
             migrationBuilder.Sql($@"
                 INSERT INTO [Menu] (MenuId, DisplayName, sort) VALUES 
-                ('{employeeMenu}', 'Employee', 1),  
-                ('{userMenu}', 'User', 2),
-                ('{categoryMenu}', 'Category', 3),
-                ('{menu}', 'Menu', 5),
-                ('{subcategoryMenu}', 'Sub Category', 4);");
+                ('{ employeeMenu }', 'Employee', 1),  
+                ('{ userMenu }', 'User', 2),
+                ('{ categoryMenu }', 'Category', 3),
+                ('{ subcategoryMenu }', 'Sub Category', 4),
+                ('{ audit }', 'Audit', 5),
+                ('{ menu }', 'Menu', 6);");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {
@@ -919,8 +922,10 @@ namespace IdentityApplication.Migrations
                     (NEWID(), 'List', 'User', 'Index', '{userMenu}'),
                     ('{profileUserSubMenu}', 'Profile', 'User', 'Profile', '{userMenu}'),
                     (NEWID(), 'Create', 'Category', 'Index', '{categoryMenu}'),
+                    (NEWID(), 'Mapping', 'CategoryDepartmentMapping', 'Index', '{categoryMenu}'),
                     (NEWID(), 'Create', 'SubCategory', 'Index', '{subcategoryMenu}'),
                     (NEWID(), 'Create menu', 'SubMenu', 'Index', '{menu}'),
+                    (NEWID(), 'View logs', 'Audit', 'Index', '{audit}'),
                     (NEWID(), 'Mapping', 'CategorySubCategoryMapping', 'Index', '{subcategoryMenu}');");
         }
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)

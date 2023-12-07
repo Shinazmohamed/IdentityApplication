@@ -68,7 +68,7 @@ namespace IdentityApplication.Core.Repositories
                 }
 
                 var totalCount = await query.CountAsync();
-                var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
+                var filteredEntities = await query.Where(e => e.CategoryId != null).Skip(filter.start).Take(filter.length).ToListAsync();
 
                 var resultViewModel = filteredEntities.Select(entity => new ListCategorySubCategoryModel
                 {

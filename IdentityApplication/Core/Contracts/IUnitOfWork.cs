@@ -13,5 +13,6 @@
         IMenuRepository Menu { get; }
         ISubMenuRepository SubMenu { get; }
         IAuditRepository Audit { get; }
+        ICategoryDepartmentMappingRepository CategoryDepartmentMapping { get; }
     }
 }
