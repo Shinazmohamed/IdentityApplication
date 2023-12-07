@@ -4,6 +4,10 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
+@{
+    var isAdmin = User.IsInRole(Constants.Roles.Administrator);
+}
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success mt-3" id="successMessage">
@@ -103,11 +107,6 @@
                 <form method="post" asp-controller="Employee" asp-action="Edit">
 
                     <input type="hidden" asp-for="EmployeeId" class="form-control" />
-
-
-                    @{
-                        var isAdmin = User.IsInRole(Constants.Roles.Administrator);
-                    }
 
                     <div class="mb-3">
                         <label asp-for="SelectedLocation" class="form-label"></label>
@@ -243,7 +242,6 @@
                         $('#employeeModal').modal('show');
                     },
                     error: function () {
-                        // Handle error
                     }
                 });
             });
@@ -255,10 +253,14 @@
             });
 
             $(document).on('click', '#reset', function () {
-                document.getElementById("locationSearch").selectedIndex = 0;
+                var isAdmin = @isAdmin.ToString().ToLower();
+                if (isAdmin === 'true') {
+                    document.getElementById("locationSearch").selectedIndex = 0;
+                }
                 document.getElementById("departmentSearch").selectedIndex = 0;
                 document.getElementById("categorySearch").selectedIndex = 0;
                 $('#subcategorySearch').empty();
+                $('#subcategorySearch').append('<option value="">All</option>');
                 table.draw();
             });
 
@@ -279,7 +281,6 @@
                         });
                     },
                     error: function (xhr, textStatus, errorThrown) {
-                        console.error('Error fetching subcategories:', textStatus, errorThrown);
                     }
                 });
             });
@@ -299,10 +300,6 @@
                             if (item.value == currentSelectedSubCategoryID){
                                 isSelected = true;
                             }
-
-                            console.log(currentSelectedSubCategoryID);
-                            console.log(isSelected);
-
                             $('#subcategory').append($('<option>', {
                                 value: item.value,
                                 text: item.text,
@@ -311,7 +308,6 @@
                         });
                     },
                     error: function (xhr, textStatus, errorThrown) {
-                        console.error('Error fetching subcategories:', textStatus, errorThrown);
                     }
                 });
             });

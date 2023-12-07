@@ -14,8 +14,9 @@ namespace IdentityApplication.Core.Repositories
         public ISubCategoryRepository SubCategory { get; }
         public IMenuRepository Menu { get; }
         public ISubMenuRepository SubMenu { get; }
+        public IAuditRepository Audit { get; }
         public UnitOfWork(IUserRepository user, IRoleRepository role, ILocationRepository location, IEmployeeRepository employee, IDepartmentRepository department,
-            ICategoryRepository category, ICategorySubCategoryRepository categorySubCategory, ISubCategoryRepository subCategory, IMenuRepository menu, ISubMenuRepository subMenu)
+            ICategoryRepository category, ICategorySubCategoryRepository categorySubCategory, ISubCategoryRepository subCategory, IMenuRepository menu, ISubMenuRepository subMenu, IAuditRepository audit)
         {
             User = user;
             Role = role;
@@ -27,6 +28,7 @@ namespace IdentityApplication.Core.Repositories
             SubCategory = subCategory;
             Menu = menu;
             SubMenu = subMenu;
+            Audit = audit;
         }
     }
 }

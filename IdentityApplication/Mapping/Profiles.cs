@@ -62,6 +62,7 @@ namespace IdentityApplication.Mapping
             CreateMap<CreateMenuRequest, Menu>();
             CreateMap<CreateMenuRequest, SubMenu>()
                 .ForMember(dest => dest.MenuId, opt => opt.MapFrom(src => src.SelectedMenu));
+            CreateMap<Audit, ListAuditModel>();
         }
 
     }

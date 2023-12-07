@@ -12,5 +12,6 @@
         ICategorySubCategoryRepository CategorySubCategory { get; }
         IMenuRepository Menu { get; }
         ISubMenuRepository SubMenu { get; }
+        IAuditRepository Audit { get; }
     }
 }

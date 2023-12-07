@@ -83,6 +83,7 @@ namespace IdentityApplication.Core.Repositories
             {
                 try
                 {
+                    request.Sort = _context.Menu.Count() + 1;
                     _context.Menu.Add(request);
                     _context.SaveChanges();
 
