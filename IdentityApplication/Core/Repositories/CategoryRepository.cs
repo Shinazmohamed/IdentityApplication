@@ -13,41 +13,77 @@ namespace IdentityApplication.Core.Repositories
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CategoryRepository> _logger;
         private readonly IMemoryCache _cache;
-        public CategoryRepository(ApplicationDbContext context, ILogger<CategoryRepository> logger, IMemoryCache cache)
+        private readonly IConfiguration _configuration;
+        public CategoryRepository(ApplicationDbContext context, ILogger<CategoryRepository> logger, IMemoryCache cache, IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
             _cache = cache;
+            _configuration = configuration;
         }
 
         public IList<Category> GetCategories()
         {
-            const string cacheKey = "Categories";
-
-            if (_cache.TryGetValue(cacheKey, out IList<Category> cachedCategories))
+            try
             {
-                return cachedCategories;
+                var cacheSettings = _configuration.GetSection("AppSettings:CacheSettings");
+                bool enableCache = cacheSettings.GetValue<bool>("EnableCache");
+                int cacheDurationMinutes = cacheSettings.GetValue<int>("CacheDurationMinutes");
+
+                const string cacheKey = "Categories";
+
+                if (enableCache && _cache.TryGetValue(cacheKey, out IList<Category> cachedCategories))
+                {
+                    return cachedCategories;
+                }
+
+                var categories = _context.Category.ToList();
+
+                if (enableCache)
+                {
+                    _cache.Set(cacheKey, categories, new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheDurationMinutes)
+                    });
+                }
+
+                return categories;
             }
-
-            var categories = _context.Category.ToList();
-
-            _cache.Set(cacheKey, categories, new MemoryCacheEntryOptions
+            catch (Exception e)
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
-
-            return categories;
+                _logger.LogError(e, "{Repo} All function error", typeof(CategoryRepository));
+                throw;
+            }
         }
+
         public Category GetCategoryById(Guid Id)
         {
-            return _context.Category
-                .Include(e => e.SubCategories)
-                . FirstOrDefault(l => l.CategoryId == Id);
+            try
+            {
+                return _context.Category
+                    .Include(e => e.SubCategories)
+                    .FirstOrDefault(l => l.CategoryId == Id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategoryRepository));
+                throw;
+            }
         }
+
         public Category GetCategoryByName(string Name)
         {
-            return _context.Category.FirstOrDefault(l => l.CategoryName == Name);
+            try
+            {
+                return _context.Category.FirstOrDefault(l => l.CategoryName == Name);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategoryRepository));
+                throw;
+            }
         }
+
         public async Task<PaginationResponse<ListCategoryModel>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try

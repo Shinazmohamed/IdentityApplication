@@ -29,11 +29,6 @@ namespace IdentityApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
         public async Task<IActionResult> Create()
         {

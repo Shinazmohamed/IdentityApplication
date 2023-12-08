@@ -15,7 +15,6 @@ namespace IdentityApplication.Core.Repositories
             _context = context;
             _logger = logger;
         }
-
         public void Update(SubCategory entity)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -47,7 +46,6 @@ namespace IdentityApplication.Core.Repositories
                 }
             }
         }
-
         public async Task<PaginationResponse<ListCategorySubCategoryModel>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try

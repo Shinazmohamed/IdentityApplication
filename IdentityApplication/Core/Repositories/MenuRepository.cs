@@ -11,54 +11,64 @@ namespace IdentityApplication.Core.Repositories
         private readonly ApplicationDbContext _context;
         private readonly ILogger<MenuRepository> _logger;
         private readonly IMemoryCache _cache;
+        private readonly IConfiguration _configuration;
 
-        public MenuRepository(ApplicationDbContext context, ILogger<MenuRepository> logger, IMemoryCache cache)
+        public MenuRepository(ApplicationDbContext context, ILogger<MenuRepository> logger, IMemoryCache cache, IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
             _cache = cache;
+            _configuration = configuration;
         }
         public List<Menu> GetMenus()
         {
+            var response = new List<Menu>();
             try
             {
+                var cacheSettings = _configuration.GetSection("AppSettings:CacheSettings");
+                bool enableCache = cacheSettings.GetValue<bool>("EnableCache");
+                int cacheDurationMinutes = cacheSettings.GetValue<int>("CacheDurationMinutes");
+
                 const string cacheKey = "Menus";
 
-                if (_cache.TryGetValue(cacheKey, out List<Menu> cachedMenus))
+                if (enableCache && _cache.TryGetValue(cacheKey, out List<Menu> cachedMenus))
                 {
                     return cachedMenus;
                 }
 
-                var menus = _context.Menu
+                response = _context.Menu
                         .OrderBy(e => e.Sort)
-                       .Include(e => e.SubMenus)
-                       .ToList();
+                        .Include(e => e.SubMenus)
+                        .ToList();
 
-                _cache.Set(cacheKey, menus, new MemoryCacheEntryOptions
+                if (enableCache)
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                });
-
-                return menus;
+                    _cache.Set(cacheKey, response, new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheDurationMinutes)
+                    });
+                }
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
-                throw;
             }
+
+            return response;
         }
         public List<Menu> GetMenuById(string roleId)
         {
+            var response = new List<Menu>();
             try
             {
-                var menusWithFilteredSubMenus = _context.Menu
+                response = _context.Menu
                     .OrderBy(e => e.Sort)
                     .Include(menu => menu.SubMenus)
                         .ThenInclude(subMenu => subMenu.SubMenuRoles.Where(role => role.Id == roleId))
                     .Where(menu => menu.SubMenus.Any(subMenu => subMenu.SubMenuRoles.Any(role => role.Id == roleId)))
                     .ToList();
 
-                foreach (var menu in menusWithFilteredSubMenus)
+                foreach (var menu in response)
                 {
                     var subMenusToRemove = menu.SubMenus.Where(subMenu => !subMenu.SubMenuRoles.Any()).ToList();
 
@@ -67,14 +77,12 @@ namespace IdentityApplication.Core.Repositories
                         menu.SubMenus.Remove(subMenuToRemove);
                     }
                 }
-
-                return menusWithFilteredSubMenus;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
-                throw;
             }
+            return response;
         }
 
         public void Create(Menu request)
@@ -93,7 +101,6 @@ namespace IdentityApplication.Core.Repositories
                 {
                     transaction.Rollback();
                     _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
-                    throw;
                 }
             }
         }

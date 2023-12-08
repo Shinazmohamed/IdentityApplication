@@ -10,12 +10,14 @@ namespace IdentityApplication.Core.Repositories
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SubMenuRepository> _logger;
         private readonly IMemoryCache _cache;
+        private readonly IConfiguration _configuration;
 
-        public SubMenuRepository(ApplicationDbContext context, ILogger<SubMenuRepository> logger, IMemoryCache cache)
+        public SubMenuRepository(ApplicationDbContext context, ILogger<SubMenuRepository> logger, IMemoryCache cache, IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
             _cache = cache;
+            _configuration = configuration;
         }
 
         public void Create(SubMenu request)
@@ -33,35 +35,40 @@ namespace IdentityApplication.Core.Repositories
                 {
                     transaction.Rollback();
                     _logger.LogError(e, "{Repo} All function error", typeof(SubMenuRepository));
-                    throw;
                 }
             }
         }
         public List<SubMenu> GetAll()
         {
+            var response = new List<SubMenu>();
             try
             {
+                var cacheSettings = _configuration.GetSection("AppSettings:CacheSettings");
+                bool enableCache = cacheSettings.GetValue<bool>("EnableCache");
+                int cacheDurationMinutes = cacheSettings.GetValue<int>("CacheDurationMinutes");
+
                 const string cacheKey = "SubMenus";
 
-                if (_cache.TryGetValue(cacheKey, out List<SubMenu> cachedSubMenus))
+                if (enableCache && _cache.TryGetValue(cacheKey, out List<SubMenu> cachedSubMenus))
                 {
                     return cachedSubMenus;
                 }
 
-                var submenus = _context.SubMenu.ToList();
+                response = _context.SubMenu.ToList();
 
-                _cache.Set(cacheKey, submenus, new MemoryCacheEntryOptions
+                if (enableCache)
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                });
-
-                return submenus;
+                    _cache.Set(cacheKey, response, new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheDurationMinutes)
+                    });
+                }
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(SubMenuRepository));
-                throw;
             }
+            return response;
         }
     }
 }

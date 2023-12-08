@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/IdentityApplication.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/selectize.bootstrap3.min.css" />
+    <link rel="stylesheet" href="~/css/jquery.dataTables.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 <body>
     <header>
@@ -20,13 +24,18 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-        &copy; 2023 - IdentityApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2023 - No limit Application - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/selectize.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.dataTables.js" asp-append-version="true"></script>
+    <script src="~/lib/moment.js/moment.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

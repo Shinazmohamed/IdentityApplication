@@ -2,6 +2,10 @@
 {
     public class PaginationResponse<T>
     {
+        public PaginationResponse()
+        {
+        }
+
         public PaginationResponse(List<T> data, int count, int page, int pageSize)
         {
             Data = data;

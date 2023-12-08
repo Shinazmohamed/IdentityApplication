@@ -40,7 +40,6 @@ namespace IdentityApplication.Core.Repositories
                 {
                     transaction.Rollback();
                     _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
-                    throw;
                 }
             }
         }
@@ -57,7 +56,6 @@ namespace IdentityApplication.Core.Repositories
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
-                throw;
             }
         }
 
@@ -97,17 +95,45 @@ namespace IdentityApplication.Core.Repositories
 
         public IList<SubCategory> GetSubCategories()
         {
-            return _context.SubCategory.ToList();
+            var response = new List<SubCategory>();
+            try
+            {
+                response = _context.SubCategory.ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+            }
+            return response;
         }
 
         public SubCategory GetSubCategoryById(Guid Id)
         {
-            return _context.SubCategory.FirstOrDefault(l => l.SubCategoryId == Id);
+            var response = new SubCategory();
+
+            try
+            {
+                response = _context.SubCategory.FirstOrDefault(l => l.SubCategoryId == Id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+            }
+            return response;
         }
 
         public SubCategory GetSubCategoryByName(string Name)
         {
-            return _context.SubCategory.FirstOrDefault(l => l.SubCategoryName == Name);
+            var response = new SubCategory();
+            try
+            {
+                response = _context.SubCategory.FirstOrDefault(l => l.SubCategoryName == Name);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+            }
+            return response;
         }
 
         public void Update(SubCategory entity)
@@ -130,14 +156,12 @@ namespace IdentityApplication.Core.Repositories
                     existingMapping.SubCategoryName = entity.SubCategoryName;
                     _context.SaveChanges();
 
-                    // If everything succeeds, commit the transaction
                     transaction.Commit();
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
                     _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
-                    throw;
                 }
             }
         }

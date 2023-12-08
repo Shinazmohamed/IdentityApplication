@@ -1,9 +1,6 @@
 ﻿@using IdentityApplication.Core;
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 }
@@ -161,8 +158,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -229,13 +224,14 @@
                     url: '/employee/Edit?id=' + id,
                     method: 'GET',
                     success: function (employee) {
-                        console.log(employee);
                         $('#EmployeeId').val(id);
                         $('#SelectedLocation')[0].selectize.setValue(employee.selectedLocation);
+
+                        $('#SelectedSubCategoryId').val(employee.selectedSubCategory);
+                        $('#SelectedCategoryId').val(employee.selectedCategory);
                         $('#department')[0].selectize.setValue(employee.selectedDepartment);
                         $('#category')[0].selectize.setValue(employee.selectedCategory);
-                        $('#subcategory')[0].selectize.setValue(employee.selectedSubCategory);
-                        $('#SelectedSubCategoryId').val(employee.selectedSubCategory);
+
                         $('#E1').val(employee.e1);
                         $('#E2').val(employee.e2);
                         $('#M1').val(employee.m1);
@@ -257,14 +253,16 @@
                 if (isAdmin === 'true') {
                     $('#locationSearch')[0].selectize.setValue(0);
                 }
+
+                $('#SelectedSubCategoryId').val('');
+                $('#SelectedCategoryId').val('');
+
                 $('#departmentSearch')[0].selectize.setValue(0);
                 $('#categorySearch')[0].selectize.setValue(0);
+                $('#subcategorySearch')[0].selectize.setValue(0);
 
-                $('#categorySearch')[0].selectize.clearOptions();
-                $('#categorySearch').append('<option value="">All</option>');
-
-                $('#subcategorySearch')[0].selectize.clearOptions();
-                $('#subcategorySearch').append('<option value="">All</option>');
+                clearselectizeddl('categorySearch');
+                clearselectizeddl('subcategorySearch');
                 table.draw();
             });
 
@@ -276,8 +274,7 @@
                         method: 'GET',
                         contentType: 'application/json',
                         success: function (data) {
-                            console.log(data);
-                            $('#categorySearch')[0].selectize.clearOptions();
+                            clearselectizeddl('categorySearch');
                             $.each(data, function (index, item) {
                                 $('#categorySearch')[0].selectize.addOption({
                                     value: item.value,
@@ -290,41 +287,18 @@
             });
 
             $('#department').change(function () {
-                var selectedDepartment = $(this).val();
-                if (selectedDepartment){
-                    $.ajax({
-                        url: '/Department/GetCategories?id=' + selectedDepartment,
-                        method: 'GET',
-                        contentType: 'application/json',
-                        success: function (data) {
-                            $('#category')[0].selectize.clearOptions();
-                            $.each(data, function (index, item) {
-                                var currentSelectedCategoryID = $('#SelectedCategoryId').val();
-                                var isSelected = false;
-                                if (item.value == currentSelectedCategoryID) {
-                                    isSelected = true;
-                                }
-                                $('#category')[0].selectize.addOption({
-                                    value: item.value,
-                                    text: item.text,
-                                    selected: isSelected
-                                });
-                            });
-                        }
-                    });
-                }
+                loadDepartments($(this).val());
             });
 
             $('#categorySearch').change(function () {
                 var selectedCategory = $(this).val();
-                if (selectedCategory){
-                    console.log(selectedCategory);
+                if (selectedCategory) {
                     $.ajax({
                         url: '/Category/GetSubcategories?id=' + selectedCategory,
                         method: 'GET',
                         contentType: 'application/json',
                         success: function (data) {
-                            $('#subcategorySearch')[0].selectize.clearOptions();
+                            clearselectizeddl('subcategorySearch');
                             $.each(data, function (index, item) {
                                 $('#subcategorySearch')[0].selectize.addOption({
                                     value: item.value,
@@ -338,30 +312,58 @@
             });
 
             $('#category').change(function () {
-                var selectedCategory = $(this).val();
+                loadCategories($(this).val());
+            });
+
+            function loadDepartments(selectedDepartment) {
+                if (selectedDepartment) {
+                    $.ajax({
+                        url: '/Department/GetCategories?id=' + selectedDepartment,
+                        method: 'GET',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            clearselectizeddl('category');
+                            $.each(data, function (index, item) {
+                                $('#category')[0].selectize.addOption({
+                                    value: item.value,
+                                    text: item.text
+                                });
+                            });
+                            if ($('#SelectedCategoryId').val())
+                                $('#category')[0].selectize.setValue($('#SelectedCategoryId').val());
+                        }
+                    });
+                }
+            }
+
+            function loadCategories(selectedCategory) {
                 if (selectedCategory) {
+
                     $.ajax({
                         url: '/Category/GetSubcategories?id=' + selectedCategory,
                         method: 'GET',
                         contentType: 'application/json',
                         success: function (data) {
-                            $('#subcategory')[0].selectize.clearOptions();
+                            clearselectizeddl('subcategory');
+
                             $.each(data, function (index, item) {
-                                var currentSelectedSubCategoryID = $('#SelectedSubCategoryId').val();
-                                var isSelected = false;
-                                if (item.value == currentSelectedSubCategoryID) {
-                                    isSelected = true;
-                                }
                                 $('#subcategory')[0].selectize.addOption({
                                     value: item.value,
-                                    text: item.text,
-                                    selected: isSelected
+                                    text: item.text
                                 });
+                                if ($('#SelectedSubCategoryId').val())
+                                    $('#subcategory')[0].selectize.setValue($('#SelectedSubCategoryId').val());
                             });
                         }
                     });
                 }
-            });
+            }
+
+            function clearselectizeddl(ddlName) {
+                $('#' + ddlName)[0].selectize.clear();
+                $('#' + ddlName)[0].selectize.clearOptions();
+            }
+
         });
     </script>
 

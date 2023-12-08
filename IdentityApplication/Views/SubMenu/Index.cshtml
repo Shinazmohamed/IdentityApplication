@@ -62,10 +62,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            // Hide/show additional fields based on the initial state of the checkbox
             toggleAdditionalFields();
 
-            // Handle the change event of the checkbox
             $("#isParentCheckbox").change(function () {
                 toggleAdditionalFields();
             });
@@ -74,7 +72,6 @@
                 var isChecked = $("#isParentCheckbox").prop("checked");
                 $("#additionalFields").toggle(!isChecked);
             }
-
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");

@@ -17,6 +17,7 @@ namespace IdentityApplication.Migrations
 
         private string employeeMenu = Guid.NewGuid().ToString();
         private string userMenu = Guid.NewGuid().ToString();
+        private string departmentMenu = Guid.NewGuid().ToString();
         private string categoryMenu = Guid.NewGuid().ToString();
         private string subcategoryMenu = Guid.NewGuid().ToString();
         private string menu = Guid.NewGuid().ToString();
@@ -907,10 +908,11 @@ namespace IdentityApplication.Migrations
                 INSERT INTO [Menu] (MenuId, DisplayName, sort) VALUES 
                 ('{ employeeMenu }', 'Employee', 1),  
                 ('{ userMenu }', 'User', 2),
-                ('{ categoryMenu }', 'Category', 3),
-                ('{ subcategoryMenu }', 'Sub Category', 4),
-                ('{ audit }', 'Audit', 5),
-                ('{ menu }', 'Menu', 6);");
+                ('{ departmentMenu }', 'Department', 3),
+                ('{ categoryMenu }', 'Category', 4),
+                ('{ subcategoryMenu }', 'Sub Category', 5),
+                ('{ audit }', 'Audit', 6),
+                ('{ menu }', 'Menu', 7);");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {
@@ -926,6 +928,7 @@ namespace IdentityApplication.Migrations
                     (NEWID(), 'Create', 'SubCategory', 'Index', '{subcategoryMenu}'),
                     (NEWID(), 'Create menu', 'SubMenu', 'Index', '{menu}'),
                     (NEWID(), 'View logs', 'Audit', 'Index', '{audit}'),
+                    (NEWID(), 'Create', 'Department', 'Index', '{ departmentMenu }'),
                     (NEWID(), 'Mapping', 'CategorySubCategoryMapping', 'Index', '{subcategoryMenu}');");
         }
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)

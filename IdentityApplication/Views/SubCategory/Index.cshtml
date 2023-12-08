@@ -1,9 +1,5 @@
 ﻿@using IdentityApplication.Core.ViewModel
 @model CreateSubCategoryRequest
-
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success mt-3" id="successMessage">
@@ -77,9 +73,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-
-
     <script type="text/javascript">
         var table;
         $(document).ready(function () {

@@ -14,43 +14,77 @@ namespace IdentityApplication.Core.Repositories
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
         private readonly ILogger<DepartmentRepository> _logger;
+        private readonly IConfiguration _configuration;
 
-        public DepartmentRepository(ApplicationDbContext context, IMemoryCache cache, IMapper mapper, ILogger<DepartmentRepository> logger)
+        public DepartmentRepository(ApplicationDbContext context, IMemoryCache cache, IMapper mapper, ILogger<DepartmentRepository> logger, IConfiguration configuration)
         {
             _context = context;
             _cache = cache;
             _mapper = mapper;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IList<Department> GetDepartments()
         {
-            const string cacheKey = "Departments";
-
-            if (_cache.TryGetValue(cacheKey, out IList<Department> cachedDepartments))
+            var response = new List<Department>();
+            try
             {
-                return cachedDepartments;
+                var cacheSettings = _configuration.GetSection("AppSettings:CacheSettings");
+                bool enableCache = cacheSettings.GetValue<bool>("EnableCache");
+                int cacheDurationMinutes = cacheSettings.GetValue<int>("CacheDurationMinutes");
+
+                const string cacheKey = "Departments";
+
+                if (enableCache && _cache.TryGetValue(cacheKey, out IList<Department> cachedDepartments))
+                {
+                    return cachedDepartments;
+                }
+
+                response = _context.Department.ToList();
+                if (enableCache)
+                {
+                    _cache.Set(cacheKey, response, new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheDurationMinutes)
+                    });
+                }
             }
-
-            var departments = _context.Department.ToList();
-
-            _cache.Set(cacheKey, departments, new MemoryCacheEntryOptions
+            catch (Exception e)
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });
-
-            return departments;
+                _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
+            }
+            return response;
         }
         public Department GetDepartmentById(Guid Id)
         {
-            return _context.Department.Include(e => e.Categories).FirstOrDefault(l => l.DepartmentId == Id);
+            var response = new Department();
+            try
+            {
+                response = _context.Department.Include(e => e.Categories).FirstOrDefault(l => l.DepartmentId == Id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
+            }
+            return response;
         }
         public Department GetDepartmentByName(string Name)
         {
-            return _context.Department.FirstOrDefault(l => l.DepartmentName == Name);
+            var response = new Department();
+            try
+            {
+                response = _context.Department.FirstOrDefault(l => l.DepartmentName == Name);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
+            }
+            return response;
         }
         public async Task<PaginationResponse<ListDepartmentViewModel>> GetEntitiesWithFilters(PaginationFilter filter)
         {
+            var response = new PaginationResponse<ListDepartmentViewModel>();
             try
             {
                 var query = _context.Department.OrderBy(e => e.DepartmentId).AsQueryable();
@@ -60,22 +94,18 @@ namespace IdentityApplication.Core.Repositories
                     query = query.Where(e => e.DepartmentName == filter.department);
                 }
 
-                var totalCount = await query.CountAsync();
+                response.TotalCount = await query.CountAsync();
                 var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
-                var resultViewModel = filteredEntities.Select(entity => _mapper.Map<ListDepartmentViewModel>(entity)).ToList();
+                response.Data = filteredEntities.Select(entity => _mapper.Map<ListDepartmentViewModel>(entity)).ToList();
+                response.CurrentPage = filter.draw;
+                response.PageSize = filter.length;
 
-                return new PaginationResponse<ListDepartmentViewModel>(
-                    resultViewModel,
-                    totalCount,
-                    filter.draw,
-                    filter.length
-                );
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
-                throw;
             }
+            return response;
         }
 
         public void Create(Department request)
@@ -101,7 +131,6 @@ namespace IdentityApplication.Core.Repositories
                 {
                     transaction.Rollback();
                     _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
-                    throw;
                 }
             }
         }
@@ -117,7 +146,6 @@ namespace IdentityApplication.Core.Repositories
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
-                throw;
             }
         }
         public void Update(Department entity)
@@ -146,7 +174,6 @@ namespace IdentityApplication.Core.Repositories
                 {
                     transaction.Rollback();
                     _logger.LogError(e, "{Repo} All function error", typeof(DepartmentRepository));
-                    throw;
                 }
             }
         }
