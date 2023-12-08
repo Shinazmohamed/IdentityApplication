@@ -122,13 +122,13 @@ namespace IdentityApplication.Controllers
                     new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
 
 
-            var categories = _unitOfWork.Category.GetCategories();
-            response.Categories = categories.Select(category =>
-                new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
+            //var categories = _unitOfWork.Category.GetCategories();
+            //response.Categories = categories.Select(category =>
+            //    new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
 
-            var subCategories = _unitOfWork.SubCategory.GetSubCategories();
-            response.SubCategories = subCategories.Select(subCategory =>
-                new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
+            //var subCategories = _unitOfWork.SubCategory.GetSubCategories();
+            //response.SubCategories = subCategories.Select(subCategory =>
+            //    new SelectListItem(subCategory?.SubCategoryName, subCategory?.SubCategoryId.ToString(), false)).ToList();
 
             return View(response);
         }

@@ -43,7 +43,7 @@ namespace IdentityApplication.Core.Repositories
         }
         public Department GetDepartmentById(Guid Id)
         {
-            return _context.Department.FirstOrDefault(l => l.DepartmentId == Id);
+            return _context.Department.Include(e => e.Categories).FirstOrDefault(l => l.DepartmentId == Id);
         }
         public Department GetDepartmentByName(string Name)
         {

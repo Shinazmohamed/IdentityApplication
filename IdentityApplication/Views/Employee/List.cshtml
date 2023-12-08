@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 }
@@ -26,22 +26,22 @@
     {
         <div class="col-md-6">
             <label for="locationSearch">Search by Location:</label>
-            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "All", new { @class = "form-select", id = "locationSearch" })
+            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "All", new { id = "locationSearch" })
         </div>
     }
     <div class="col-md-6">
         <label for="departmentSearch">Search by Department:</label>
-        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "All", new { @class = "form-select", id = "departmentSearch" })
+        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "All", new { id = "departmentSearch" })
     </div>
 </div>
 <div class="row">
     <div class="col-md-6">
         <label for="categorySearch">Search by Category:</label>
-        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { @class = "form-select", id = "categorySearch" })
+        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { id = "categorySearch" })
     </div>
     <div class="col-md-6">
         <label for="subcategorySearch">Search by Sub Category:</label>
-        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "All", new { @class = "form-select", id = "subcategorySearch" })
+        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, "All", new { id = "subcategorySearch" })
     </div>
 </div>
 <br />
@@ -107,25 +107,25 @@
                 <form method="post" asp-controller="Employee" asp-action="Edit">
 
                     <input type="hidden" asp-for="EmployeeId" class="form-control" />
-
                     <div class="mb-3">
                         <label asp-for="SelectedLocation" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, (isAdmin) ? new { @class = "form-select" } : new { @class = "form-select", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, (isAdmin) ? new { id = "SelectedLocation" } : new { id = "SelectedLocation", disabled = true })
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="SelectedDepartment" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, (isAdmin) ? new { @class = "form-select" } : new { @class = "form-select", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, (isAdmin) ? new { id = "department" } : new { id = "department", disabled = true })
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="SelectedCategory" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, (isAdmin) ? new { @class = "form-select", id = "category" } : new { @class = "form-select", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, (isAdmin) ? new { id = "category" } : new { id = "category", disabled = true })
+                        <input type="hidden" id="SelectedCategoryId" class="form-control" />
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="SelectedSubCategory" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, (isAdmin) ? new { @class = "form-select", id = "subcategory" } : new { @class = "form-select", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, (isAdmin) ? new { id = "subcategory" } : new { id = "subcategory", disabled = true })
                         <input type="hidden" id="SelectedSubCategoryId" class="form-control" />
                     </div>
 
@@ -162,10 +162,13 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
+            $('select').selectize({
+                sortField: 'text'
+            });
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
@@ -186,10 +189,10 @@
                             draw: d.draw,
                             start: d.start,
                             length: d.length,
-                            location: $('#locationSearch').val(),
-                            category: $('#categorySearch').val(),
-                            department: $('#departmentSearch').val(),
-                            subcategory: $('#subcategorySearch').val()
+                            location: $('#locationSearch')[0].selectize.getValue(),
+                            category: $('#categorySearch')[0].selectize.getValue(),
+                            department: $('#departmentSearch')[0].selectize.getValue(),
+                            subcategory: $('#subcategorySearch')[0].selectize.getValue()
                         };
                         return JSON.stringify(customFilter);
                     },
@@ -220,19 +223,18 @@
                 table.draw();
             });
 
-            // Handle Edit button click
             $('#employeeTable').on('click', '.btn-edit', function () {
                 var id = $(this).data('id');
-
                 $.ajax({
                     url: '/employee/Edit?id=' + id,
                     method: 'GET',
                     success: function (employee) {
-
+                        console.log(employee);
                         $('#EmployeeId').val(id);
-                        $('#SelectedLocation').val(employee.selectedLocation).trigger('change');
-                        $('#SelectedDepartment').val(employee.selectedDepartment).trigger('change');
-                        $('#category').val(employee.selectedCategory).trigger('change');
+                        $('#SelectedLocation')[0].selectize.setValue(employee.selectedLocation);
+                        $('#department')[0].selectize.setValue(employee.selectedDepartment);
+                        $('#category')[0].selectize.setValue(employee.selectedCategory);
+                        $('#subcategory')[0].selectize.setValue(employee.selectedSubCategory);
                         $('#SelectedSubCategoryId').val(employee.selectedSubCategory);
                         $('#E1').val(employee.e1);
                         $('#E2').val(employee.e2);
@@ -240,8 +242,6 @@
                         $('#M2').val(employee.m2);
 
                         $('#employeeModal').modal('show');
-                    },
-                    error: function () {
                     }
                 });
             });
@@ -253,64 +253,116 @@
             });
 
             $(document).on('click', '#reset', function () {
-                var isAdmin = @isAdmin.ToString().ToLower();
+                var isAdmin = '@isAdmin'.toLowerCase();
                 if (isAdmin === 'true') {
-                    document.getElementById("locationSearch").selectedIndex = 0;
+                    $('#locationSearch')[0].selectize.setValue(0);
                 }
-                document.getElementById("departmentSearch").selectedIndex = 0;
-                document.getElementById("categorySearch").selectedIndex = 0;
-                $('#subcategorySearch').empty();
+                $('#departmentSearch')[0].selectize.setValue(0);
+                $('#categorySearch')[0].selectize.setValue(0);
+
+                $('#categorySearch')[0].selectize.clearOptions();
+                $('#categorySearch').append('<option value="">All</option>');
+
+                $('#subcategorySearch')[0].selectize.clearOptions();
                 $('#subcategorySearch').append('<option value="">All</option>');
                 table.draw();
             });
 
+            $('#departmentSearch').change(function () {
+                var selectedDepartment = $(this).val();
+                if (selectedDepartment) {
+                    $.ajax({
+                        url: '/Department/GetCategories?id=' + selectedDepartment,
+                        method: 'GET',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            console.log(data);
+                            $('#categorySearch')[0].selectize.clearOptions();
+                            $.each(data, function (index, item) {
+                                $('#categorySearch')[0].selectize.addOption({
+                                    value: item.value,
+                                    text: item.text
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('#department').change(function () {
+                var selectedDepartment = $(this).val();
+                if (selectedDepartment){
+                    $.ajax({
+                        url: '/Department/GetCategories?id=' + selectedDepartment,
+                        method: 'GET',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            $('#category')[0].selectize.clearOptions();
+                            $.each(data, function (index, item) {
+                                var currentSelectedCategoryID = $('#SelectedCategoryId').val();
+                                var isSelected = false;
+                                if (item.value == currentSelectedCategoryID) {
+                                    isSelected = true;
+                                }
+                                $('#category')[0].selectize.addOption({
+                                    value: item.value,
+                                    text: item.text,
+                                    selected: isSelected
+                                });
+                            });
+                        }
+                    });
+                }
+            });
 
             $('#categorySearch').change(function () {
                 var selectedCategory = $(this).val();
-                $.ajax({
-                    url: '/Category/GetSubcategories?id=' + selectedCategory,
-                    method: 'GET',
-                    contentType: 'application/json',
-                    success: function (data) {
-                        $('#subcategorySearch').empty();
-                        $.each(data, function (index, item) {
-                            $('#subcategorySearch').append($('<option>', {
-                                value: item.value,
-                                text: item.text
-                            }));
-                        });
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                    }
-                });
+                if (selectedCategory){
+                    console.log(selectedCategory);
+                    $.ajax({
+                        url: '/Category/GetSubcategories?id=' + selectedCategory,
+                        method: 'GET',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            $('#subcategorySearch')[0].selectize.clearOptions();
+                            $.each(data, function (index, item) {
+                                $('#subcategorySearch')[0].selectize.addOption({
+                                    value: item.value,
+                                    text: item.text
+                                });
+                            });
+                        }
+                    });
+                }
+
             });
 
             $('#category').change(function () {
                 var selectedCategory = $(this).val();
-                $.ajax({
-                    url: '/Category/GetSubcategories?id=' + selectedCategory,
-                    method: 'GET',
-                    contentType: 'application/json',
-                    success: function (data) {
-                        $('#subcategory').empty();
-                        $.each(data, function (index, item) {
-
-                            var currentSelectedSubCategoryID = $('#SelectedSubCategoryId').val();
-                            var isSelected = false;
-                            if (item.value == currentSelectedSubCategoryID){
-                                isSelected = true;
-                            }
-                            $('#subcategory').append($('<option>', {
-                                value: item.value,
-                                text: item.text,
-                                selected: isSelected
-                            }));
-                        });
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                    }
-                });
+                if (selectedCategory) {
+                    $.ajax({
+                        url: '/Category/GetSubcategories?id=' + selectedCategory,
+                        method: 'GET',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            $('#subcategory')[0].selectize.clearOptions();
+                            $.each(data, function (index, item) {
+                                var currentSelectedSubCategoryID = $('#SelectedSubCategoryId').val();
+                                var isSelected = false;
+                                if (item.value == currentSelectedSubCategoryID) {
+                                    isSelected = true;
+                                }
+                                $('#subcategory')[0].selectize.addOption({
+                                    value: item.value,
+                                    text: item.text,
+                                    selected: isSelected
+                                });
+                            });
+                        }
+                    });
+                }
             });
         });
     </script>
+
 }

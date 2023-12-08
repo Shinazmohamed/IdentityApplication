@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using IdentityApplication.Core.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace IdentityApplication.Core.ViewModel
@@ -24,25 +25,25 @@ namespace IdentityApplication.Core.ViewModel
         [Display(Name = "Location")]
         public string SelectedLocation { get; set; }
 
-        public List<SelectListItem> Locations { get; set; }
+        public List<SelectListItem> Locations { get; set; } = new List<SelectListItem>();
 
         [Required]
         [Display(Name = "Department")]
         public string SelectedDepartment { get; set; }
 
-        public List<SelectListItem> Departments { get; set; }
+        public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
 
         [Required]
         [Display(Name = "Category")]
         public string SelectedCategory { get; set; }
 
-        public List<SelectListItem> Categories { get; set; }
+        public List<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
 
         [Required]
         [Display(Name = "Sub Category")]
         public string SelectedSubCategory { get; set; }
 
-        public List<SelectListItem> SubCategories { get; set; }
+        public List<SelectListItem> SubCategories { get; set; } = new List<SelectListItem>();
     }
 
 }

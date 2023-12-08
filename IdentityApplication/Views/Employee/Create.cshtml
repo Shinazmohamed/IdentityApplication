@@ -24,7 +24,7 @@
 
     <div class="mb-3">
         <label asp-for="SelectedDepartment" class="form-label"></label>
-        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Select a  department", new { @class = "form-select" })
+        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Select a  department", new { @class = "form-select", id = "departmentDropdown" })
     </div>
 
     <div class="mb-3">
@@ -86,6 +86,28 @@
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         console.error('Error fetching subcategories:', textStatus, errorThrown);
+                    }
+                });
+            });
+
+
+            $('#departmentDropdown').change(function () {
+                var selectedDepartment = $(this).val();
+                $.ajax({
+                    url: '/Department/GetCategories?id=' + selectedDepartment,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        $('#categoryDropdown').empty();
+                        $.each(data, function (index, item) {
+                            $('#categoryDropdown').append($('<option>', {
+                                value: item.value,
+                                text: item.text
+                            }));
+                        });
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.error('Error fetching categories:', textStatus, errorThrown);
                     }
                 });
             });
