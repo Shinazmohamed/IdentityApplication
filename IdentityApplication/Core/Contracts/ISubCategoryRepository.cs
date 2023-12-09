@@ -12,5 +12,6 @@ namespace IdentityApplication.Core.Contracts
         SubCategory GetSubCategoryByName(string Name);
         Task<PaginationResponse<ListSubCategoryModel>> GetEntitiesWithFilters(PaginationFilter filter);
         Task Delete(Guid id);
+        List<SubCategory> GetSubCategoryByCategoryId(Guid Id);
     }
 }

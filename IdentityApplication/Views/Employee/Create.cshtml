@@ -72,7 +72,7 @@
             $('#categoryDropdown').change(function () {
                 var selectedCategory = $(this).val();
                 $.ajax({
-                    url: '/Category/GetSubcategories?id=' + selectedCategory,
+                    url: '/SubCategory/GetSubcategories?id=' + selectedCategory,
                     method: 'GET',
                     contentType: 'application/json',
                     success: function (data) {
@@ -94,7 +94,7 @@
             $('#departmentDropdown').change(function () {
                 var selectedDepartment = $(this).val();
                 $.ajax({
-                    url: '/Department/GetCategories?id=' + selectedDepartment,
+                    url: '/Category/GetCategoryByDepartmentId?id=' + selectedDepartment,
                     method: 'GET',
                     contentType: 'application/json',
                     success: function (data) {

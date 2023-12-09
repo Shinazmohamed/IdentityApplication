@@ -85,6 +85,12 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory));
 
 
+            CreateMap<SubCategory, ListSubCategoryModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SubCategoryId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.SubCategoryName));
+            
+
+
         }
 
     }

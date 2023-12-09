@@ -3,10 +3,11 @@ using IdentityApplication.Core;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
+    [Authorize]
     public class SubCategoryController : Controller
     {
         private readonly ISubCategoryBusiness _business;
@@ -16,13 +17,11 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
@@ -37,7 +36,6 @@ namespace IdentityApplication.Controllers
             return Json(jsonD);
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateSubCategoryRequest request)
         {
@@ -54,7 +52,6 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Update(CreateSubCategoryRequest request)
         {
@@ -71,7 +68,6 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> Delete(string mappingId)
         {
@@ -96,5 +92,33 @@ namespace IdentityApplication.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpGet]
+        public IActionResult GetSubcategories(string id)
+        {
+            try
+            {
+                var response = _business.GetSubCategoriesByCategoryId(id);
+
+                var sub = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "", Text = "All" }
+                };
+
+                sub.AddRange(response.Select(item => new SelectListItem
+                {
+                    Value = item.Id.ToString(),
+                    Text = item.Name.ToString()
+                }));
+
+                return Json(sub);
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "No Records found.";
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
     }
 }

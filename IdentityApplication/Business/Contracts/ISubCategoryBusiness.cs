@@ -9,5 +9,6 @@ namespace IdentityApplication.Business.Contracts
         Task<PaginationResponse<ListSubCategoryModel>> GetAllWithFilters(PaginationFilter filter);
         Task Delete(string id);
         List<ListSubCategoryModel> GetSubCategoriesById(string Id);
+        List<ListSubCategoryModel> GetSubCategoriesByCategoryId(string Id);
     }
 }

@@ -60,9 +60,20 @@ namespace IdentityApplication.Core.Repositories
         {
             try
             {
-                return _context.Category
-                    .Include(e => e.SubCategories)
-                    .FirstOrDefault(l => l.CategoryId == Id);
+                return _context.Category.FirstOrDefault(l => l.CategoryId == Id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategoryRepository));
+                throw;
+            }
+        }
+
+        public List<Category> GetCategoryByDepartmentId(Guid Id)
+        {
+            try
+            {
+                return _context.Category.Where(l => l.DepartmentId == Id).ToList();
             }
             catch (Exception e)
             {

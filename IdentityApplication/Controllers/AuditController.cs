@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize]
     public class AuditController : Controller
     {
         private readonly IAuditBusiness _business;

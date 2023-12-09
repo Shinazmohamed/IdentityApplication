@@ -44,5 +44,11 @@ namespace IdentityApplication.Business
         {
             await _unitOfWork.Category.Delete(Guid.Parse(id));
         }
+
+        public List<ListCategoryModel> GetCategoryByDepartmentId(string id)
+        {
+            var category = _unitOfWork.Category.GetCategoryByDepartmentId(Guid.Parse(id));
+            return _mapper.Map<List<ListCategoryModel>>(category);
+        }
     }
 }

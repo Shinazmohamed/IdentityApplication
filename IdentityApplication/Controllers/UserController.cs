@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -26,7 +26,6 @@ namespace IdentityApplication.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsersWithLocations();
@@ -34,32 +33,42 @@ namespace IdentityApplication.Controllers
             return View(source);
 
         }
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public async Task<IActionResult> Edit(string userId)
         {
-            var user = _unitOfWork.User.GetUser(userId);
-            var roles = _unitOfWork.Role.GetRoles();
+            var response = new EditUserViewModel();
+            try
+            {
+                if(string.IsNullOrEmpty(userId)) return View(response);
 
+                var user = _unitOfWork.User.GetUser(userId);
+                var roles = _unitOfWork.Role.GetRoles();
+                var userRoles = await _signInManager.UserManager.GetRolesAsync(user);
 
-            var userRoles = await _signInManager.UserManager.GetRolesAsync(user);
+                var roleItems = roles.Select(role =>
+                new SelectListItem(
+                    role.Name,
+                    role.Id,
+                    userRoles.Any(ur => ur.Contains(role.Name)))).ToList();
 
-            var roleItems = roles.Select(role => 
-            new SelectListItem(
-                role.Name, 
-                role.Id, 
-                userRoles.Any(ur => ur.Contains(role.Name)))).ToList();
+                var locations = _unitOfWork.Location.GetLocations();
+                var locationItems = locations.Select(location =>
+                new SelectListItem(
+                    location.LocationName,
+                    location.LocationId.ToString(),
+                    locations.Any(e => e.LocationId == user.LocationId))).ToList();
 
-            var locations = _unitOfWork.Location.GetLocations();
-            var locationItems = locations.Select(location =>
-            new SelectListItem(
-                location.LocationName,
-                location.LocationId.ToString(),
-                locations.Any(e => e.LocationId == user.LocationId))).ToList();
-            
-            var vm = new EditUserViewModel { User = user, Roles = roleItems, Locations = locationItems };
-            return View(vm);
+                response.User = user;
+                response.Roles = roleItems;
+                response.Locations = locationItems;
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Error Occured! Please contact admin";
+            }
+
+            return View(response);
         }
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+
         [HttpPost]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
         {
@@ -120,9 +129,8 @@ namespace IdentityApplication.Controllers
             }
 
 
-            return RedirectToAction("Edit", new { id = request.User.Id });
+            return RedirectToAction("Edit", new { userId = request.User.Id });
         }
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
         {
@@ -142,13 +150,12 @@ namespace IdentityApplication.Controllers
             {
                 TempData["SuccessMessage"] = "Password reset is successfull.";
             }
-            return RedirectToAction("Edit", new { id = request.User.Id });
+            return RedirectToAction("Edit", new { userId = request.User.Id });
         }
         public IActionResult Profile()
         {
             return Redirect("http://localhost:5258/Identity/Account/Manage");
         }
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         public IActionResult Register()
         {        
             return Redirect("http://localhost:5258/Identity/Account/Register");

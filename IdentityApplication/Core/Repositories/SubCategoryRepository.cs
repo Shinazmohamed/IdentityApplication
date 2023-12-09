@@ -9,9 +9,9 @@ namespace IdentityApplication.Core.Repositories
     public class SubCategoryRepository : ISubCategoryRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<CategorySubCategoryRepository> _logger;
+        private readonly ILogger<SubCategoryRepository> _logger;
 
-        public SubCategoryRepository(ApplicationDbContext context, ILogger<CategorySubCategoryRepository> logger)
+        public SubCategoryRepository(ApplicationDbContext context, ILogger<SubCategoryRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -55,7 +55,7 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
             }
         }
 
@@ -88,7 +88,7 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
                 throw;
             }
         }
@@ -102,7 +102,7 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
             }
             return response;
         }
@@ -117,7 +117,22 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
+            }
+            return response;
+        }
+
+        public List<SubCategory> GetSubCategoryByCategoryId(Guid Id)
+        {
+            var response = new List<SubCategory>();
+
+            try
+            {
+                response = _context.SubCategory.Where(l => l.CategoryId == Id).ToList();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
             }
             return response;
         }
@@ -131,7 +146,7 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
             }
             return response;
         }
@@ -161,7 +176,7 @@ namespace IdentityApplication.Core.Repositories
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                    _logger.LogError(e, "{Repo} All function error", typeof(SubCategoryRepository));
                 }
             }
         }

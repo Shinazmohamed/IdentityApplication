@@ -1,5 +1,4 @@
 ﻿using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize]
     public class CategoryDepartmentMappingController : Controller
     {
         private readonly ICategoryDepartmentMappingBusiness _business;

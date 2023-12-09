@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize]
     public class PermissionController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager; 
@@ -55,8 +56,15 @@ namespace IdentityApplication.Controllers
 
         public async Task<IActionResult> CheckPermissions()
         {
-            var hasDeletePermission = await _authorizationService.AuthorizeAsync(User, Permissions.Employees.Delete);
-            return Ok(new { hasDeletePermission = hasDeletePermission.Succeeded });
+            try
+            {
+                var hasDeletePermission = await _authorizationService.AuthorizeAsync(User, Permissions.Employees.Delete);
+                return Ok(new { hasDeletePermission = hasDeletePermission.Succeeded });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

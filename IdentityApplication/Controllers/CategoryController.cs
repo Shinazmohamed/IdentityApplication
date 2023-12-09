@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator},{Constants.Roles.User}")]
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ICategoryBusiness _business;
@@ -23,21 +23,22 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSubcategories(string id) 
+        public IActionResult GetCategoryByDepartmentId(string id)
         {
             try
             {
-                var response = _business.GetCategoryById(id);
+                var response = _business.GetCategoryByDepartmentId(id);
 
                 var sub = new List<SelectListItem>
                 {
                     new SelectListItem { Value = "", Text = "All" }
                 };
 
-                foreach (var item in response.SubCategories.ToList())
+                sub.AddRange(response.Select(item => new SelectListItem
                 {
-                    sub.Add(new SelectListItem { Value = item.SubCategoryId.ToString(), Text = item.SubCategoryName });
-                }
+                    Value = item.Id.ToString(),
+                    Text = item.Name
+                }));
 
                 return Json(sub);
             }
@@ -103,16 +104,9 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                if (User.HasClaim("Permission", "RequireAdmin"))
-                {
-                    await _business.Delete(mappingId);
+                await _business.Delete(mappingId);
 
-                    TempData["SuccessMessage"] = "Record deleted successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Authorization error: You do not have permission to perform this action.";
-                }
+                TempData["SuccessMessage"] = "Record deleted successfully.";
 
                 return RedirectToAction("Index");
             }

@@ -9,5 +9,6 @@ namespace IdentityApplication.Business.Contracts
         Task Create(CreateCategoryRequest request);
         Task Update(CreateCategoryRequest request);
         Task Delete(string id);
+        List<ListCategoryModel> GetCategoryByDepartmentId(string id);
     }
 }

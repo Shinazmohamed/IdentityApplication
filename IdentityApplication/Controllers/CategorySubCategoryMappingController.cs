@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize]
     public class CategorySubCategoryMappingController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

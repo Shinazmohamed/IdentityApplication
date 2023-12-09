@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IDepartmentBusiness _business;
@@ -93,32 +93,6 @@ namespace IdentityApplication.Controllers
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
                 return RedirectToAction("Index");
-            }
-        }
-
-        [HttpGet]
-        public IActionResult GetCategories(string id)
-        {
-            try
-            {
-                var response = _business.GetDepartmentById(id);
-
-                var sub = new List<SelectListItem>
-                {
-                    new SelectListItem { Value = "", Text = "All" }
-                };
-
-                foreach (var item in response.Categories.ToList())
-                {
-                    sub.Add(new SelectListItem { Value = item.CategoryId.ToString(), Text = item.CategoryName });
-                }
-
-                return Json(sub);
-            }
-            catch (Exception)
-            {
-                TempData["ErrorMessage"] = "No Records found.";
-                return StatusCode(500, "Internal Server Error");
             }
         }
     }

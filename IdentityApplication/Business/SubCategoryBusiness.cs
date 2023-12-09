@@ -44,5 +44,11 @@ namespace IdentityApplication.Business
             var subcategories = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(Id));
             return _mapper.Map<List<ListSubCategoryModel>>(subcategories);
         }
+
+        public List<ListSubCategoryModel> GetSubCategoriesByCategoryId(string Id)
+        {
+            var subcategories = _unitOfWork.SubCategory.GetSubCategoryByCategoryId(Guid.Parse(Id));
+            return _mapper.Map<List<ListSubCategoryModel>>(subcategories);
+        }
     }
 }

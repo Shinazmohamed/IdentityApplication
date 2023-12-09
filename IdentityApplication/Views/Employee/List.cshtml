@@ -21,13 +21,10 @@
 }
 
 <div class="row">
-    @if (User.IsInRole(Constants.Roles.Administrator))
-    {
-        <div class="col-md-6">
-            <label for="locationSearch">Search by Location:</label>
-            @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "All", new { id = "locationSearch" })
-        </div>
-    }
+    <div class="col-md-6">
+        <label for="locationSearch">Search by Location:</label>
+        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "All", new { id = "locationSearch" })
+    </div>
     <div class="col-md-6">
         <label for="departmentSearch">Search by Department:</label>
         @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "All", new { id = "departmentSearch" })
@@ -72,7 +69,6 @@
     </tbody>
 </table>
 
-
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -93,7 +89,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -166,18 +161,12 @@
                 sortField: 'text'
             });
 
-
-
             var hasDeletePermission = false;
 
             fetch('/Permission/CheckPermissions')
                 .then(response => response.json())
                 .then(data => {
                     hasDeletePermission = data.hasDeletePermission;
-                    // Continue with your logic here
-                })
-                .catch(error => {
-                    console.error('Error checking delete permission:', error);
                 });
 
             setTimeout(function () {
@@ -219,33 +208,24 @@
                     { data: 'c' },
                     { data: 'm1' },
                     { data: 'm2' },
-                    // {
-                    //     data: 'id',
-                    //     render: function (data, type, row) {
-                    //         return '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ' +
-                    //             '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>';
-                    //     }
-                    // }
                     {
                         data: 'id',
                         render: function (data, type, row) {
                             var actionHtml = '<div class="btn-group">' +
                                 '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                                 '<div class="dropdown-menu shadow animated--grow-in">' +
-                                    '<a class="dropdown-item">' +
-                                        '<i class="fas fa-pencil-alt btn-edit"></i> Edit' +
-                                    '</a>';
-
+                                '<a class="dropdown-item">' +
+                                '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
+                                '</a>';
                             if (hasDeletePermission) {
                                 actionHtml +=
                                     '<form class="d-inline">' +
-                                        '<a class="dropdown-item"><i class="fas fa-trash-alt btn-delete"></i> Delete</a>' +
-                                    '</form>'
-                                    '</a>';
+                                    '<a class="dropdown-item">' +
+                                    '<i class="fas fa-trash-alt btn-delete" data-id="' + data + '"> Delete</i>' +
+                                    '</a>' +
+                                    '</form>';
                             }
-
                             actionHtml += '</div></div>';
-
                             return actionHtml;
                         }
                     }
@@ -258,6 +238,7 @@
 
             $('#employeeTable').on('click', '.btn-edit', function () {
                 var id = $(this).data('id');
+
                 $.ajax({
                     url: '/employee/Edit?id=' + id,
                     method: 'GET',
@@ -274,10 +255,9 @@
                         $('#E2').val(employee.e2);
                         $('#M1').val(employee.m1);
                         $('#M2').val(employee.m2);
-
-                        $('#employeeModal').modal('show');
                     }
                 });
+                $('#employeeModal').modal('show');
             });
 
             $('#employeeTable').on('click', '.btn-delete', function () {
@@ -305,92 +285,58 @@
             });
 
             $('#departmentSearch').change(function () {
-                var selectedDepartment = $(this).val();
-                if (selectedDepartment) {
-                    $.ajax({
-                        url: '/Department/GetCategories?id=' + selectedDepartment,
-                        method: 'GET',
-                        contentType: 'application/json',
-                        success: function (data) {
-                            clearselectizeddl('categorySearch');
-                            $.each(data, function (index, item) {
-                                $('#categorySearch')[0].selectize.addOption({
-                                    value: item.value,
-                                    text: item.text
-                                });
-                            });
-                        }
-                    });
-                }
-            });
-
-            $('#department').change(function () {
-                loadDepartments($(this).val());
+                loadCategories($(this).val(), 'categorySearch');
             });
 
             $('#categorySearch').change(function () {
-                var selectedCategory = $(this).val();
-                if (selectedCategory) {
-                    $.ajax({
-                        url: '/Category/GetSubcategories?id=' + selectedCategory,
-                        method: 'GET',
-                        contentType: 'application/json',
-                        success: function (data) {
-                            clearselectizeddl('subcategorySearch');
-                            $.each(data, function (index, item) {
-                                $('#subcategorySearch')[0].selectize.addOption({
-                                    value: item.value,
-                                    text: item.text
-                                });
-                            });
-                        }
-                    });
-                }
-
+                loadSubCategories($(this).val(), 'subcategorySearch');
             });
 
-            $('#category').change(function () {
-                loadCategories($(this).val());
+            $(document).on('change', '#department', function () {
+                loadCategories($(this).val(), 'category');
             });
 
-            function loadDepartments(selectedDepartment) {
+            $(document).on('change', '#category', function () {
+                loadSubCategories($(this).val(), 'subcategory');
+            });
+
+            function loadCategories(selectedDepartment, impactedElementName) {
                 if (selectedDepartment) {
                     $.ajax({
-                        url: '/Department/GetCategories?id=' + selectedDepartment,
+                        url: '/Category/GetCategoryByDepartmentId?id=' + selectedDepartment,
                         method: 'GET',
                         contentType: 'application/json',
                         success: function (data) {
-                            clearselectizeddl('category');
+                            clearselectizeddl(impactedElementName);
                             $.each(data, function (index, item) {
-                                $('#category')[0].selectize.addOption({
+                                $('#' + impactedElementName)[0].selectize.addOption({
                                     value: item.value,
                                     text: item.text
                                 });
                             });
                             if ($('#SelectedCategoryId').val())
-                                $('#category')[0].selectize.setValue($('#SelectedCategoryId').val());
+                                $('#' + impactedElementName)[0].selectize.setValue($('#SelectedCategoryId').val());
                         }
                     });
                 }
             }
 
-            function loadCategories(selectedCategory) {
+            function loadSubCategories(selectedCategory, impactedElementName) {
                 if (selectedCategory) {
-
+                    console.log('loadCategories');
                     $.ajax({
-                        url: '/Category/GetSubcategories?id=' + selectedCategory,
+                        url: '/SubCategory/GetSubcategories?id=' + selectedCategory,
                         method: 'GET',
                         contentType: 'application/json',
                         success: function (data) {
-                            clearselectizeddl('subcategory');
-
+                            clearselectizeddl(impactedElementName);
                             $.each(data, function (index, item) {
-                                $('#subcategory')[0].selectize.addOption({
+                                $('#' + impactedElementName)[0].selectize.addOption({
                                     value: item.value,
                                     text: item.text
                                 });
                                 if ($('#SelectedSubCategoryId').val())
-                                    $('#subcategory')[0].selectize.setValue($('#SelectedSubCategoryId').val());
+                                    $('#' + impactedElementName)[0].selectize.setValue($('#SelectedSubCategoryId').val());
                             });
                         }
                     });

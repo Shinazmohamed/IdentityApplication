@@ -12,5 +12,6 @@ namespace IdentityApplication.Core.Contracts
         void Create(Category request);
         void Update(Category request);
         Task Delete(Guid id);
+        List<Category> GetCategoryByDepartmentId(Guid Id);
     }
 }
