@@ -1,8 +1,5 @@
 ﻿@using IdentityApplication.Core;
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 }
@@ -124,22 +121,22 @@
 
                     <div class="mb-3">
                         <label asp-for="E1" class="form-label"></label>
-                        <input asp-for="E1" class="form-control" />
+                        <input asp-for="E1" class="form-control" maxlength="6" />
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="E2" class="form-label"></label>
-                        <input asp-for="E2" class="form-control" />
+                        <input asp-for="E2" class="form-control" maxlength="6" />
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="M1" class="form-label"></label>
-                        <input asp-for="M1" class="form-control" />
+                        <input asp-for="M1" class="form-control" maxlength="6" />
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="M2" class="form-label"></label>
-                        <input asp-for="M2" class="form-control" />
+                        <input asp-for="M2" class="form-control" maxlength="6" />
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -152,8 +149,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -212,7 +207,7 @@
                         data: 'id',
                         render: function (data, type, row) {
                             var actionHtml = '<div class="btn-group">' +
-                                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                                '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                                 '<div class="dropdown-menu shadow animated--grow-in">' +
                                 '<a class="dropdown-item">' +
                                 '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
@@ -228,6 +223,7 @@
                             actionHtml += '</div></div>';
                             return actionHtml;
                         }
+
                     }
                 ]
             });
@@ -255,9 +251,10 @@
                         $('#E2').val(employee.e2);
                         $('#M1').val(employee.m1);
                         $('#M2').val(employee.m2);
+
+                        $('#employeeModal').modal('show');
                     }
                 });
-                $('#employeeModal').modal('show');
             });
 
             $('#employeeTable').on('click', '.btn-delete', function () {
@@ -292,11 +289,11 @@
                 loadSubCategories($(this).val(), 'subcategorySearch');
             });
 
-            $(document).on('change', '#department', function () {
+            $('#department').change(function () {
                 loadCategories($(this).val(), 'category');
             });
 
-            $(document).on('change', '#category', function () {
+            $('#category').change(function () {
                 loadSubCategories($(this).val(), 'subcategory');
             });
 
@@ -314,6 +311,8 @@
                                     text: item.text
                                 });
                             });
+
+
                             if ($('#SelectedCategoryId').val())
                                 $('#' + impactedElementName)[0].selectize.setValue($('#SelectedCategoryId').val());
                         }
@@ -323,7 +322,6 @@
 
             function loadSubCategories(selectedCategory, impactedElementName) {
                 if (selectedCategory) {
-                    console.log('loadCategories');
                     $.ajax({
                         url: '/SubCategory/GetSubcategories?id=' + selectedCategory,
                         method: 'GET',
