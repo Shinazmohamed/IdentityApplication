@@ -1,14 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using IdentityApplication.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
-using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Repositories;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Business;
 using Serilog;
+using IdentityApplication.Core.Permission;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
@@ -16,6 +18,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

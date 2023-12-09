@@ -1,6 +1,8 @@
 ﻿@using IdentityApplication.Core;
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 }
@@ -102,7 +104,6 @@
             </div>
             <div class="modal-body">
                 <form method="post" asp-controller="Employee" asp-action="Edit">
-
                     <input type="hidden" asp-for="EmployeeId" class="form-control" />
                     <div class="mb-3">
                         <label asp-for="SelectedLocation" class="form-label"></label>
@@ -152,18 +153,32 @@
         </div>
     </div>
 </div>
-
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
             $('select').selectize({
                 sortField: 'text'
             });
+
+
+
+            var hasDeletePermission = false;
+
+            fetch('/Permission/CheckPermissions')
+                .then(response => response.json())
+                .then(data => {
+                    hasDeletePermission = data.hasDeletePermission;
+                    // Continue with your logic here
+                })
+                .catch(error => {
+                    console.error('Error checking delete permission:', error);
+                });
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
@@ -204,11 +219,34 @@
                     { data: 'c' },
                     { data: 'm1' },
                     { data: 'm2' },
+                    // {
+                    //     data: 'id',
+                    //     render: function (data, type, row) {
+                    //         return '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ' +
+                    //             '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>';
+                    //     }
+                    // }
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            return '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ' +
-                                '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>';
+                            var actionHtml = '<div class="btn-group">' +
+                                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                                '<div class="dropdown-menu shadow animated--grow-in">' +
+                                    '<a class="dropdown-item">' +
+                                        '<i class="fas fa-pencil-alt btn-edit"></i> Edit' +
+                                    '</a>';
+
+                            if (hasDeletePermission) {
+                                actionHtml +=
+                                    '<form class="d-inline">' +
+                                        '<a class="dropdown-item"><i class="fas fa-trash-alt btn-delete"></i> Delete</a>' +
+                                    '</form>'
+                                    '</a>';
+                            }
+
+                            actionHtml += '</div></div>';
+
+                            return actionHtml;
                         }
                     }
                 ]

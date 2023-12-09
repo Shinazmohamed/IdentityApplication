@@ -1,5 +1,6 @@
 ﻿using IdentityApplication.Core;
 using IdentityApplication.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -35,17 +36,50 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(builder);
 
+        #region Table Definitions
+        builder.HasDefaultSchema("Identity");
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.ToTable(name: "User");
+        });
+        builder.Entity<IdentityRole>(entity =>
+        {
+            entity.ToTable(name: "Role");
+        });
+        builder.Entity<IdentityUserRole<string>>(entity =>
+        {
+            entity.ToTable("UserRoles");
+        });
+        builder.Entity<IdentityUserClaim<string>>(entity =>
+        {
+            entity.ToTable("UserClaims");
+        });
+        builder.Entity<IdentityUserLogin<string>>(entity =>
+        {
+            entity.ToTable("UserLogins");
+        });
+        builder.Entity<IdentityRoleClaim<string>>(entity =>
+        {
+            entity.ToTable("RoleClaims");
+        });
+        builder.Entity<IdentityUserToken<string>>(entity =>
+        {
+            entity.ToTable("UserTokens");
+        });
+
         string employeeTableName = _configuration.GetSection("AppSettings")["TagEmployeeTableName"];
         if (!string.IsNullOrEmpty(employeeTableName))
         {
             builder.Entity<Employee>().ToTable(employeeTableName);
         }
+        #endregion
 
+        #region Relationships
         builder.Entity<Category>()
-               .HasMany(c => c.SubCategories)
-               .WithOne(sc => sc.Category)
-               .HasForeignKey(sc => sc.CategoryId)
-               .OnDelete(DeleteBehavior.Cascade);
+       .HasMany(c => c.SubCategories)
+       .WithOne(sc => sc.Category)
+       .HasForeignKey(sc => sc.CategoryId)
+       .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Menu>()
                 .HasMany(c => c.SubMenus)
@@ -69,6 +103,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.ClientSetNull);
 
         builder.Ignore<ApplicationRole>();
+        #endregion
     }
 
     private void OnBeforeSaveChanges(string userId)

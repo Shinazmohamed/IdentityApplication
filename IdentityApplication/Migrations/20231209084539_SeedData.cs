@@ -9,8 +9,12 @@ namespace IdentityApplication.Migrations
     {
         private string UserRoleId = Guid.NewGuid().ToString();
         private string AdminRoleId = Guid.NewGuid().ToString();
+        private string SuperDevRoleId = Guid.NewGuid().ToString();
+
         private string AdminId = Guid.NewGuid().ToString();
         private string UserId = Guid.NewGuid().ToString();
+        private string SuperDevId = Guid.NewGuid().ToString();
+
         private string LocationId = Guid.NewGuid().ToString();
         private string CategoryId = Guid.NewGuid().ToString();
         private string DepartmentId = Guid.NewGuid().ToString();
@@ -20,8 +24,9 @@ namespace IdentityApplication.Migrations
         private string departmentMenu = Guid.NewGuid().ToString();
         private string categoryMenu = Guid.NewGuid().ToString();
         private string subcategoryMenu = Guid.NewGuid().ToString();
-        private string menu = Guid.NewGuid().ToString();
-        private string audit = Guid.NewGuid().ToString();
+        private string menuMenu = Guid.NewGuid().ToString();
+        private string auditMenu = Guid.NewGuid().ToString();
+        private string roleMenu = Guid.NewGuid().ToString();
 
         private string createEmployeeSubMenu = Guid.NewGuid().ToString();
         private string listEmployeeSubMenu = Guid.NewGuid().ToString();
@@ -43,36 +48,48 @@ namespace IdentityApplication.Migrations
         }
         private void SeedRolesSQL(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql($@"INSERT INTO [AspNetRoles] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
+            migrationBuilder.Sql($@"INSERT INTO [identity].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
                 VALUES ('{AdminRoleId}', 'Administrator', 'ADMINISTRATOR', null);");
 
-            migrationBuilder.Sql($@"INSERT INTO [AspNetRoles] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
+            migrationBuilder.Sql($@"INSERT INTO [identity].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
                 VALUES ('{UserRoleId}', 'User', 'USER', null);");
+
+            migrationBuilder.Sql($@"INSERT INTO [identity].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
+                VALUES ('{SuperDevRoleId}', 'SuperDeveloper', 'SUPERDEVELOPER', null);");
         }
         private void SeedUser(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [AspNetUsers] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
+                INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
                 VALUES ('{AdminId}', 'admin@test.com', '{LocationId}', 'ADMIN@TEST.COM', 'admin@test.com', 'ADMIN@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '9337b27a-86df-425c-a68b-10e97e15d4ae', NULL, 0, 0, NULL, 1, 0)");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [AspNetUsers] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
+                INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
                 VALUES ('{UserId}', 'user@test.com', '{LocationId}', 'USER@TEST.COM', 'user@test.com', 'USER@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '751920ce-2459-4f57-95de-2bf30c1205f5', NULL, 0, 0, NULL, 1, 0)");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
+                VALUES ('{SuperDevId}', 'superdev@test.com', '{LocationId}', 'SUPERDEV@TEST.COM', 'superdev@test.com', 'SUPERDEV@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '751920ce-2459-4f57-95de-2bf30c1205f5', NULL, 0, 0, NULL, 1, 0)");
+
         }
         private void SeedUserRoles(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [AspNetUserRoles] ([UserId], [RoleId])
+                INSERT INTO [identity].[UserRoles] ([UserId], [RoleId])
                 VALUES ('{UserId}', '{UserRoleId}');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [AspNetUserRoles] ([UserId], [RoleId])
+                INSERT INTO [identity].[UserRoles] ([UserId], [RoleId])
                 VALUES ('{AdminId}', '{AdminRoleId}');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[UserRoles] ([UserId], [RoleId])
+                VALUES ('{SuperDevId}', '{SuperDevRoleId}');");
         }
         private void SeedLocations(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [Location] VALUES 
+                INSERT INTO [identity].[Location] VALUES 
                 ('{LocationId}', 'NOLIMIT OGF'),
                 (NEWID(), 'HYDE PARK'),
                 (NEWID(), 'CCC'),
@@ -100,18 +117,18 @@ namespace IdentityApplication.Migrations
         private void SeedDepartment(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [Department] VALUES 
+                INSERT INTO [identity].[Department] VALUES 
                 (NEWID(), 'GENTS'),
                 (NEWID(), 'LADIES'),
-                ('{ DepartmentId }', 'ACCESSORIES'),
+                ('{DepartmentId}', 'ACCESSORIES'),
                 (NEWID(), 'HOMEWARE'),
                 (NEWID(), 'KIDS');");
         }
         private void SeedCategory(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [Category] (CategoryId, CategoryName, DepartmentId) VALUES 
-                ('{ CategoryId }', 'Girls', '{ DepartmentId }'),
+                INSERT INTO [identity].[Category] (CategoryId, CategoryName, DepartmentId) VALUES 
+                ('{CategoryId}', 'Girls', '{DepartmentId}'),
                 (NEWID(), N'Maternity wear', '{DepartmentId}'),
                 (NEWID(), N'STORAGE', '{DepartmentId}'),
                 (NEWID(), N'HOME TEXTILES', '{DepartmentId}'),
@@ -168,7 +185,7 @@ namespace IdentityApplication.Migrations
         private void SeedSubCategory(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [SubCategory] VALUES
+                INSERT INTO [identity].[SubCategory] VALUES
                 (NEWID(), N'T-shirt','{CategoryId}'),
                 (NEWID(), N'Mitten','{CategoryId}'),
                 (NEWID(), N'Nail Cutter Set','{CategoryId}'),
@@ -899,25 +916,26 @@ namespace IdentityApplication.Migrations
         private void SeedClaims(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [AspNetRoleClaims] (RoleId, ClaimType, ClaimValue)
+                INSERT INTO [identity].[RoleClaims] (RoleId, ClaimType, ClaimValue)
                 VALUES ('{AdminRoleId}', 'Permission', 'RequireAdmin');");
         }
         private void SeedMenu(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [Menu] (MenuId, DisplayName, sort) VALUES 
-                ('{ employeeMenu }', 'Employee', 1),  
-                ('{ userMenu }', 'User', 2),
-                ('{ departmentMenu }', 'Department', 3),
-                ('{ categoryMenu }', 'Category', 4),
-                ('{ subcategoryMenu }', 'Sub Category', 5),
-                ('{ audit }', 'Audit', 6),
-                ('{ menu }', 'Menu', 7);");
+                INSERT INTO [identity].[Menu] (MenuId, DisplayName, sort) VALUES 
+                ('{employeeMenu}', 'Employee', 1),  
+                ('{userMenu}', 'User', 2),
+                ('{departmentMenu}', 'Department', 3),
+                ('{categoryMenu}', 'Category', 4),
+                ('{subcategoryMenu}', 'Sub Category', 5),
+                ('{auditMenu}', 'Audit', 6),
+                ('{roleMenu}', 'Roles', 7),
+                ('{menuMenu}', 'Menu', 8);");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [SubMenu] (SubMenuId, DisplayName, Controller, Method, MenuId) VALUES 
+                INSERT INTO [identity].[SubMenu] (SubMenuId, DisplayName, Controller, Method, MenuId) VALUES 
                     ('{createEmployeeSubMenu}', 'Create Employee', 'Employee', 'Create', '{employeeMenu}'),
                     ('{listEmployeeSubMenu}', 'List Employee', 'Employee', 'List', '{employeeMenu}'),
                     (NEWID(), 'Register', 'User', 'Register', '{userMenu}'),
@@ -926,15 +944,16 @@ namespace IdentityApplication.Migrations
                     (NEWID(), 'Create', 'Category', 'Index', '{categoryMenu}'),
                     (NEWID(), 'Mapping', 'CategoryDepartmentMapping', 'Index', '{categoryMenu}'),
                     (NEWID(), 'Create', 'SubCategory', 'Index', '{subcategoryMenu}'),
-                    (NEWID(), 'Create menu', 'SubMenu', 'Index', '{menu}'),
-                    (NEWID(), 'View logs', 'Audit', 'Index', '{audit}'),
-                    (NEWID(), 'Create', 'Department', 'Index', '{ departmentMenu }'),
+                    (NEWID(), 'Create menu', 'SubMenu', 'Index', '{menuMenu}'),
+                    (NEWID(), 'View logs', 'Audit', 'Index', '{auditMenu}'),
+                    (NEWID(), 'Create', 'Department', 'Index', '{departmentMenu}'),
+                    (NEWID(), 'View', 'Roles', 'Index', '{roleMenu}'),
                     (NEWID(), 'Mapping', 'CategorySubCategoryMapping', 'Index', '{subcategoryMenu}');");
         }
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [SubMenuRoles] (SubMenuId, Id) VALUES 
+                INSERT INTO [identity].[SubMenuRoles] (SubMenuId, Id) VALUES 
                     ('{createEmployeeSubMenu}','{UserRoleId}'),
                     ('{listEmployeeSubMenu}','{UserRoleId}');");
         }

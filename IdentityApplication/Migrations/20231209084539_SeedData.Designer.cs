@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231207162205_SeedData")]
+    [Migration("20231209084539_SeedData")]
     partial class SeedData
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace IdentityApplication.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("Identity")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -92,7 +93,7 @@ namespace IdentityApplication.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("User", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Audit", b =>
@@ -132,7 +133,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditLogs");
+                    b.ToTable("AuditLogs", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Category", b =>
@@ -145,14 +146,14 @@ namespace IdentityApplication.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DepartmentId")
+                    b.Property<Guid?>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CategoryId");
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Department", b =>
@@ -167,7 +168,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("DepartmentId");
 
-                    b.ToTable("Department");
+                    b.ToTable("Department", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Employee", b =>
@@ -205,7 +206,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SPDec2023", (string)null);
+                    b.ToTable("SPDec2023", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Location", b =>
@@ -220,7 +221,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("LocationId");
 
-                    b.ToTable("Location");
+                    b.ToTable("Location", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Menu", b =>
@@ -238,7 +239,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("MenuId");
 
-                    b.ToTable("Menu");
+                    b.ToTable("Menu", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
@@ -258,7 +259,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SubCategory");
+                    b.ToTable("SubCategory", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenu", b =>
@@ -286,7 +287,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("MenuId");
 
-                    b.ToTable("SubMenu");
+                    b.ToTable("SubMenu", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenuRole", b =>
@@ -299,7 +300,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("SubMenuId", "Id");
 
-                    b.ToTable("SubMenuRoles");
+                    b.ToTable("SubMenuRoles", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -326,7 +327,7 @@ namespace IdentityApplication.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Role", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -351,7 +352,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -376,7 +377,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -400,7 +401,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -415,7 +416,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -436,7 +437,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Areas.Identity.Data.ApplicationUser", b =>
@@ -454,9 +455,7 @@ namespace IdentityApplication.Migrations
                 {
                     b.HasOne("IdentityApplication.Core.Entities.Department", "Department")
                         .WithMany("Categories")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });

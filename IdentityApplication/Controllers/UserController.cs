@@ -35,9 +35,9 @@ namespace IdentityApplication.Controllers
 
         }
         [Authorize(Roles = $"{Constants.Roles.Administrator}")]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string userId)
         {
-            var user = _unitOfWork.User.GetUser(id);
+            var user = _unitOfWork.User.GetUser(userId);
             var roles = _unitOfWork.Role.GetRoles();
 
 

@@ -11,22 +11,12 @@ namespace IdentityApplication.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "AspNetRoles",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
+            migrationBuilder.EnsureSchema(
+                name: "Identity");
 
             migrationBuilder.CreateTable(
                 name: "AuditLogs",
+                schema: "Identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -47,6 +37,7 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Department",
+                schema: "Identity",
                 columns: table => new
                 {
                     DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -59,6 +50,7 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Location",
+                schema: "Identity",
                 columns: table => new
                 {
                     LocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -71,6 +63,7 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Menu",
+                schema: "Identity",
                 columns: table => new
                 {
                     MenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -83,7 +76,23 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Role",
+                schema: "Identity",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SPDec2023",
+                schema: "Identity",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -103,33 +112,13 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Category",
+                schema: "Identity",
                 columns: table => new
                 {
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -137,13 +126,14 @@ namespace IdentityApplication.Migrations
                     table.ForeignKey(
                         name: "FK_Category_Department_DepartmentId",
                         column: x => x.DepartmentId,
+                        principalSchema: "Identity",
                         principalTable: "Department",
-                        principalColumn: "DepartmentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DepartmentId");
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "User",
+                schema: "Identity",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -165,10 +155,11 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Location_LocationId",
+                        name: "FK_User_Location_LocationId",
                         column: x => x.LocationId,
+                        principalSchema: "Identity",
                         principalTable: "Location",
                         principalColumn: "LocationId",
                         onDelete: ReferentialAction.Cascade);
@@ -176,6 +167,7 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.CreateTable(
                 name: "SubMenu",
+                schema: "Identity",
                 columns: table => new
                 {
                     SubMenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -190,13 +182,38 @@ namespace IdentityApplication.Migrations
                     table.ForeignKey(
                         name: "FK_SubMenu_Menu_MenuId",
                         column: x => x.MenuId,
+                        principalSchema: "Identity",
                         principalTable: "Menu",
                         principalColumn: "MenuId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoleClaims",
+                schema: "Identity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RoleClaims_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalSchema: "Identity",
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SubCategory",
+                schema: "Identity",
                 columns: table => new
                 {
                     SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -209,13 +226,15 @@ namespace IdentityApplication.Migrations
                     table.ForeignKey(
                         name: "FK_SubCategory_Category_CategoryId",
                         column: x => x.CategoryId,
+                        principalSchema: "Identity",
                         principalTable: "Category",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
+                name: "UserClaims",
+                schema: "Identity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -226,17 +245,19 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.PrimaryKey("PK_UserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        name: "FK_UserClaims_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalSchema: "Identity",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
+                name: "UserLogins",
+                schema: "Identity",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
@@ -246,17 +267,19 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_UserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        name: "FK_UserLogins_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalSchema: "Identity",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "UserRoles",
+                schema: "Identity",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -264,23 +287,26 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        name: "FK_UserRoles_Role_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
+                        principalSchema: "Identity",
+                        principalTable: "Role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        name: "FK_UserRoles_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalSchema: "Identity",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
+                name: "UserTokens",
+                schema: "Identity",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -290,17 +316,19 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        name: "FK_UserTokens_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "AspNetUsers",
+                        principalSchema: "Identity",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "SubMenuRoles",
+                schema: "Identity",
                 columns: table => new
                 {
                     SubMenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -312,120 +340,148 @@ namespace IdentityApplication.Migrations
                     table.ForeignKey(
                         name: "FK_SubMenuRoles_SubMenu_SubMenuId",
                         column: x => x.SubMenuId,
+                        principalSchema: "Identity",
                         principalTable: "SubMenu",
                         principalColumn: "SubMenuId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
-                column: "RoleId");
+                name: "IX_Category_DepartmentId",
+                schema: "Identity",
+                table: "Category",
+                column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                table: "AspNetRoles",
+                schema: "Identity",
+                table: "Role",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
+                name: "IX_RoleClaims_RoleId",
+                schema: "Identity",
+                table: "RoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_LocationId",
-                table: "AspNetUsers",
-                column: "LocationId");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Category_DepartmentId",
-                table: "Category",
-                column: "DepartmentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SubCategory_CategoryId",
+                schema: "Identity",
                 table: "SubCategory",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubMenu_MenuId",
+                schema: "Identity",
                 table: "SubMenu",
                 column: "MenuId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                schema: "Identity",
+                table: "User",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_LocationId",
+                schema: "Identity",
+                table: "User",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                schema: "Identity",
+                table: "User",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserClaims_UserId",
+                schema: "Identity",
+                table: "UserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLogins_UserId",
+                schema: "Identity",
+                table: "UserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_RoleId",
+                schema: "Identity",
+                table: "UserRoles",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+                name: "AuditLogs",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                name: "RoleClaims",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                name: "SPDec2023",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                name: "SubCategory",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                name: "SubMenuRoles",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AuditLogs");
+                name: "UserClaims",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "SPDec2023");
+                name: "UserLogins",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "SubCategory");
+                name: "UserRoles",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "SubMenuRoles");
+                name: "UserTokens",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Category",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "SubMenu",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Role",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "SubMenu");
+                name: "User",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Location");
+                name: "Department",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Department");
+                name: "Menu",
+                schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Menu");
+                name: "Location",
+                schema: "Identity");
         }
     }
 }
