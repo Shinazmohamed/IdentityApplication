@@ -173,7 +173,7 @@ namespace IdentityApplication.Controllers
             }
         }
 
-        [Authorize(policy: $"{Permissions.Employees.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.Employees.Delete}")]
         [HttpPost]
         public async Task<IActionResult> Delete(string Id)
         {

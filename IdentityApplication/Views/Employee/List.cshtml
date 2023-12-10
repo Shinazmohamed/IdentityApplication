@@ -1,7 +1,9 @@
 ﻿@using IdentityApplication.Core;
+@using IdentityApplication.Core.Permission
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
+    var policyname = @PermissionsModel.Employees.Delete;
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -151,6 +153,9 @@
     }
 
     <script type="text/javascript">
+
+        var policyName = '@policyname';
+
         $(document).ready(function () {
             $('select').selectize({
                 sortField: 'text'
@@ -158,7 +163,7 @@
 
             var hasDeletePermission = false;
 
-            fetch('/Permission/CheckPermissions')
+            fetch('/Permission/CheckPermissions?policyname=' + policyName)
                 .then(response => response.json())
                 .then(data => {
                     hasDeletePermission = data.hasDeletePermission;

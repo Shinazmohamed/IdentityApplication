@@ -21,7 +21,7 @@ namespace IdentityApplication.Controllers
         {
             var model = new PermissionViewModel();
             var allPermissions = new List<RoleClaimsViewModel>();
-            allPermissions.GetPermissions(typeof(Permissions.Employees), roleId);
+            allPermissions.GetPermissions(typeof(PermissionsModel.Employees), roleId);
             var role = await _roleManager.FindByIdAsync(roleId);
             model.RoleId = roleId;
             var claims = await _roleManager.GetClaimsAsync(role);
@@ -54,11 +54,11 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index", new { roleId = model.RoleId });
         }
 
-        public async Task<IActionResult> CheckPermissions()
+        public async Task<IActionResult> CheckPermissions(string policyname)
         {
             try
             {
-                var hasDeletePermission = await _authorizationService.AuthorizeAsync(User, Permissions.Employees.Delete);
+                var hasDeletePermission = await _authorizationService.AuthorizeAsync(User, policyname);
                 return Ok(new { hasDeletePermission = hasDeletePermission.Succeeded });
             }
             catch (Exception ex)
