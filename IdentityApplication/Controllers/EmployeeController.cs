@@ -120,7 +120,6 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);

@@ -102,4 +102,8 @@ void AddScoped()
 
     builder.Services.AddScoped<ICategoryDepartmentMappingBusiness, CategoryDepartmentMappingBusiness>();
     builder.Services.AddScoped<ICategoryDepartmentMappingRepository, CategoryDepartmentMappingRepository>();
+
+
+    builder.Services.AddScoped<IPermissionBusiness, PermissionBusiness>();
+    builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 }

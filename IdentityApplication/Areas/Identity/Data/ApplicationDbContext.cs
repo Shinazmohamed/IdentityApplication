@@ -21,6 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<SubMenu> SubMenu => Set<SubMenu>();
     public DbSet<SubMenuRole> SubMenuRoles => Set<SubMenuRole>();
     public DbSet<Audit> AuditLogs { get; set; }
+    public DbSet<Permission> Permission { get; set; }
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;

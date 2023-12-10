@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Core.Helpers;
+﻿using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core.Helpers;
 using IdentityApplication.Core.Permission;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +13,12 @@ namespace IdentityApplication.Controllers
     {
         private readonly RoleManager<IdentityRole> _roleManager; 
         private readonly IAuthorizationService _authorizationService;
-        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService)
+        private readonly IPermissionBusiness _business;
+        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business)
         {
             _roleManager = roleManager;
             _authorizationService = authorizationService;
+            _business = business;
         }
         public async Task<ActionResult> Index(string roleId)
         {
@@ -38,20 +41,30 @@ namespace IdentityApplication.Controllers
             model.RoleClaims = allPermissions;
             return View(model);
         }
-        public async Task<IActionResult> Update(PermissionViewModel model)
+        public async Task<IActionResult> Update([FromBody] PermissionViewModel model)
         {
-            var role = await _roleManager.FindByIdAsync(model.RoleId);
-            var claims = await _roleManager.GetClaimsAsync(role);
-            foreach (var claim in claims)
+            try
             {
-                await _roleManager.RemoveClaimAsync(role, claim);
+                var role = await _roleManager.FindByIdAsync(model.RoleId);
+                var claims = await _roleManager.GetClaimsAsync(role);
+                foreach (var claim in claims)
+                {
+                    await _roleManager.RemoveClaimAsync(role, claim);
+                }
+                var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
+                foreach (var claim in selectedClaims)
+                {
+                    await _roleManager.AddPermissionClaim(role, claim.Value);
+                }
+
+                TempData["SuccessMessage"] = "Permission updated successfully.";
             }
-            var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
-            foreach (var claim in selectedClaims)
+            catch (Exception ex)
             {
-                await _roleManager.AddPermissionClaim(role, claim.Value);
+                TempData["ErrorMessage"] = "Employee creation failed.";
+                return BadRequest(ex.Message);
             }
-            return RedirectToAction("Index", new { roleId = model.RoleId });
+            return Ok();
         }
 
         public async Task<IActionResult> CheckPermissions(string policyname)
@@ -65,6 +78,47 @@ namespace IdentityApplication.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
+        {
+            var response = new PermissionViewModel();
+            var model = new List<RoleClaimsViewModel>();
+
+            var data = await _business.GetPermissionsWithFilters(filter);
+            var allPermissions = data.Data;
+
+            var role = await _roleManager.FindByIdAsync(filter.roleId);
+            var claims = await _roleManager.GetClaimsAsync(role);
+            var allClaimValues = allPermissions.Select(a => a.Value).ToList();
+            var roleClaimValues = claims.Select(a => a.Value).ToList();
+            var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
+
+            foreach (var permission in allPermissions)
+            {
+                var claim = new RoleClaimsViewModel();
+                claim.Type = permission.Entity;
+                claim.Value = permission.Value;
+
+                if (authorizedClaims.Any(a => a == permission.Value))
+                {
+                    claim.Selected = true;
+                }
+
+                model.Add(claim);
+            }
+            response.RoleClaims = model;
+
+            var dataSrc = new
+            {
+                filter.draw,
+                recordsTotal = data.TotalCount,
+                recordsFiltered = data.TotalCount,
+                data = response.RoleClaims
+            };
+            return Json(dataSrc);
         }
     }
 }

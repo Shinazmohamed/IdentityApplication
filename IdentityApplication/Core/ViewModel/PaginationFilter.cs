@@ -9,5 +9,7 @@
         public string department { get; set; }
         public string category { get; set; }
         public string subcategory { get; set; }
+        public string entity { get; set; }
+        public string roleId { get; set; }
     }
 }

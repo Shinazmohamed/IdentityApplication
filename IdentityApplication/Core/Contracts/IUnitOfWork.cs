@@ -14,5 +14,6 @@
         ISubMenuRepository SubMenu { get; }
         IAuditRepository Audit { get; }
         ICategoryDepartmentMappingRepository CategoryDepartmentMapping { get; }
+        IPermissionRepository Permission { get; }
     }
 }

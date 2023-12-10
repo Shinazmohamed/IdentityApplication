@@ -1,10 +1,23 @@
 ﻿@using IdentityApplication.Core
 @using Microsoft.AspNetCore.Identity;
 @model IEnumerable<IdentityRole>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <h1>Roles</h1>
 <br />
+
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3" id="successMessage">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3" id="errorMessage">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <form method="post" asp-action="addrole" asp-controller="roles">
     <div class="input-group">
         <input name="roleName" class="form-control w-25">
@@ -13,6 +26,39 @@
         </span>
     </div>
 </form>
+
+<div class="modal fade" id="exampleModalToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="permissionForm" method="post">
+                <div class="modal-body">
+                    <input id="RoleId" type="hidden" />
+                    <table id="permissionTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <table class="table table-striped" id="roleTable">
     <thead>
         <tr>
@@ -39,31 +85,114 @@
                 </td>
                 <td class="text-right">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Action
                         </button>
                         <div class="dropdown-menu shadow animated--grow-in">
-                            <a class="dropdown-item">
+                            <a class="dropdown-item" href="#">
                                 <i class="fas fa-pencil-alt"></i> Edit
                             </a>
-                            <form class="d-inline">
-                                <a class="dropdown-item"><i class="fas fa-trash-alt"></i> Delete</a>
+                            <form class="d-inline-block">
+                                <a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i> Delete</a>
                             </form>
-                          @*   @if (role.Name != $"{Constants.Roles.Administrator}")
-                            { *@
-                                <a style='margin-right:16px' asp-controller="Permission" asp-action="Index" asp-route-roleId="@role.Id" class="dropdown-item">
+                            @if (role.Name != $"{Constants.Roles.Administrator}")
+                            {
+                                <a style='margin-right:16px' class="dropdown-item btn-edit" data-id="@role.Id" href="#">
                                     <i class="fas fa-wrench"></i> Manage Permissions
                                 </a>
-                            @* } *@
+                            }
                         </div>
                     </div>
                 </td>
+
             </tr>
         }
     </tbody>
 </table>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var table;
+            $('#roleTable').on('click', '.btn-edit', function () {
+                var id = $(this).data('id');
+
+                $('#RoleId').val(id)
+
+                table = $('#permissionTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    searching: false,
+                    ordering: false,
+                    ajax: {
+                        url: '/Permission/GetList',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: function (d) {
+                            var customFilter = {
+                                draw: d.draw,
+                                start: d.start,
+                                length: d.length,
+                                roleId: id
+                            };
+                            return JSON.stringify(customFilter);
+                        },
+                        dataSrc: 'data'
+                    },
+                    columns: [
+                        { data: 'type' },
+                        { data: 'value' },
+                        {
+                            data: 'selected',
+                            render: function (data, type, row) {
+                                return '<input type="checkbox" class="checkbox-select" ' + (data ? 'checked' : '') + '>';
+                            }
+                        }
+                    ]
+                });
+
+                $('#exampleModalToggle').modal('show');
+            });
+
+
+            $('#permissionTable').on('change', '.checkbox-select', function () {
+                var rowIndex = table.row($(this).closest('tr')).index();
+                var rowData = table.row(rowIndex).data();
+                rowData.selected = this.checked;
+            });
+
+
+            $('#permissionForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var formData = table.rows().data().toArray();
+
+                var json = {
+                    RoleId: $('#RoleId').val(),
+                    RoleClaims: formData
+                };
+
+                $.ajax({
+                    url: '/Permission/Update',
+                    type: 'POST',
+                    contentType: 'application/json', // Specify the content type as JSON
+                    data: JSON.stringify(json),
+                    success: function (response) {
+                        // Handle success
+                        console.log(response);
+                        // Optionally close the modal or perform other actions
+                    },
+                    error: function (error) {
+                        // Handle error
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+}
