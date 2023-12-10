@@ -5,18 +5,18 @@
 <br />
 
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success mt-3" id="successMessage">
+<div class="alert alert-success mt-3" id="successMessage" style="display:none">
+    @if (TempData["SuccessMessage"] != null)
+    {
         @TempData["SuccessMessage"]
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-3" id="errorMessage">
+    }
+</div>
+<div class="alert alert-danger mt-3" id="errorMessage" style="display:none">
+    @if (TempData["ErrorMessage"] != null)
+    {
         @TempData["ErrorMessage"]
-    </div>
-}
+    }
+</div>
 
 <form method="post" asp-action="addrole" asp-controller="roles">
     <div class="input-group">
@@ -27,7 +27,7 @@
     </div>
 </form>
 
-<div class="modal fade" id="exampleModalToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="permissionmodel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -92,12 +92,12 @@
                             <a class="dropdown-item" href="#">
                                 <i class="fas fa-pencil-alt"></i> Edit
                             </a>
-                            <form class="d-inline-block">
+                            <form class="d-inline-block" type="submit">
                                 <a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i> Delete</a>
                             </form>
                             @if (role.Name != $"{Constants.Roles.Administrator}")
                             {
-                                <a style='margin-right:16px' class="dropdown-item btn-edit" data-id="@role.Id" href="#">
+                                <a style='margin-right:16px' class="dropdown-item btn-permission" data-id="@role.Id" href="#">
                                     <i class="fas fa-wrench"></i> Manage Permissions
                                 </a>
                             }
@@ -117,12 +117,23 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            var table;
-            $('#roleTable').on('click', '.btn-edit', function () {
-                var id = $(this).data('id');
 
-                $('#RoleId').val(id)
+            $("#successMessage").fadeOut("slow");
+            $("#errorMessage").fadeOut("slow");
 
+            var table = $('#permissionTable').DataTable();
+
+            $('#roleTable').on('click', '.btn-permission', function () {
+
+                var row = $(this).closest('tr');
+                var role = {
+                    Name: row.find('td:eq(0)').text().trim(),
+                    Id: row.find('td:eq(1)').text().trim()
+                };
+
+                $('#RoleId').val(role.Id);
+
+                table.clear().destroy();
                 table = $('#permissionTable').DataTable({
                     processing: true,
                     serverSide: true,
@@ -137,7 +148,7 @@
                                 draw: d.draw,
                                 start: d.start,
                                 length: d.length,
-                                roleId: id
+                                roleId: role.Id
                             };
                             return JSON.stringify(customFilter);
                         },
@@ -155,7 +166,8 @@
                     ]
                 });
 
-                $('#exampleModalToggle').modal('show');
+                $('#exampleModalLabel').text('Manage Permissions for ' + role.Name)
+                $('#permissionmodel').modal('show');
             });
 
 
@@ -168,7 +180,6 @@
 
             $('#permissionForm').on('submit', function (e) {
                 e.preventDefault();
-
                 var formData = table.rows().data().toArray();
 
                 var json = {
@@ -179,19 +190,34 @@
                 $.ajax({
                     url: '/Permission/Update',
                     type: 'POST',
-                    contentType: 'application/json', // Specify the content type as JSON
+                    contentType: 'application/json',
                     data: JSON.stringify(json),
                     success: function (response) {
-                        // Handle success
-                        console.log(response);
-                        // Optionally close the modal or perform other actions
+                        console.log('success');
+                        $('#errorMessage').hide();
+                        $('#successMessage').html('Permission updated successfully.').show();
+
+                        setTimeout(function () {
+                            $("#successMessage").fadeOut("slow");
+                        }, 3000);
+
+                        $('#permissionmodel').modal('hide');
+
                     },
                     error: function (error) {
-                        // Handle error
-                        console.log(error);
+                        // Hide any existing success messages
+                        $('#successMessage').hide();
+
+                        // Show error message
+                        $('#errorMessage').html('Permission update failed.').show();
+
+                        setTimeout(function () {
+                            $("#errorMessage").fadeOut("slow");
+                        }, 3000);
                     }
                 });
             });
+
         });
     </script>
 
