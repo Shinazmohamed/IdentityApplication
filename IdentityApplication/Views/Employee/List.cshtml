@@ -1,5 +1,5 @@
 ﻿@using IdentityApplication.Core;
-@using IdentityApplication.Core.Permission
+@using IdentityApplication.Core.PermissionHelper
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);

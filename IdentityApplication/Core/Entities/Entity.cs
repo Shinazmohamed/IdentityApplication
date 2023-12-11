@@ -2,13 +2,12 @@
 
 namespace IdentityApplication.Core.Entities
 {
-    public class Permission
+    public class Entity
     {
         [Key]
-        public Guid Id { get; set; }
-        public string Value { get; set; }
         public Guid EntityId { get; set; }
+        public string Name { get; set; }
 
-        public Entity Entity { get; set; }
+        public List<Permission> Permissions { get; set; }
     }
 }

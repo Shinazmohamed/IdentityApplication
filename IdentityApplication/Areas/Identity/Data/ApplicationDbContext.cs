@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<SubMenuRole> SubMenuRoles => Set<SubMenuRole>();
     public DbSet<Audit> AuditLogs { get; set; }
     public DbSet<Permission> Permission { get; set; }
+    public DbSet<Entity> Entity { get; set; }
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -104,6 +105,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.ClientSetNull);
 
         builder.Ignore<ApplicationRole>();
+
         #endregion
     }
 

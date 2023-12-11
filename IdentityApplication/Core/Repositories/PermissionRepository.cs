@@ -15,21 +15,47 @@ namespace IdentityApplication.Core.Repositories
             _context = context;
             _logger = logger;
         }
-        public async Task<PaginationResponse<Entities.Permission>> GetEntitiesWithFilters(PaginationFilter filter)
+        public async Task<PaginationResponse<Entity>> GetEntitiesWithFilters(PaginationFilter filter)
         {
-            var response = new PaginationResponse<Entities.Permission>();
+            var response = new PaginationResponse<Entity>();
             try
             {
-                var query = _context.Permission.OrderBy(e => e.Id).AsQueryable();
 
-                if (!string.IsNullOrEmpty(filter.entity))
-                {
-                    query = query.Where(e => e.Entity == filter.entity);
-                }
+                var query = _context.Entity.OrderBy(e => e.EntityId).AsQueryable();
+
+                //if (!string.IsNullOrEmpty(filter.entity))
+                //{
+                //    query = query.Where(e => e.Entity.Name == filter.entity);
+                //}
+
+                var totalCount = await query.CountAsync();
+                var filteredEntities = await query.Skip(filter.start).Take(filter.length).Include(e => e.Permissions).ToListAsync();
+
+                response.Data = filteredEntities;
+                response.CurrentPage = filter.draw;
+                response.PageSize = filter.length;
+                response.TotalCount = totalCount;
+
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(PermissionRepository));
+            }
+            return response;
+        }
+
+        public async Task<PaginationResponse<Permission>> GetPermissionsWithFilters(PaginationFilter filter)
+        {
+            var response = new PaginationResponse<Permission>();
+            try
+            {
+
+                var query = _context.Permission.OrderBy(e => e.Id).AsQueryable();
 
                 var totalCount = await query.CountAsync();
                 var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
-                
+
                 response.Data = filteredEntities;
                 response.CurrentPage = filter.draw;
                 response.PageSize = filter.length;

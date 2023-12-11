@@ -1,4 +1,4 @@
-﻿namespace IdentityApplication.Core.Permission
+﻿namespace IdentityApplication.Core.PermissionHelper
 {
     public static class PermissionsModel
     {

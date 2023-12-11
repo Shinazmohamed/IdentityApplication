@@ -1,5 +1,4 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 
 namespace IdentityApplication.Core.Entities
 {

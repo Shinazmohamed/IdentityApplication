@@ -17,9 +17,13 @@ namespace IdentityApplication.Business
             _mapper = mapper;
         }
 
-        public async Task<PaginationResponse<Permission>> GetPermissionsWithFilters(PaginationFilter filter)
+        public async Task<PaginationResponse<Entity>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             return await _unitOfWork.Permission.GetEntitiesWithFilters(filter);
+        }
+        public async Task<PaginationResponse<Permission>> GetPermissionsWithFilters(PaginationFilter filter)
+        {
+            return await _unitOfWork.Permission.GetPermissionsWithFilters(filter);
         }
 
         public async Task Create(CreatePermission request)

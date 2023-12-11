@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace IdentityApplication.Core.Permission
+namespace IdentityApplication.Core.PermissionHelper
 {
     internal class PermissionRequirement : IAuthorizationRequirement
     {

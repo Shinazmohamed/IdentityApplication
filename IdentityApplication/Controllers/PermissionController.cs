@@ -1,4 +1,7 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AutoMapper;
+using Azure;
+using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.Helpers;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -13,11 +16,13 @@ namespace IdentityApplication.Controllers
         private readonly RoleManager<IdentityRole> _roleManager; 
         private readonly IAuthorizationService _authorizationService;
         private readonly IPermissionBusiness _business;
-        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business)
+        private readonly IMapper _mapper;
+        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper)
         {
             _roleManager = roleManager;
             _authorizationService = authorizationService;
             _business = business;
+            _mapper = mapper;
         }
 
         public async Task<ActionResult> Index()
@@ -83,7 +88,7 @@ namespace IdentityApplication.Controllers
             foreach (var permission in allPermissions)
             {
                 var claim = new RoleClaimsViewModel();
-                claim.Type = permission.Entity;
+                claim.Type = permission.Entity.Name;
                 claim.Value = permission.Value;
 
                 if (authorizedClaims.Any(a => a == permission.Value))
@@ -108,16 +113,32 @@ namespace IdentityApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> GetAllPermission([FromBody]PaginationFilter filter)
         {
-            var data = await _business.GetPermissionsWithFilters(filter);
+            var data = await _business.GetEntitiesWithFilters(filter);
+
+            var mappedData = data.Data.Select(entity =>
+            {
+                var viewPermissionModel = _mapper.Map<ViewEntityModel>(entity);
+                viewPermissionModel.Permissions = _mapper.Map<List<ViewPermissionModel>>(entity.Permissions);
+                return viewPermissionModel;
+            });
 
             var dataSrc = new
             {
                 filter.draw,
                 recordsTotal = data.TotalCount,
-                recordsFiltered = data.TotalCount,
-                data = data.Data
+                recordsFiltered = data.TotalCount,                
+                data = mappedData
             };
             return Json(dataSrc);
+        }
+
+        private List<Permission> GetPermissionsForEntity()
+        {
+            return new List<Permission>
+            {
+                new Permission { Id = Guid.NewGuid(), Value = "Value1", EntityId = Guid.NewGuid() },
+                new Permission { Id = Guid.NewGuid(), Value = "Value2", EntityId = Guid.NewGuid() }
+            };
         }
 
         [HttpPost]

@@ -3,7 +3,7 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
-using IdentityApplication.Core.Permission;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

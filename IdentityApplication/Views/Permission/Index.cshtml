@@ -1,6 +1,14 @@
 ﻿@using IdentityApplication.Core.ViewModel
 @model CreatePermission
-<h1>Permissions</h1>
+
+<style>
+    .hidden-column {
+        display: none;
+    }
+</style>
+
+
+<h1>Manage Permissions</h1>
 <br />
 
 @if (TempData["SuccessMessage"] != null)
@@ -16,20 +24,15 @@
     </div>
 }
 
-<form method="post" asp-controller="Permission" asp-action="Create" id="CreatePermission">
+<div class="d-flex justify-content-end">
+    <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#permissionModal" style="margin-right: 10px;">
+        Add Entity
+    </button>
+    <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#permissionModal">
+        Add Permission
+    </button>
+</div>
 
-    <div class="col-md-6">
-        <label asp-for="Entity" class="form-label">Type</label>
-        <input asp-for="Entity" class="form-control" />
-    </div>
-    <div class="col-md-6">
-        <label asp-for="Value" class="form-label">Value</label>
-        <input asp-for="Value" class="form-control" />
-    </div>
-    <div class="col-md-6">
-        <button type="submit" class="btn btn-success" id="save">Save</button>
-    </div>
-</form>
 
 <br />
 <div class="card">
@@ -39,32 +42,65 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Id</th>
-                        <th>Type</th>
-                        <th>Value</th>
+                        <th>Entity ID</th>
+                        <th>Name</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- DataTable content will be loaded here dynamically -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+
+
+<div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="employeeModalLabel">Add Permission</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-controller="Permission" asp-action="Create" id="CreatePermission">
+
+                    <div class="col-md-6">
+                        <label asp-for="Entity" class="form-label">Type</label>
+                        <input asp-for="Entity" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Value" class="form-label">Value</label>
+                        <input asp-for="Value" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-success" id="save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function () {
-
             var table = $('#permissionTable').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
                 ordering: false,
                 ajax: {
-                    url: '/Permission/GetAllPermission',
+                    url: '@Url.Action("GetAllPermission", "Permission")',
                     type: 'POST',
                     contentType: 'application/json',
                     data: function (d) {
@@ -84,49 +120,59 @@
                         data: null,
                         defaultContent: ''
                     },
-                    { data: 'id', visible: false },
-                    { data: 'entity' },
-                    { data: 'value' }
+                    { data: 'entityId', visible: false },
+                    { data: 'name' },
+                                       {
+                        data: 'entityId',
+                        render: function (data, type, row) {
+                            var actionHtml = '<div class="btn-group">' +
+                                '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                                '<div class="dropdown-menu shadow animated--grow-in">' +
+                                    '<a class="dropdown-item">' +
+                                        '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
+                                    '</a>';
+                            actionHtml += '</div></div>';
+                            return actionHtml;
+                        }
+
+                    }
                 ]
             });
 
             function format(d) {
-                // `d` is the original data object for the row
-                var tableContent = '<table class="table table-bordered">' +
+                var permissionsTable = '<table class="table table-bordered">' +
                     '<thead>' +
-                    '<tr>' +
-                    '<th>Type</th>' +
-                    '<th>Value</th>' +
-                    '<th>Status</th>' +
-                    '</tr>' +
+                        '<tr>' +
+                            '<th class="hidden-column">Id</th>' +
+                            '<th>Value</th>' +
+                        '</tr>' +
                     '</thead>' +
-                    '<tbody>' +
-                    '<tr>' +
-                    '<td>' + d.type + '</td>' +
-                    '<td>' + d.value + '</td>' +
-                    '<td>' + (d.selected ? 'Selected' : 'Not Selected') + '</td>' +
-                    '</tr>' +
-                    '</tbody>' +
-                    '</table>';
+                    '<tbody>';
 
-                return tableContent;
+                if (d.permissions) {
+                    d.permissions.forEach(function (permission) {
+                        permissionsTable += '<tr>' +
+                            '<td class="hidden-column">' + permission.id + '</td>' +
+                            '<td>' + permission.value + '</td>' +
+                            '</tr>';
+                    });
+                }
+                permissionsTable += '</tbody></table>';
+
+                return permissionsTable;
             }
 
-            // Add event listener for opening and closing details
             table.on('click', 'td.dt-control', function (e) {
-                let tr = e.target.closest('tr');
-                let row = table.row(tr);
+                var tr = e.target.closest('tr');
+                var row = table.row(tr);
 
                 if (row.child.isShown()) {
-                    // This row is already open - close it
                     row.child.hide();
-                }
-                else {
-                    // Open this row
+                } else {
                     row.child(format(row.data())).show();
                 }
             });
-
         });
     </script>
+
 }

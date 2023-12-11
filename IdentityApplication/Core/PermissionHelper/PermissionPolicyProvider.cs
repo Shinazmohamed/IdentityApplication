@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace IdentityApplication.Core.Permission
+namespace IdentityApplication.Core.PermissionHelper
 {
     internal class PermissionPolicyProvider : IAuthorizationPolicyProvider
     {

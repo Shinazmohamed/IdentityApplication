@@ -6,7 +6,7 @@ using IdentityApplication.Core.Repositories;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Business;
 using Serilog;
-using IdentityApplication.Core.Permission;
+using IdentityApplication.Core.PermissionHelper;
 using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
