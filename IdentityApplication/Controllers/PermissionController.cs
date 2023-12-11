@@ -1,35 +1,46 @@
 ﻿using AutoMapper;
-using Azure;
 using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.Helpers;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
     [Authorize]
     public class PermissionController : Controller
     {
-        private readonly RoleManager<IdentityRole> _roleManager; 
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly IPermissionBusiness _business;
+        private readonly IEntityBusiness _entitybusiness;
         private readonly IMapper _mapper;
-        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper)
+        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper, IEntityBusiness entitybusiness)
         {
             _roleManager = roleManager;
             _authorizationService = authorizationService;
             _business = business;
             _mapper = mapper;
+            _entitybusiness = entitybusiness;
         }
 
         public async Task<ActionResult> Index()
         {
-            return View();
+            var entities = _entitybusiness.GetEntities();
+            var response = new ManagePermission()
+            {
+                CreatePermission = new CreatePermission(),
+                CreateEntity = new CreateEntity()
+            };
+
+            response.CreatePermission.Entities = entities.Select(entity =>
+                new SelectListItem(entity.Name, entity.EntityId.ToString(), false)).ToList();
+
+            return View(response);
         }
-        
+
         public async Task<IActionResult> Update(PermissionViewModel model)
         {
             try
@@ -71,7 +82,7 @@ namespace IdentityApplication.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> GetPermissionByRole([FromBody]PaginationFilter filter)
+        public async Task<IActionResult> GetPermissionByRole([FromBody] PaginationFilter filter)
         {
             var response = new PermissionViewModel();
             var model = new List<RoleClaimsViewModel>();
@@ -111,7 +122,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetAllPermission([FromBody]PaginationFilter filter)
+        public async Task<IActionResult> GetAllPermission([FromBody] PaginationFilter filter)
         {
             var data = await _business.GetEntitiesWithFilters(filter);
 
@@ -126,27 +137,18 @@ namespace IdentityApplication.Controllers
             {
                 filter.draw,
                 recordsTotal = data.TotalCount,
-                recordsFiltered = data.TotalCount,                
+                recordsFiltered = data.TotalCount,
                 data = mappedData
             };
             return Json(dataSrc);
         }
 
-        private List<Permission> GetPermissionsForEntity()
-        {
-            return new List<Permission>
-            {
-                new Permission { Id = Guid.NewGuid(), Value = "Value1", EntityId = Guid.NewGuid() },
-                new Permission { Id = Guid.NewGuid(), Value = "Value2", EntityId = Guid.NewGuid() }
-            };
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Create(CreatePermission permission)
+        public async Task<IActionResult> Create(ManagePermission request)
         {
             try
             {
-                await _business.Create(permission);
+                await _business.Create(request.CreatePermission);
 
                 TempData["SuccessMessage"] = "Permission created successfully.";
                 return RedirectToAction("Index");
@@ -159,11 +161,11 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(CreatePermission request)
+        public async Task<IActionResult> Edit(ManagePermission request)
         {
             try
             {
-                await _business.Update(request);
+                await _business.Update(request.CreatePermission);
 
                 TempData["SuccessMessage"] = "Record updated successfully.";
                 return RedirectToAction("Index");

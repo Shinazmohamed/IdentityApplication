@@ -86,12 +86,16 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SubCategoryId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.SubCategoryName));
 
-            CreateMap<CreatePermission, Permission>();
+            CreateMap<CreatePermission, Permission>()
+                .ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.SelectedEntity));
 
             CreateMap<Entity, ViewEntityModel>();
 
             CreateMap<Permission, ViewPermissionModel>();
-            
+
+            CreateMap<CreateEntity, Entity>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Entity));
+
         }
 
     }

@@ -15,5 +15,6 @@
         IAuditRepository Audit { get; }
         ICategoryDepartmentMappingRepository CategoryDepartmentMapping { get; }
         IPermissionRepository Permission { get; }
+        IEntityRepository Entity { get; }
     }
 }
