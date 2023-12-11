@@ -1,6 +1,5 @@
 ﻿using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Helpers;
-using IdentityApplication.Core.Permission;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,28 +19,13 @@ namespace IdentityApplication.Controllers
             _authorizationService = authorizationService;
             _business = business;
         }
-        public async Task<ActionResult> Index(string roleId)
+
+        public async Task<ActionResult> Index()
         {
-            var model = new PermissionViewModel();
-            var allPermissions = new List<RoleClaimsViewModel>();
-            allPermissions.GetPermissions(typeof(PermissionsModel.Employees), roleId);
-            var role = await _roleManager.FindByIdAsync(roleId);
-            model.RoleId = roleId;
-            var claims = await _roleManager.GetClaimsAsync(role);
-            var allClaimValues = allPermissions.Select(a => a.Value).ToList();
-            var roleClaimValues = claims.Select(a => a.Value).ToList();
-            var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
-            foreach (var permission in allPermissions)
-            {
-                if (authorizedClaims.Any(a => a == permission.Value))
-                {
-                    permission.Selected = true;
-                }
-            }
-            model.RoleClaims = allPermissions;
-            return View(model);
+            return View();
         }
-        public async Task<IActionResult> Update([FromBody] PermissionViewModel model)
+        
+        public async Task<IActionResult> Update(PermissionViewModel model)
         {
             try
             {
@@ -82,7 +66,7 @@ namespace IdentityApplication.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
+        public async Task<IActionResult> GetPermissionByRole([FromBody]PaginationFilter filter)
         {
             var response = new PermissionViewModel();
             var model = new List<RoleClaimsViewModel>();
@@ -119,6 +103,72 @@ namespace IdentityApplication.Controllers
                 data = response.RoleClaims
             };
             return Json(dataSrc);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetAllPermission([FromBody]PaginationFilter filter)
+        {
+            var data = await _business.GetPermissionsWithFilters(filter);
+
+            var dataSrc = new
+            {
+                filter.draw,
+                recordsTotal = data.TotalCount,
+                recordsFiltered = data.TotalCount,
+                data = data.Data
+            };
+            return Json(dataSrc);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreatePermission permission)
+        {
+            try
+            {
+                await _business.Create(permission);
+
+                TempData["SuccessMessage"] = "Permission created successfully.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Permission creation failed.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(CreatePermission request)
+        {
+            try
+            {
+                await _business.Update(request);
+
+                TempData["SuccessMessage"] = "Record updated successfully.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Record update failed.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string Id)
+        {
+            try
+            {
+                await _business.Delete(Id);
+                TempData["SuccessMessage"] = "Record deleted successfully.";
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Record delete failed.";
+                return RedirectToAction("Index");
+            }
         }
     }
 }

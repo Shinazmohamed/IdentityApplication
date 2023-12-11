@@ -1,5 +1,6 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +40,78 @@ namespace IdentityApplication.Core.Repositories
                 _logger.LogError(e, "{Repo} All function error", typeof(PermissionRepository));
             }
             return response;
+        }
+
+        public void Create(Entities.Permission request)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var existingMapping = _context.Permission
+                        .FirstOrDefault(e => e.Value == request.Value);
+                    if (existingMapping != null)
+                    {
+                        throw new ArgumentNullException(nameof(existingMapping));
+                    }
+
+                    _context.Permission.Add(request);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(PermissionRepository));
+                    throw;
+                }
+            }
+        }
+        public async Task Delete(Guid id)
+        {
+            try
+            {
+                var entity = await _context.Permission.FirstOrDefaultAsync(e => e.Id == id);
+                _context.Permission.Remove(entity);
+                _context.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(PermissionRepository));
+                throw;
+            }
+        }
+        public void Update(Entities.Permission entity)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (entity == null)
+                        throw new ArgumentNullException(nameof(entity));
+
+                    var existingMapping = _context.Permission
+                        .FirstOrDefault(e => e.Id == entity.Id);
+
+                    if (existingMapping == null)
+                    {
+                        throw new ArgumentNullException(nameof(entity));
+                    }
+
+                    existingMapping.Value = entity.Value;
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(PermissionRepository));
+                    throw;
+                }
+            }
         }
     }
 }

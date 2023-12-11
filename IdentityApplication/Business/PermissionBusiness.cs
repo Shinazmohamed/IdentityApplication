@@ -21,5 +21,22 @@ namespace IdentityApplication.Business
         {
             return await _unitOfWork.Permission.GetEntitiesWithFilters(filter);
         }
+
+        public async Task Create(CreatePermission request)
+        {
+            var entity = _mapper.Map<Permission>(request);
+            _unitOfWork.Permission.Create(entity);
+        }
+
+        public async Task Update(CreatePermission request)
+        {
+            var entity = _mapper.Map<Permission>(request);
+            _unitOfWork.Permission.Update(entity);
+        }
+
+        public async Task Delete(string id)
+        {
+            await _unitOfWork.Permission.Delete(Guid.Parse(id));
+        }
     }
 }

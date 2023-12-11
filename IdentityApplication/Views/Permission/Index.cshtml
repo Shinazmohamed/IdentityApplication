@@ -1,52 +1,132 @@
 ﻿@using IdentityApplication.Core.ViewModel
-@model PermissionViewModel
+@model CreatePermission
 <h1>Permissions</h1>
 <br />
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3" id="successMessage">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3" id="errorMessage">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form method="post" asp-controller="Permission" asp-action="Create" id="CreatePermission">
+
+    <div class="col-md-6">
+        <label asp-for="Entity" class="form-label">Type</label>
+        <input asp-for="Entity" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Value" class="form-label">Value</label>
+        <input asp-for="Value" class="form-control" />
+    </div>
+    <div class="col-md-6">
+        <button type="submit" class="btn btn-success" id="save">Save</button>
+    </div>
+</form>
+
+<br />
 <div class="card">
-    <div id="viewAll" class="card-body table-responsive">
-        <form asp-controller="permission" method="post" asp-action="Update" class="d-inline">
-            <input asp-for="@Model.RoleId" type="hidden" />
-            <table class="table table-striped" id="permissionTable">
+    <div class="card-body">
+        <div id="viewAll" class="card-body table-responsive">
+            <table id="permissionTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>
-                            Type
-                        </th>
-                        <th>
-                            Permission
-                        </th>
-                        <th>
-                            Status
-                        </th>
+                        <th></th>
+                        <th>Id</th>
+                        <th>Type</th>
+                        <th>Value</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 0; i < Model.RoleClaims.Count(); i++)
-                    {
-                        <tr>
-                            <td>
-                                <input asp-for="@Model.RoleClaims[i].Type" type="hidden" />
-                                @Model.RoleClaims[i].Type
-                            </td>
-                            <td>
-                                <input asp-for="@Model.RoleClaims[i].Value" type="hidden" />
-                                @Model.RoleClaims[i].Value
-                            </td>
-                            <td>
-                                <div class="form-check m-1">
-                                    <input asp-for="@Model.RoleClaims[i].Selected" class="form-check-input" />
-                                </div>
-                            </td>
-                        </tr>
-                    }
                 </tbody>
             </table>
-            <div class="col-sm-12" style="padding: 20px 20px 0px 0px">
-                <button type="submit" id="save" class="btn btn-success">
-                    <i class="fa fa-check"></i>
-                    Save
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var table = $('#permissionTable').DataTable({
+                processing: true,
+                serverSide: true,
+                searching: false,
+                ordering: false,
+                ajax: {
+                    url: '/Permission/GetAllPermission',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function (d) {
+                        var customFilter = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length
+                        };
+                        return JSON.stringify(customFilter);
+                    },
+                    dataSrc: 'data'
+                },
+                columns: [
+                    {
+                        className: 'dt-control',
+                        orderable: false,
+                        data: null,
+                        defaultContent: ''
+                    },
+                    { data: 'id', visible: false },
+                    { data: 'entity' },
+                    { data: 'value' }
+                ]
+            });
+
+            function format(d) {
+                // `d` is the original data object for the row
+                var tableContent = '<table class="table table-bordered">' +
+                    '<thead>' +
+                    '<tr>' +
+                    '<th>Type</th>' +
+                    '<th>Value</th>' +
+                    '<th>Status</th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody>' +
+                    '<tr>' +
+                    '<td>' + d.type + '</td>' +
+                    '<td>' + d.value + '</td>' +
+                    '<td>' + (d.selected ? 'Selected' : 'Not Selected') + '</td>' +
+                    '</tr>' +
+                    '</tbody>' +
+                    '</table>';
+
+                return tableContent;
+            }
+
+            // Add event listener for opening and closing details
+            table.on('click', 'td.dt-control', function (e) {
+                let tr = e.target.closest('tr');
+                let row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                }
+                else {
+                    // Open this row
+                    row.child(format(row.data())).show();
+                }
+            });
+
+        });
+    </script>
+}
