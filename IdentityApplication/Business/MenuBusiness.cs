@@ -30,8 +30,8 @@ namespace IdentityApplication.Business
             {
                 return null;
             }
-            var isAdmin = await _userManager.IsInRoleAsync(user, Constants.Roles.Administrator);
-            if (isAdmin)
+            var isDev = await _userManager.IsInRoleAsync(user, Constants.Roles.SuperDeveloper);
+            if (isDev)
             {
                 var menus = _unitOfWork.Menu.GetMenus();
                 return _mapper.Map<List<MenuViewModel>>(menus);

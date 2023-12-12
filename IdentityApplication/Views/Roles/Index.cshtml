@@ -95,7 +95,7 @@
                             <form class="d-inline-block" type="submit">
                                 <a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i> Delete</a>
                             </form>
-                            @if (role.Name != $"{Constants.Roles.Administrator}")
+                            @if (role.Name != $"{Constants.Roles.SuperDeveloper}")
                             {
                                 <a style='margin-right:16px' class="dropdown-item btn-permission" data-id="@role.Id" href="#">
                                     <i class="fas fa-wrench"></i> Manage Permissions

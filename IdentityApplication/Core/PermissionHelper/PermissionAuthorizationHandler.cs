@@ -11,6 +11,13 @@ namespace IdentityApplication.Core.PermissionHelper
             {
                 return;
             }
+
+            if (context.User.IsInRole(Constants.Roles.SuperDeveloper))
+            {
+                context.Succeed(requirement);
+                return;
+            }
+
             var permissionss = context.User.Claims.Where(x => x.Type == "Permission" &&
                                                                 x.Value == requirement.Permission &&
                                                                 x.Issuer == "LOCAL AUTHORITY");

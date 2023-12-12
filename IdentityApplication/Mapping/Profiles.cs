@@ -20,8 +20,7 @@ namespace IdentityApplication.Mapping
 
             CreateMap<ApplicationUser, ListUsersModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location.LocationName));
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 
             CreateMap<CreateCategorySubCategoryRequest, SubCategory>()
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory))

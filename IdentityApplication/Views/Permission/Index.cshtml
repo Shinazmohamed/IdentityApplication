@@ -2,11 +2,6 @@
 @using IdentityApplication.Core.ViewModel
 @model ManagePermission
 
-@{
-    var deletepolicy = @PermissionsModel.Permission.Delete;
-    var editpolicy = @PermissionsModel.Permission.Edit;
-}
-
 <style>
     .hidden-column {
         display: none;
@@ -34,9 +29,12 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-end">
-            <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#entityModal" style="margin-right: 10px;">
-                Add Entity
-            </button>
+            @if (Model.Create)
+            {
+                <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#entityModal" style="margin-right: 10px;">
+                    Add Entity
+                </button>
+            }
             <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#permissionModal">
                 Add Permission
             </button>
@@ -127,6 +125,9 @@
                 sortField: 'text'
             });
 
+            var hasDeletePermission = '@Model.Delete';
+            var hasEditPermission = '@Model.Edit';
+
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
                 $("#errorMessage").fadeOut("slow");
@@ -173,6 +174,14 @@
                                     '<a class="dropdown-item">' +
                                     '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
                                     '</a>';
+                            }
+                            if (hasDeletePermission) {
+                                actionHtml +=
+                                    '<form class="d-inline">' +
+                                    '<a class="dropdown-item">' +
+                                    '<i class="fas fa-trash-alt btn-delete" data-id="' + data + '"> Delete</i>' +
+                                    '</a>' +
+                                    '</form>';
                             }
                             actionHtml += '</div></div>';
                             return actionHtml;

@@ -28,9 +28,9 @@ namespace IdentityApplication.Controllers
 
         public IActionResult Index()
         {
-            var users = _unitOfWork.User.GetUsersWithLocations();
-            var source = _mapper.Map<List<ListUsersModel>>(users);
-            return View(source);
+            var users = _unitOfWork.User.GetUsersWithRoles();
+            //var source = _mapper.Map<List<ListUsersModel>>(users);
+            return View(users);
 
         }
         public async Task<IActionResult> Edit(string userId)

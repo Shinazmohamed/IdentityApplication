@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.Helpers;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,13 +28,22 @@ namespace IdentityApplication.Controllers
             _entitybusiness = entitybusiness;
         }
 
+        [Authorize(policy: $"{PermissionsModel.Entity.View}")]
         public async Task<ActionResult> Index()
         {
             var entities = _entitybusiness.GetEntities();
+            
+            var create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Entity.Create);
+            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Entity.Edit);
+            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Entity.Delete);
+
             var response = new ManagePermission()
             {
                 CreatePermission = new CreatePermission(),
-                CreateEntity = new CreateEntity()
+                CreateEntity = new CreateEntity(),
+                Create = create.Succeeded,
+                Edit = edit.Succeeded,
+                Delete = delete.Succeeded
             };
 
             response.CreatePermission.Entities = entities.Select(entity =>

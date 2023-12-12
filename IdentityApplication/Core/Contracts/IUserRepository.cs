@@ -1,4 +1,5 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
+using IdentityApplication.Core.ViewModel;
 
 namespace IdentityApplication.Core.Contracts
 {
@@ -8,5 +9,6 @@ namespace IdentityApplication.Core.Contracts
         ApplicationUser GetUser(string id);
         ApplicationUser UpdateUser(ApplicationUser user);
         ICollection<ApplicationUser> GetUsersWithLocations();
+        ICollection<ListUsersModel> GetUsersWithRoles();
     }
 }
