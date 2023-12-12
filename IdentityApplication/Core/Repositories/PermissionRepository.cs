@@ -54,7 +54,7 @@ namespace IdentityApplication.Core.Repositories
                 var query = _context.Permission.OrderBy(e => e.Id).AsQueryable();
 
                 var totalCount = await query.CountAsync();
-                var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
+                var filteredEntities = await query.Skip(filter.start).Take(filter.length).Include(e => e.Entity).ToListAsync();
 
                 response.Data = filteredEntities;
                 response.CurrentPage = filter.draw;

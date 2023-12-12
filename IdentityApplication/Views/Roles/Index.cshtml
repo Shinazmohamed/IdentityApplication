@@ -140,7 +140,7 @@
                     searching: false,
                     ordering: false,
                     ajax: {
-                        url: '/Permission/GetList',
+                        url: '/Permission/GetPermissionByRole',
                         type: 'POST',
                         contentType: 'application/json',
                         data: function (d) {
@@ -187,6 +187,8 @@
                     RoleClaims: formData
                 };
 
+                console.log(json);
+
                 $.ajax({
                     url: '/Permission/Update',
                     type: 'POST',
@@ -211,6 +213,7 @@
                         // Show error message
                         $('#errorMessage').html('Permission update failed.').show();
 
+                        $('#permissionmodel').modal('hide');
                         setTimeout(function () {
                             $("#errorMessage").fadeOut("slow");
                         }, 3000);

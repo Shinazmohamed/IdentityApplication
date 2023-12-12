@@ -3,7 +3,8 @@
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
-    var policyname = @PermissionsModel.Employees.Delete;
+    var deletepolicy = @PermissionsModel.Employee.Delete;
+    var editpolicy = @PermissionsModel.Employee.Edit;
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -154,7 +155,8 @@
 
     <script type="text/javascript">
 
-        var policyName = '@policyname';
+        var deletepolicy = '@deletepolicy';
+        var editpolicy = '@editpolicy';
 
         $(document).ready(function () {
             $('select').selectize({
@@ -162,11 +164,18 @@
             });
 
             var hasDeletePermission = false;
+            var hasEditPermission = false;
 
-            fetch('/Permission/CheckPermissions?policyname=' + policyName)
+            fetch('/Permission/CheckPermissions?policyname=' + deletepolicy)
                 .then(response => response.json())
                 .then(data => {
-                    hasDeletePermission = data.hasDeletePermission;
+                    hasDeletePermission = data.hasPermission;
+                });
+
+            fetch('/Permission/CheckPermissions?policyname=' + editpolicy)
+                .then(response => response.json())
+                .then(data => {
+                    hasEditPermission = data.hasPermission;
                 });
 
             setTimeout(function () {
@@ -213,10 +222,13 @@
                         render: function (data, type, row) {
                             var actionHtml = '<div class="btn-group">' +
                                 '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                                '<div class="dropdown-menu shadow animated--grow-in">' +
-                                '<a class="dropdown-item">' +
-                                '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
-                                '</a>';
+                                '<div class="dropdown-menu shadow animated--grow-in">';
+                            if(hasEditPermission){
+                                actionHtml +=
+                                    '<a class="dropdown-item">' +
+                                    '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
+                                    '</a>';
+                            }
                             if (hasDeletePermission) {
                                 actionHtml +=
                                     '<form class="d-inline">' +

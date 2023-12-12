@@ -31,6 +31,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize(policy: $"{PermissionsModel.Employee.Create}")]
         public async Task<IActionResult> Create()
         {
             var employee = new InsertEmployeeRequest();
@@ -67,6 +68,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Employee.Create}")]
         public async Task<IActionResult> CreateEmployee(InsertEmployeeRequest model)
         {
             try
@@ -90,6 +92,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize(policy: $"{PermissionsModel.Employee.View}")]
         public async Task<IActionResult> List()
         {
             var response = new InsertEmployeeRequest();
@@ -156,6 +159,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Employee.Edit}")]
         public async Task<IActionResult> Edit(InsertEmployeeRequest request)
         {
             try
@@ -172,8 +176,8 @@ namespace IdentityApplication.Controllers
             }
         }
 
-        [Authorize(policy: $"{PermissionsModel.Employees.Delete}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Employee.Delete}")]
         public async Task<IActionResult> Delete(string Id)
         {
             try

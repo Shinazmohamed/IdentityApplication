@@ -1,5 +1,11 @@
-﻿@using IdentityApplication.Core.ViewModel
+﻿@using IdentityApplication.Core.PermissionHelper
+@using IdentityApplication.Core.ViewModel
 @model ManagePermission
+
+@{
+    var deletepolicy = @PermissionsModel.Permission.Delete;
+    var editpolicy = @PermissionsModel.Permission.Edit;
+}
 
 <style>
     .hidden-column {
@@ -99,6 +105,7 @@
                         <label asp-for="CreateEntity.Entity" class="form-label">Entity</label>
                         <input asp-for="CreateEntity.Entity" class="form-control" />
                     </div>
+                    <br />
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-success" id="save">Save</button>
                     </div>
@@ -159,10 +166,14 @@
                         render: function (data, type, row) {
                             var actionHtml = '<div class="btn-group">' +
                                 '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                                '<div class="dropdown-menu shadow animated--grow-in">' +
-                                '<a class="dropdown-item">' +
-                                '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
-                                '</a>';
+                                '<div class="dropdown-menu shadow animated--grow-in">';
+
+                            if (hasEditPermission) {
+                                actionHtml +=
+                                    '<a class="dropdown-item">' +
+                                    '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
+                                    '</a>';
+                            }
                             actionHtml += '</div></div>';
                             return actionHtml;
                         }

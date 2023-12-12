@@ -41,7 +41,7 @@ namespace IdentityApplication.Controllers
             return View(response);
         }
 
-        public async Task<IActionResult> Update(PermissionViewModel model)
+        public async Task<IActionResult> Update([FromBody] PermissionViewModel model)
         {
             try
             {
@@ -71,8 +71,8 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                var hasDeletePermission = await _authorizationService.AuthorizeAsync(User, policyname);
-                return Ok(new { hasDeletePermission = hasDeletePermission.Succeeded });
+                var hasPermission = await _authorizationService.AuthorizeAsync(User, policyname);
+                return Ok(new { hasPermission = hasPermission.Succeeded });
             }
             catch (Exception ex)
             {
