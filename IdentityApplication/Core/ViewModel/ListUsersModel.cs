@@ -1,6 +1,4 @@
-﻿using IdentityApplication.Core.Entities;
-
-namespace IdentityApplication.Core.ViewModel
+﻿namespace IdentityApplication.Core.ViewModel
 {
     public class ListUsersModel
     {

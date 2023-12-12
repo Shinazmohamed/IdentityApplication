@@ -53,7 +53,7 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.SubMenu, opt => opt.MapFrom(src => src.SubMenus));
 
             CreateMap<SubMenu, SubMenuViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MenuId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SubMenuId))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest => dest.Controller, opt => opt.MapFrom(src => src.Controller))
                 .ForMember(dest => dest.Method, opt => opt.MapFrom(src => src.Method));

@@ -1,4 +1,5 @@
 ﻿using IdentityApplication.Core.Entities;
+using IdentityApplication.Core.ViewModel;
 
 namespace IdentityApplication.Core.Contracts
 {
@@ -6,5 +7,6 @@ namespace IdentityApplication.Core.Contracts
     {
         void Create(SubMenu request);
         List<SubMenu> GetAll();
+        void Update(ManageMenuViewModel request);
     }
 }

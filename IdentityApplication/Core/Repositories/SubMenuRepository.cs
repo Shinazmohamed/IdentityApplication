@@ -1,6 +1,8 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
+using IdentityApplication.Core.ViewModel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace IdentityApplication.Core.Repositories
@@ -70,5 +72,53 @@ namespace IdentityApplication.Core.Repositories
             }
             return response;
         }
+
+        public void Delete(ManageMenuViewModel request)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var subMenuRolesToRemove = _context.SubMenuRoles.Where(e => e.Id == request.RoleId);
+                    _context.SubMenuRoles.RemoveRange(subMenuRolesToRemove);
+
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} Update function error", typeof(SubMenuRepository));
+                }
+            }
+        }
+
+
+        public void Update(ManageMenuViewModel request)
+        {
+            Delete(request);
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in request.menuData.Where(item => item.isChecked))
+                    {
+                        _context.SubMenuRoles.Add(new SubMenuRole { SubMenuId = item.Id, Id = request.RoleId });
+                    }
+
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} Update function error", typeof(SubMenuRepository));
+                }
+            }
+        }
+
     }
 }

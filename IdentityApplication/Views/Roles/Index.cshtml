@@ -3,7 +3,11 @@
 @model IEnumerable<IdentityRole>
 <h1>Roles</h1>
 <br />
-
+<style>
+    .hidden-column {
+        display: none;
+    }
+</style>
 
 <div class="alert alert-success mt-3" id="successMessage" style="display:none">
     @if (TempData["SuccessMessage"] != null)
@@ -57,7 +61,27 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="MenuModel" tabindex="-1" aria-labelledby="MenuModelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="MenuModelLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="menuForm" method="post">
+                <!-- Change the form id -->
+                <div class="modal-body">
+                    <input id="RoleId" type="hidden" />
+                    @await Component.InvokeAsync("ManageMenu")
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <table class="table table-striped" id="roleTable">
     <thead>
@@ -101,10 +125,12 @@
                                     <i class="fas fa-wrench"></i> Manage Permissions
                                 </a>
                             }
+                            <a style='margin-right:16px' class="dropdown-item btn-menu" data-id="@role.Id" href="#">
+                                <i class="fas fa-wrench"></i> Manage Menu
+                            </a>
                         </div>
                     </div>
                 </td>
-
             </tr>
         }
     </tbody>
@@ -115,16 +141,32 @@
     }
 
     <script type="text/javascript">
-
         $(document).ready(function () {
+
+            $('#MenuModel').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
 
             $("#successMessage").fadeOut("slow");
             $("#errorMessage").fadeOut("slow");
 
             var table = $('#permissionTable').DataTable();
 
-            $('#roleTable').on('click', '.btn-permission', function () {
+            $('#roleTable').on('click', '.btn-menu', function (e) {
+                e.preventDefault();
+                var row = $(this).closest('tr');
+                var role = {
+                    Name: row.find('td:eq(0)').text().trim(),
+                    Id: row.find('td:eq(1)').text().trim()
+                };
 
+                $('#RoleId').val(role.Id);
+                $('#MenuModelLabel').text('Manage Menu for ' + role.Name)
+                $('#MenuModel').modal('show');
+            });
+
+            $('#roleTable').on('click', '.btn-permission', function () {
                 var row = $(this).closest('tr');
                 var role = {
                     Name: row.find('td:eq(0)').text().trim(),
@@ -170,13 +212,11 @@
                 $('#permissionmodel').modal('show');
             });
 
-
             $('#permissionTable').on('change', '.checkbox-select', function () {
                 var rowIndex = table.row($(this).closest('tr')).index();
                 var rowData = table.row(rowIndex).data();
                 rowData.selected = this.checked;
             });
-
 
             $('#permissionForm').on('submit', function (e) {
                 e.preventDefault();
@@ -187,15 +227,12 @@
                     RoleClaims: formData
                 };
 
-                console.log(json);
-
                 $.ajax({
                     url: '/Permission/Update',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(json),
                     success: function (response) {
-                        console.log('success');
                         $('#errorMessage').hide();
                         $('#successMessage').html('Permission updated successfully.').show();
 
@@ -204,7 +241,6 @@
                         }, 3000);
 
                         $('#permissionmodel').modal('hide');
-
                     },
                     error: function (error) {
                         // Hide any existing success messages
@@ -221,7 +257,128 @@
                 });
             });
 
+            var menutable = $('#menuTable').DataTable({
+                processing: true,
+                serverSide: true,
+                searching: false,
+                ordering: false,
+                ajax: {
+                    url: '/Menu/GetAll',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function (d) {
+                        var customFilter = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length
+                        };
+                        return JSON.stringify(customFilter);
+                    },
+                    dataSrc: 'data'
+                },
+                columns: [
+                    {
+                        className: 'dt-control',
+                        orderable: false,
+                        data: null,
+                        defaultContent: ''
+                    },
+                    { data: 'id', visible: false },
+                    { data: 'displayName' }
+                ]
+            });
+
+            var subMenuTable = $('#submenuTable').DataTable({
+                searching: false,
+                paging: false,
+                info: false
+            });
+
+            function formatmenutable(d) {
+                var subMenuTable = '<table id="submenuTable" class="table table-bordered">' +
+                    '<thead>' +
+                    '<tr>' +
+                    '<th class="hidden-column">Id</th>' +
+                    '<th>Sub Menu</th>' +
+                    '<th></th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody>';
+
+                if (d.subMenu) {
+                    d.subMenu.forEach(function (subMenu) {
+                        subMenuTable += '<tr>' +
+                            '<td class="hidden-column">' + subMenu.id + '</td>' +
+                            '<td>' + subMenu.displayName + '</td>' +
+                            '<td><input type="checkbox" class="childCheckbox"></td>' +
+                            '</tr>';
+                    });
+                }
+                subMenuTable += '</tbody></table>';
+
+                return subMenuTable;
+            }
+
+            menutable.on('click', 'td.dt-control', function (e) {
+                var tr = e.target.closest('tr');
+                var row = menutable.row(tr);
+
+                if (row.child.isShown()) {
+                    row.child.hide();
+                } else {
+                    row.child(formatmenutable(row.data())).show();
+
+                    $(document).on('click', '#submenuTable .childCheckbox', function (e) {
+                        var subTr = $(this).closest('tr');
+                        var subRow = subMenuTable.row(subTr);
+                        console.log(subRow.data());
+                    });
+                }
+            });
+
+            $('#menuForm').submit(function (e) {
+                e.preventDefault();
+                var menuData = [];
+
+                $('#submenuTable tbody tr').each(function () {
+                    var id = $(this).find('.hidden-column').text();
+                    var displayName = $(this).find('td:eq(1)').text();
+                    var isChecked = $(this).find('.childCheckbox').prop('checked');
+
+                    menuData.push({ Id: id, DisplayName: displayName, IsChecked: isChecked });
+                });
+
+                var formData = {
+                    menuData: menuData,
+                    RoleId: $('#RoleId').val()
+                };
+
+                $.ajax({
+                    url: '/Menu/SaveMenuData',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        $('#errorMessage').hide();
+                        $('#successMessage').html('Menu updated successfully.').show();
+
+                        setTimeout(function () {
+                            $("#successMessage").fadeOut("slow");
+                        }, 3000);
+
+                        $('#MenuModel').modal('hide');
+                    },
+                    error: function (error) {
+                        $('#successMessage').hide();
+                        $('#errorMessage').html('Menu update failed.').show();
+                        $('#MenuModel').modal('hide');
+
+                        setTimeout(function () {
+                            $("#errorMessage").fadeOut("slow");
+                        }, 3000);
+                    }
+                });
+            });
         });
     </script>
-
 }

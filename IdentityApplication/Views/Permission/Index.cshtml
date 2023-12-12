@@ -217,7 +217,7 @@
             table.on('click', 'td.dt-control', function (e) {
                 var tr = e.target.closest('tr');
                 var row = table.row(tr);
-
+                console.log(row);
                 if (row.child.isShown()) {
                     row.child.hide();
                 } else {
