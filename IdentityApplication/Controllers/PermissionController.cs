@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.Helpers;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
@@ -52,6 +51,7 @@ namespace IdentityApplication.Controllers
             return View(response);
         }
 
+        [Authorize(policy: $"{PermissionsModel.Entity.Edit}")]
         public async Task<IActionResult> Update([FromBody] PermissionViewModel model)
         {
             try
@@ -90,7 +90,6 @@ namespace IdentityApplication.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> GetPermissionByRole([FromBody] PaginationFilter filter)
@@ -155,6 +154,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
         public async Task<IActionResult> Create(ManagePermission request)
         {
             try
@@ -172,6 +172,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Entity.Edit}")]
         public async Task<IActionResult> Edit(ManagePermission request)
         {
             try
@@ -189,6 +190,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Entity.Delete}")]
         public async Task<IActionResult> Delete(string Id)
         {
             try

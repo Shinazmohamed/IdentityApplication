@@ -1,5 +1,6 @@
 ﻿using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
+        [Authorize(policy: $"{PermissionsModel.Category.Create}")]
         public IActionResult Index()
         {
             return View();
@@ -49,8 +50,8 @@ namespace IdentityApplication.Controllers
             }
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Category.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAllWithFilters(filter);
@@ -64,8 +65,8 @@ namespace IdentityApplication.Controllers
             return Json(jsonD);
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Category.Create}")]
         public async Task<IActionResult> Create(CreateCategoryRequest request)
         {
             try
@@ -81,8 +82,8 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Category.Edit}")]
         public async Task<IActionResult> Update(CreateCategoryRequest request)
         {
             try
@@ -98,8 +99,8 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Category.Delete}")]
         public async Task<IActionResult> Delete(string mappingId)
         {
             try

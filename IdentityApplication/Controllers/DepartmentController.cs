@@ -1,9 +1,8 @@
 ﻿using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
@@ -16,13 +15,14 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
+        [Authorize(policy: $"{PermissionsModel.Department.Create}")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Department.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAllWithFilters(filter);
@@ -36,8 +36,8 @@ namespace IdentityApplication.Controllers
             return Json(jsonD);
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Department.Create}")]
         public async Task<IActionResult> Create(CreateDepartmentViewModel request)
         {
             try
@@ -53,8 +53,8 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Department.Edit}")]
         public async Task<IActionResult> Update(CreateDepartmentViewModel request)
         {
             try
@@ -70,8 +70,8 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = $"{Constants.Roles.Administrator}")]
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Department.Delete}")]
         public async Task<IActionResult> Delete(string mappingId)
         {
             try

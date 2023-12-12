@@ -1,5 +1,6 @@
 ﻿using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,14 @@ namespace IdentityApplication.Controllers
             _repository = repository;
         }
 
+        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Entity.View}")]
         public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
         {
             var data = new IndexViewModel(_business).MenuItems;
@@ -45,6 +48,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
         public ActionResult SaveMenuData([FromBody] ManageMenuViewModel menuData)
         {
             _repository.Update(menuData);

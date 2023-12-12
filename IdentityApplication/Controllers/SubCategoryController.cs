@@ -1,5 +1,5 @@
 ﻿using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +17,14 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
+        [Authorize(policy: $"{PermissionsModel.SubCategory.View}")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubCategory.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAllWithFilters(filter);
@@ -37,6 +39,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubCategory.Create}")]
         public async Task<IActionResult> Create(CreateSubCategoryRequest request)
         {
             try
@@ -53,6 +56,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubCategory.Edit}")]
         public async Task<IActionResult> Update(CreateSubCategoryRequest request)
         {
             try
@@ -69,6 +73,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubCategory.Delete}")]
         public async Task<IActionResult> Delete(string mappingId)
         {
             try

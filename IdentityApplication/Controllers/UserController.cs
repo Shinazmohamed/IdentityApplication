@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using IdentityApplication.Areas.Identity.Data;
-using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,6 +26,7 @@ namespace IdentityApplication.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(policy: $"{PermissionsModel.User.View}")]
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsersWithRoles();
@@ -33,6 +34,8 @@ namespace IdentityApplication.Controllers
             return View(users);
 
         }
+
+        [Authorize(policy: $"{PermissionsModel.User.Edit}")]
         public async Task<IActionResult> Edit(string userId)
         {
             var response = new EditUserViewModel();
@@ -70,6 +73,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.User.Create}")]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
         {
             try
@@ -131,7 +135,9 @@ namespace IdentityApplication.Controllers
 
             return RedirectToAction("Edit", new { userId = request.User.Id });
         }
+
         [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.User.ResetPassword}")]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
         {
             var user = _unitOfWork.User.GetUser(request.User.Id);
@@ -152,10 +158,14 @@ namespace IdentityApplication.Controllers
             }
             return RedirectToAction("Edit", new { userId = request.User.Id });
         }
+
+        [Authorize(policy: $"{PermissionsModel.User.Profile}")]
         public IActionResult Profile()
         {
             return Redirect("http://localhost:5258/Identity/Account/Manage");
         }
+
+        [Authorize(policy: $"{PermissionsModel.User.Register}")]
         public IActionResult Register()
         {        
             return Redirect("http://localhost:5258/Identity/Account/Register");

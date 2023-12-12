@@ -33,5 +33,43 @@
             public const string Edit = "Permissions.Permission.Edit";
             public const string Delete = "Permissions.Permission.Delete";
         }
+        public static class Category
+        {
+            public const string View = "Permissions.Category.View";
+            public const string Create = "Permissions.Category.Create";
+            public const string Edit = "Permissions.Category.Edit";
+            public const string Delete = "Permissions.Category.Delete";
+        }
+        public static class Department
+        {
+            public const string View = "Permissions.Department.View";
+            public const string Create = "Permissions.Department.Create";
+            public const string Edit = "Permissions.Department.Edit";
+            public const string Delete = "Permissions.Department.Delete";
+        }
+        public static class Role
+        {
+            public const string View = "Permissions.Role.View";
+            public const string Create = "Permissions.Role.Create";
+            public const string Edit = "Permissions.Role.Edit";
+            public const string Delete = "Permissions.Role.Delete";
+        }
+        public static class SubCategory
+        {
+            public const string View = "Permissions.SubCategory.View";
+            public const string Create = "Permissions.SubCategory.Create";
+            public const string Edit = "Permissions.SubCategory.Edit";
+            public const string Delete = "Permissions.SubCategory.Delete";
+        }
+        public static class User
+        {
+            public const string View = "Permissions.User.View";
+            public const string Create = "Permissions.User.Create";
+            public const string Edit = "Permissions.User.Edit";
+            public const string Delete = "Permissions.User.Delete";
+            public const string ResetPassword = "Permissions.User.ResetPassword";
+            public const string Profile = "Permissions.User.Profile";
+            public const string Register = "Permissions.User.Register";
+        }
     }
 }
