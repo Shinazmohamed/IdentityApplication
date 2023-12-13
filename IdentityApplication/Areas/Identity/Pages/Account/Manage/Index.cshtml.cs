@@ -2,17 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using IdentityApplication.Areas.Identity.Data;
+using IdentityApplication.Core.PermissionHelper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account.Manage
 {
+    [Authorize(policy: $"{PermissionsModel.User.Profile}")]
     public class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;

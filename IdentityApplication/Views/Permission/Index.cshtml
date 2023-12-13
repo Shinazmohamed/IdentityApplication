@@ -59,7 +59,26 @@
     </div>
 </div>
 
-
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Permission" asp-action="Delete">
+                <div class="modal-body">
+                    <input type="hidden" id="Id" name="Id" />
+                    <p>Are you sure you want to delete this record?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -192,11 +211,12 @@
             });
 
             function format(d) {
-                var permissionsTable = '<table class="table table-bordered">' +
+                var permissionsTable = '<table id="permissionTable" class="table table-bordered">' +
                     '<thead>' +
                     '<tr>' +
                     '<th class="hidden-column">Id</th>' +
                     '<th>Value</th>' +
+                    '<th>Action</th>' +
                     '</tr>' +
                     '</thead>' +
                     '<tbody>';
@@ -206,7 +226,29 @@
                         permissionsTable += '<tr>' +
                             '<td class="hidden-column">' + permission.id + '</td>' +
                             '<td>' + permission.value + '</td>' +
-                            '</tr>';
+                            '<td>';
+
+                        var actionHtml = '<div class="btn-group">' +
+                            '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                            '<div class="dropdown-menu shadow animated--grow-in">';
+
+                        if (hasEditPermission) {
+                            actionHtml +=
+                                '<a class="dropdown-item">' +
+                                '<i class="fas fa-pencil-alt btn-permission-edit" data-id="' + permission.id + '"> Edit</i>' +
+                                '</a>';
+                        }
+                        if (hasDeletePermission) {
+                            actionHtml +=
+                                '<form class="d-inline">' +
+                                '<a class="dropdown-item">' +
+                                '<i class="fas fa-trash-alt btn-permission-delete" data-id="' + permission.id + '"> Delete</i>' +
+                                '</a>' +
+                                '</form>';
+                        }
+                        actionHtml += '</div></div>';
+
+                        permissionsTable += actionHtml + '</td></tr>';
                     });
                 }
                 permissionsTable += '</tbody></table>';
@@ -217,13 +259,48 @@
             table.on('click', 'td.dt-control', function (e) {
                 var tr = e.target.closest('tr');
                 var row = table.row(tr);
-                console.log(row);
+
                 if (row.child.isShown()) {
                     row.child.hide();
                 } else {
                     row.child(format(row.data())).show();
                 }
             });
+
+            $('#permissionTable').on('click', '.btn-permission-edit', function () {
+                var id = $(this).data('id');
+                console.log(id);
+
+                // $.ajax({
+                //     url: '/employee/Edit?id=' + id,
+                //     method: 'GET',
+                //     success: function (employee) {
+                //         $('#EmployeeId').val(id);
+                //         $('#SelectedLocation')[0].selectize.setValue(employee.selectedLocation);
+
+                //         $('#SelectedSubCategoryId').val(employee.selectedSubCategory);
+                //         $('#SelectedCategoryId').val(employee.selectedCategory);
+                //         $('#department')[0].selectize.setValue(employee.selectedDepartment);
+                //         $('#category')[0].selectize.setValue(employee.selectedCategory);
+
+                //         $('#E1').val(employee.e1);
+                //         $('#E2').val(employee.e2);
+                //         $('#M1').val(employee.m1);
+                //         $('#M2').val(employee.m2);
+
+                //         $('#employeeModal').modal('show');
+                //     }
+                // });
+            });
+
+            $('#permissionTable').on('click', '.btn-permission-delete', function () {
+                var id = $(this).data('id');
+                $('#Id').val(id);
+                $('#deleteConfirmationModal').modal('show');
+            });
+
+
+
         });
     </script>
 

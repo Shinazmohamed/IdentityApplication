@@ -71,5 +71,9 @@
             public const string Profile = "Permissions.User.Profile";
             public const string Register = "Permissions.User.Register";
         }
+        public static class Audit
+        {
+            public const string View = "Permissions.Audit.View";
+        }
     }
 }

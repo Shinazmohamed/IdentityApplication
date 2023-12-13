@@ -206,5 +206,23 @@ namespace IdentityApplication.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.Entity.Delete}")]
+        public async Task<IActionResult> DeletePermission(string Id)
+        {
+            try
+            {
+                await _business.Delete(Id);
+                TempData["SuccessMessage"] = "Record deleted successfully.";
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Record delete failed.";
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
