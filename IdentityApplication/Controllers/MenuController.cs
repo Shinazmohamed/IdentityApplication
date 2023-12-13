@@ -11,7 +11,6 @@ namespace IdentityApplication.Controllers
     public class MenuController : Controller
     {
         private readonly IMenuBusiness _business;
-
         private readonly ISubMenuRepository _repository;
         public MenuController(IMenuBusiness business, ISubMenuRepository repository)
         {
@@ -19,36 +18,14 @@ namespace IdentityApplication.Controllers
             _repository = repository;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
+        [Authorize(policy: $"{PermissionsModel.SubMenu.Create}")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.View}")]
-        public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
-        {
-            var data = new IndexViewModel(_business).MenuItems;
-            var mappedData = data.Select(entity =>
-            {
-                var model = entity;
-                model.SubMenu = entity.SubMenu;
-                return model;
-            });
-
-            var dataSrc = new
-            {
-                filter.draw,
-                recordsTotal = data.Count(),
-                recordsFiltered = data.Count(),
-                data = mappedData
-            };
-            return Json(dataSrc);
-        }
-
-        [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
+        [Authorize(policy: $"{PermissionsModel.SubMenu.Create}")]
         public ActionResult SaveMenuData([FromBody] ManageMenuViewModel menuData)
         {
             _repository.Update(menuData);

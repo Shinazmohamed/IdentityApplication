@@ -94,7 +94,6 @@ namespace IdentityApplication.Core.Repositories
             }
         }
 
-
         public void Update(ManageMenuViewModel request)
         {
             Delete(request);
@@ -103,12 +102,17 @@ namespace IdentityApplication.Core.Repositories
             {
                 try
                 {
-                    foreach (var item in request.menuData.Where(item => item.isChecked))
-                    {
-                        _context.SubMenuRoles.Add(new SubMenuRole { SubMenuId = item.Id, Id = request.RoleId });
-                    }
+                    var selectedItems = request.menuData.Where(item => item.Selected).ToList();
 
-                    _context.SaveChanges();
+                    if (selectedItems.Any())
+                    {
+                        foreach (var item in selectedItems)
+                        {
+                            _context.SubMenuRoles.Add(new SubMenuRole { SubMenuId = item.Id, Id = request.RoleId });
+                        }
+
+                        _context.SaveChanges();
+                    }
 
                     transaction.Commit();
                 }
@@ -120,5 +124,40 @@ namespace IdentityApplication.Core.Repositories
             }
         }
 
+        public PaginationResponse<SubMenuViewModel> GetSubMenusWithFilters(PaginationFilter filter)
+        {
+            var response = new PaginationResponse<SubMenuViewModel>();
+            try
+            {
+                var query = _context.SubMenu.AsQueryable();
+
+                var totalCount = query.Count();
+                var filteredEntities = query
+                    .Skip(filter.start)
+                    .Take(filter.length)
+                    .OrderBy(e => e.Controller)
+                    .Select(submenu => new SubMenuViewModel
+                    {
+                        Id = submenu.SubMenuId,
+                        DisplayName = submenu.DisplayName,
+                        Controller = submenu.Controller,
+                        Method = submenu.Method,
+                        Selected = _context.SubMenuRoles.Any(mapping => mapping.SubMenuId == submenu.SubMenuId && filter.roleId == mapping.Id)
+                    })
+                    .ToList();
+
+                response.Data = filteredEntities;
+                response.CurrentPage = filter.draw;
+                response.PageSize = filter.length;
+                response.TotalCount = totalCount;
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(SubMenuRepository));
+            }
+            return response;
+        }
     }
 }

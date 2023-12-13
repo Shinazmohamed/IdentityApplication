@@ -27,7 +27,7 @@ namespace IdentityApplication.Controllers
             _entitybusiness = entitybusiness;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Entity.View}")]
+        [Authorize(policy: $"{PermissionsModel.Permission.View}")]
         public async Task<ActionResult> Index()
         {
             var entities = _entitybusiness.GetEntities();
@@ -51,7 +51,7 @@ namespace IdentityApplication.Controllers
             return View(response);
         }
 
-        [Authorize(policy: $"{PermissionsModel.Entity.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.Permission.Edit}")]
         public async Task<IActionResult> Update([FromBody] PermissionViewModel model)
         {
             try
@@ -154,7 +154,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
+        [Authorize(policy: $"{PermissionsModel.Permission.Create}")]
         public async Task<IActionResult> Create(ManagePermission request)
         {
             try
@@ -172,7 +172,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.Permission.Edit}")]
         public async Task<IActionResult> Edit(ManagePermission request)
         {
             try
@@ -190,7 +190,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.Permission.Delete}")]
         public async Task<IActionResult> Delete(string Id)
         {
             try

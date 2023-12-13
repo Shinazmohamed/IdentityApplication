@@ -1,4 +1,5 @@
 ﻿using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,22 @@ namespace IdentityApplication.Controllers
                 TempData["ErrorMessage"] = "Employee creation failed.";
                 return RedirectToAction("Index");
             }
+        }
+
+        [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubMenu.View}")]
+        public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
+        {
+            var data = _business.GetSubMenusWithFilters(filter);
+
+            var dataSrc = new
+            {
+                filter.draw,
+                recordsTotal = data.TotalCount,
+                recordsFiltered = data.TotalCount,
+                data = data.Data
+            };
+            return Json(dataSrc);
         }
     }
 }

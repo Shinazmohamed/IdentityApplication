@@ -45,7 +45,6 @@ namespace IdentityApplication.Business
                 var rolemenus = _unitOfWork.Menu.GetMenuById(currentRole.Id);
                 return _mapper.Map<List<MenuViewModel>>(rolemenus);
             }
-
         }
 
         public List<Menu> GetAll()

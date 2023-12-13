@@ -75,5 +75,12 @@
         {
             public const string View = "Permissions.Audit.View";
         }
+        public static class SubMenu
+        {
+            public const string View = "Permissions.SubMenu.View";
+            public const string Create = "Permissions.SubMenu.Create";
+            public const string Edit = "Permissions.SubMenu.Edit";
+            public const string Delete = "Permissions.SubMenu.Delete";
+        }
     }
 }

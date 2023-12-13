@@ -7,5 +7,6 @@ namespace IdentityApplication.Business.Contracts
     {
         List<SubMenu> GetAll();
         void Create(CreateMenuRequest request);
+        PaginationResponse<SubMenuViewModel> GetSubMenusWithFilters(PaginationFilter filter);
     }
 }

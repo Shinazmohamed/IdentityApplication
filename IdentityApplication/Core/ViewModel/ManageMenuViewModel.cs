@@ -9,6 +9,6 @@
     public class MenuData
     {
         public Guid Id { get; set; }
-        public bool isChecked { get; set; }
+        public bool Selected { get; set; }
     }
 }
