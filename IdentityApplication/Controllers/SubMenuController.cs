@@ -4,7 +4,6 @@ using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using NuGet.Protocol.Core.Types;
 
 namespace IdentityApplication.Controllers
 {
