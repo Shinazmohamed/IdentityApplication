@@ -11,25 +11,44 @@ namespace IdentityApplication.Controllers
     public class MenuController : Controller
     {
         private readonly IMenuBusiness _business;
-        private readonly ISubMenuRepository _repository;
-        public MenuController(IMenuBusiness business, ISubMenuRepository repository)
+        private readonly IAuthorizationService _authorizationService;
+        public MenuController(IMenuBusiness business, IAuthorizationService authorizationService)
         {
             _business = business;
-            _repository = repository;
+            _authorizationService = authorizationService;
         }
 
-        [Authorize(policy: $"{PermissionsModel.SubMenu.Create}")]
-        public IActionResult Index()
+        [Authorize(policy: $"{PermissionsModel.Menu.Create}")]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Menu.Create);
+            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Menu.Edit);
+            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Menu.Delete);
+
+            var response = new ManagePermission()
+            {
+                Create = create.Succeeded,
+                Edit = edit.Succeeded,
+                Delete = delete.Succeeded
+            };
+
+            return View(response);
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.SubMenu.Create}")]
-        public ActionResult SaveMenuData([FromBody] ManageMenuViewModel menuData)
+        [Authorize(policy: $"{PermissionsModel.Menu.View}")]
+        public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
         {
-            _repository.Update(menuData);
-            return Json(new { success = true, message = "Menu data saved successfully" });
+            var data = _business.GetMenusWithFilters(filter);
+
+            var dataSrc = new
+            {
+                filter.draw,
+                recordsTotal = data.TotalCount,
+                recordsFiltered = data.TotalCount,
+                data = data.Data
+            };
+            return Json(dataSrc);
         }
     }
 }

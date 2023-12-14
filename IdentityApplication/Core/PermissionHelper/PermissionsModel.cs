@@ -82,5 +82,12 @@
             public const string Edit = "Permissions.SubMenu.Edit";
             public const string Delete = "Permissions.SubMenu.Delete";
         }
+        public static class Menu
+        {
+            public const string View = "Permissions.Menu.View";
+            public const string Create = "Permissions.Menu.Create";
+            public const string Edit = "Permissions.Menu.Edit";
+            public const string Delete = "Permissions.Menu.Delete";
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IdentityApplication.Core.ViewModel
 {
-    public class CreateMenuRequest
+    public class CreateMenuRequest : BasePermissionViewModel
     {
         [Display(Name = "Menu")]
         public string? SelectedMenu { get; set; }

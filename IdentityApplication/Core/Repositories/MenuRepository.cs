@@ -1,6 +1,7 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
+using IdentityApplication.Core.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -103,6 +104,39 @@ namespace IdentityApplication.Core.Repositories
                     _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
                 }
             }
+        }
+
+        public PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter)
+        {
+            var response = new PaginationResponse<MenuViewModel>();
+            try
+            {
+                var query = _context.Menu.AsQueryable();
+
+                var totalCount = query.Count();
+                var filteredEntities = query
+                    .Skip(filter.start)
+                    .Take(filter.length)
+                    .Select(menu => new MenuViewModel
+                    {
+                        Id = menu.MenuId,
+                        DisplayName = menu.DisplayName,
+                        Sort = (int)menu.Sort
+                    })
+                    .ToList();
+
+                response.Data = filteredEntities;
+                response.CurrentPage = filter.draw;
+                response.PageSize = filter.length;
+                response.TotalCount = totalCount;
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+            }
+            return response;
         }
     }
 }

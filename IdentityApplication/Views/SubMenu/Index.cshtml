@@ -14,44 +14,70 @@
         @TempData["ErrorMessage"]
     </div>
 }
+<div class="card">
+    <div class="card-body">
+        <form method="post" asp-controller="SubMenu" asp-action="Create">
+            <div class="mb-3 row">
+                <label asp-for="DisplayName" class="col-sm-2 col-form-label">Display Name</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" asp-for="DisplayName">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label asp-for="IsParent" class="col-sm-2 col-form-label">Is Parent</label>
+                <div class="col-sm-3">
+                    <input class="form-check-input" type="checkbox" asp-for="IsParent" checked id="isParentCheckbox">
+                </div>
+            </div>
+            <div id="additionalFields" style="display: @(Model.IsParent ? "none" : "block")">
+                <div class="mb-3 row">
+                    <label asp-for="Controller" class="col-sm-2 col-form-label">Controller</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" asp-for="Controller">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label asp-for="Method" class="col-sm-2 col-form-label">Method</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" asp-for="Method">
+                    </div>
+                </div>
 
-<form method="post" asp-controller="SubMenu" asp-action="Create">
-    <div class="mb-3 row">
-        <label asp-for="DisplayName" class="col-sm-2 col-form-label">Display Name</label>
-        <div class="col-sm-3">
-            <input type="text" class="form-control" asp-for="DisplayName">
+                <div class="mb-3 row">
+                    <label asp-for="SelectedMenu" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-3">
+                        @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { @class = "form-select" })
+                    </div>
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+<br />
+<div class="card">
+    <div class="card-body">
+
+        <div id="viewAll" class="card-body table-responsive">
+            <table id="menuTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Menu ID</th>
+                        <th>Display Name</th>
+                        <th>Sort</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- DataTable content will be loaded here dynamically -->
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="mb-3 row">
-        <label asp-for="IsParent" class="col-sm-2 col-form-label">Is Parent</label>
-        <div class="col-sm-3">
-            <input class="form-check-input" type="checkbox" asp-for="IsParent" checked id="isParentCheckbox">
-        </div>
-    </div>
-    <div id="additionalFields" style="display: @(Model.IsParent ? "none" : "block")">
-        <div class="mb-3 row">
-            <label asp-for="Controller" class="col-sm-2 col-form-label">Controller</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" asp-for="Controller">
-            </div>
-        </div>
-        <div class="mb-3 row">
-            <label asp-for="Method" class="col-sm-2 col-form-label">Method</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" asp-for="Method">
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label asp-for="SelectedMenu" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-3">
-                @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { @class = "form-select" })
-            </div>
-        </div>
-
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</div>
 
 @section Scripts {
     @{
@@ -60,6 +86,9 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            var hasDeletePermission = '@Model.Delete';
+            var hasEditPermission = '@Model.Edit';
 
             toggleAdditionalFields();
 
@@ -76,6 +105,65 @@
                 $("#successMessage").fadeOut("slow");
                 $("#errorMessage").fadeOut("slow");
             }, 3000);
+
+
+            var table = $('#menuTable').DataTable({
+                processing: true,
+                serverSide: true,
+                searching: false,
+                ordering: false,
+                ajax: {
+                    url: '@Url.Action("GetAll", "Menu")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function (d) {
+                        var customFilter = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length
+                        };
+                        return JSON.stringify(customFilter);
+                    },
+                    dataSrc: 'data'
+                },
+                columns: [
+                    {
+                        className: 'dt-control',
+                        orderable: false,
+                        data: null,
+                        defaultContent: ''
+                    },
+                    { data: 'id' },
+                    { data: 'displayName' },
+                    { data: 'sort' },
+                    {
+                        data: 'id',
+                        render: function (data, type, row) {
+                            var actionHtml = '<div class="btn-group">' +
+                                '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                                '<div class="dropdown-menu shadow animated--grow-in">';
+
+                            if (hasEditPermission) {
+                                actionHtml +=
+                                    '<a class="dropdown-item">' +
+                                    '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
+                                    '</a>';
+                            }
+                            if (hasDeletePermission) {
+                                actionHtml +=
+                                    '<form class="d-inline">' +
+                                    '<a class="dropdown-item">' +
+                                    '<i class="fas fa-trash-alt btn-delete" data-id="' + data + '"> Delete</i>' +
+                                    '</a>' +
+                                    '</form>';
+                            }
+                            actionHtml += '</div></div>';
+                            return actionHtml;
+                        }
+
+                    }
+                ]
+            });
         });
 
     </script>

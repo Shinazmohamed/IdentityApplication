@@ -25,7 +25,10 @@ namespace IdentityApplication.Business
             var entity = _mapper.Map<SubMenu>(request);
             _unitOfWork.SubMenu.Create(entity);
         }
-
+        public void Update(ManageMenuViewModel request)
+        {
+            _unitOfWork.SubMenu.Update(request);
+        }
         public PaginationResponse<SubMenuViewModel> GetSubMenusWithFilters(PaginationFilter filter)
         {
             return _unitOfWork.SubMenu.GetSubMenusWithFilters(filter);

@@ -8,5 +8,6 @@ namespace IdentityApplication.Core.Contracts
         List<Menu> GetMenus();
         List<Menu> GetMenuById(string roleId);
         void Create(Menu request);
+        PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter);
     }
 }

@@ -57,5 +57,10 @@ namespace IdentityApplication.Business
             var entity = _mapper.Map<Menu>(request);
             _unitOfWork.Menu.Create(entity);
         }
+
+        public PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter)
+        {
+            return _unitOfWork.Menu.GetMenusWithFilters(filter);
+        }
     }
 }

@@ -4,6 +4,7 @@ using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Protocol.Core.Types;
 
 namespace IdentityApplication.Controllers
 {
@@ -19,6 +20,7 @@ namespace IdentityApplication.Controllers
             _menuBusiness = menuBusiness;
         }
 
+        [Authorize(policy: $"{PermissionsModel.SubMenu.View}")]
         public IActionResult Index()
         {
             var response = new CreateMenuRequest();
@@ -30,6 +32,7 @@ namespace IdentityApplication.Controllers
             return View(response);
         }
 
+        [Authorize(policy: $"{PermissionsModel.SubMenu.Create}")]
         public async Task<IActionResult> Create(CreateMenuRequest request)
         {
             try
@@ -68,6 +71,14 @@ namespace IdentityApplication.Controllers
                 data = data.Data
             };
             return Json(dataSrc);
+        }
+
+        [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubMenu.Edit}")]
+        public ActionResult SaveMenuData([FromBody] ManageMenuViewModel menuData)
+        {
+            _business.Update(menuData);
+            return Json(new { success = true, message = "Menu data saved successfully" });
         }
     }
 }
