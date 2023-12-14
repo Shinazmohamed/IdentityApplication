@@ -17,15 +17,26 @@ namespace IdentityApplication.Business
             _mapper = mapper;
         }
 
-        public async Task Create(CreateEntity request)
+        public async Task Create(ManagePermission request)
         {
             var entity = _mapper.Map<Entity>(request);
             _unitOfWork.Entity.Create(entity);
         }
 
+        public async Task Edit(ManagePermission request)
+        {
+            var entity = _mapper.Map<Entity>(request);
+            _unitOfWork.Entity.Edit(entity);
+        }
+
         public IList<Entity> GetEntities()
         {
             return _unitOfWork.Entity.GetEntities();
+        }
+
+        public async Task Delete(string id)
+        {
+            await _unitOfWork.Entity.Delete(Guid.Parse(id));
         }
     }
 }

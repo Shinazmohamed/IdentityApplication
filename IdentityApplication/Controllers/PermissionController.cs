@@ -38,14 +38,12 @@ namespace IdentityApplication.Controllers
 
             var response = new ManagePermission()
             {
-                CreatePermission = new CreatePermission(),
-                CreateEntity = new CreateEntity(),
                 Create = create.Succeeded,
                 Edit = edit.Succeeded,
                 Delete = delete.Succeeded
             };
 
-            response.CreatePermission.Entities = entities.Select(entity =>
+            response.Entities = entities.Select(entity =>
                 new SelectListItem(entity.Name, entity.EntityId.ToString(), false)).ToList();
 
             return View(response);
@@ -159,7 +157,7 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                await _business.Create(request.CreatePermission);
+                await _business.Create(request);
 
                 TempData["SuccessMessage"] = "Permission created successfully.";
                 return RedirectToAction("Index");
@@ -177,7 +175,7 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                await _business.Update(request.CreatePermission);
+                await _business.Update(request);
 
                 TempData["SuccessMessage"] = "Record updated successfully.";
                 return RedirectToAction("Index");

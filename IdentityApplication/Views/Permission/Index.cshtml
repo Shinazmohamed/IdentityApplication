@@ -31,18 +31,18 @@
         <div class="d-flex justify-content-end">
             @if (Model.Create)
             {
-                <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#entityModal" style="margin-right: 10px;">
+                <button type="button" class="fas fa-plus btn btn-primary" id="btnEntity" style="margin-right: 10px;">
                     Add Entity
                 </button>
             }
-            <button type="button" class="fas fa-plus btn btn-primary" data-bs-toggle="modal" data-bs-target="#permissionModal">
+            <button type="button" class="fas fa-plus btn btn-primary" id="btnPermission">
                 Add Permission
             </button>
         </div>
 
 
         <div id="viewAll" class="card-body table-responsive">
-            <table id="permissionTable" class="table table-striped table-bordered">
+            <table id="entityTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th></th>
@@ -79,27 +79,50 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="deleteEntityConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Entity" asp-action="Delete">
+                <div class="modal-body">
+                    <input type="hidden" id="deleteEntityId" name="deleteEntityId" />
+                    <p>Are you sure you want to delete this record?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="employeeModalLabel">Add Permission</h1>
+                <h1 class="modal-title fs-5" id="permissionModalLabel">Add Permission</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" asp-controller="Permission" asp-action="Create" id="CreatePermission">
+                <form method="post" asp-controller="Permission" asp-action="Create" id="PermissionForm">
+                    <input type="hidden" id="PermissionId" name="permissionId" />
                     <div class="col-md-6">
                         <label for="categorySearch">Entity :</label>
-                        @Html.DropDownListFor(m => m.CreatePermission.SelectedEntity, Model.CreatePermission.Entities, "All")
+                        @Html.DropDownListFor(m => m.SelectedEntity, Model.Entities, "All", new { id = "SelectedEntity" })
                     </div>
                     <div class="col-md-6">
-                        <label asp-for="CreatePermission.Value" class="form-label">Value</label>
-                        <input asp-for="CreatePermission.Value" class="form-control" />
+                        <label asp-for="Value" class="form-label">Value</label>
+                        <input asp-for="Value" id="Value" name="Value" class="form-control" />
                     </div>
                     <br />
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="savePermission">
                         <button type="submit" class="btn btn-success" id="save">Save</button>
+                    </div>
+                    <div class="col-md-6" style="display:none" id="updatePermission">
+                        <button type="button" class="btn btn-success" id="updatePermissionBtn">Update</button>
                     </div>
                 </form>
             </div>
@@ -112,19 +135,22 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="employeeModalLabel">Add Entity</h1>
+                <h1 class="modal-title fs-5" id="entityModalLabel">Add Entity</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" asp-controller="Entity" asp-action="Create" id="CreatePermission">
-
+                <form method="post" asp-controller="Entity" asp-action="Create" id="EntityForm">
+                    <input type="hidden" id="EntityId" name="entityId" />
                     <div class="col-md-6">
-                        <label asp-for="CreateEntity.Entity" class="form-label">Entity</label>
-                        <input asp-for="CreateEntity.Entity" class="form-control" />
+                        <label asp-for="Entity" class="form-label">Entity</label>
+                        <input asp-for="Entity" class="form-control" />
                     </div>
                     <br />
-                    <div class="col-md-6">
-                        <button type="submit" class="btn btn-success" id="save">Save</button>
+                    <div class="col-md-6" id="saveEntity">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                    <div class="col-md-6" style="display:none" id="updateEntity">
+                        <button type="submit" class="btn btn-success" id="updateEntityBtn">Update</button>
                     </div>
                 </form>
             </div>
@@ -152,8 +178,19 @@
                 $("#errorMessage").fadeOut("slow");
             }, 3000);
 
+            document.getElementById('btnPermission').onclick = function () {
+                reset();
+                enableUpdatePermissionBtn(false);
+                $('#permissionModal').modal('show');
+            };
 
-            var table = $('#permissionTable').DataTable({
+            document.getElementById('btnEntity').onclick = function () {
+                reset();
+                enableUpdateEntityBtn(false);
+                $('#entityModal').modal('show');
+            };
+
+            var table = $('#entityTable').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
@@ -179,7 +216,7 @@
                         data: null,
                         defaultContent: ''
                     },
-                    { data: 'entityId', visible: false },
+                    { data: 'entityId' },
                     { data: 'name' },
                     {
                         data: 'entityId',
@@ -260,6 +297,8 @@
                 var tr = e.target.closest('tr');
                 var row = table.row(tr);
 
+                $('#EntityId').val(row.data().entityId);
+
                 if (row.child.isShown()) {
                     row.child.hide();
                 } else {
@@ -267,38 +306,101 @@
                 }
             });
 
-            $('#permissionTable').on('click', '.btn-permission-edit', function () {
-                var id = $(this).data('id');
-                console.log(id);
+            $('#entityTable').on('click', '.btn-edit', function () {
+                var row = $(this).closest('tr');
+                var role = {
+                    Id: row.find('td:eq(1)').text().trim(),
+                    Value: row.find('td:eq(2)').text().trim()
+                };
 
-                // $.ajax({
-                //     url: '/employee/Edit?id=' + id,
-                //     method: 'GET',
-                //     success: function (employee) {
-                //         $('#EmployeeId').val(id);
-                //         $('#SelectedLocation')[0].selectize.setValue(employee.selectedLocation);
+                $('#EntityId').val(role.Id);
+                $('#Entity').val(role.Value);
 
-                //         $('#SelectedSubCategoryId').val(employee.selectedSubCategory);
-                //         $('#SelectedCategoryId').val(employee.selectedCategory);
-                //         $('#department')[0].selectize.setValue(employee.selectedDepartment);
-                //         $('#category')[0].selectize.setValue(employee.selectedCategory);
-
-                //         $('#E1').val(employee.e1);
-                //         $('#E2').val(employee.e2);
-                //         $('#M1').val(employee.m1);
-                //         $('#M2').val(employee.m2);
-
-                //         $('#employeeModal').modal('show');
-                //     }
-                // });
+                enableUpdateEntityBtn(true);
+                $('#entityModalLabel').text('Edit Entity');
+                $('#entityModal').modal('show');
             });
 
-            $('#permissionTable').on('click', '.btn-permission-delete', function () {
+            $('#entityTable').on('click', '.btn-delete', function () {
+                var row = $(this).closest('tr');
+                var role = {
+                    Id: row.find('td:eq(1)').text().trim(),
+                    Value: row.find('td:eq(2)').text().trim()
+                };
+                $('#deleteEntityId').val(role.Id);
+                console.log($('#deleteEntityId').val());
+
+                $('#deleteEntityConfirmationModal').modal('show');
+            });
+
+            $('#entityTable').on('click', '.btn-permission-edit', function () {
+                var row = $(this).closest('tr');
+                var role = {
+                    Id: row.find('td:eq(0)').text().trim(),
+                    Value: row.find('td:eq(1)').text().trim()
+                };
+
+                $('#PermissionId').val(role.Id);
+                $('#SelectedEntity')[0].selectize.setValue($('#EntityId').val());
+                $('#Value').val(role.Value);
+
+                enableUpdatePermissionBtn(true);
+
+                $('#permissionModalLabel').text('Edit Permission');
+                $('#permissionModal').modal('show');
+            });
+
+            $('#entityTable').on('click', '.btn-permission-delete', function () {
                 var id = $(this).data('id');
                 $('#Id').val(id);
                 $('#deleteConfirmationModal').modal('show');
             });
 
+            document.getElementById('updatePermissionBtn').onclick = function () {
+                var form = document.getElementById('PermissionForm');
+                form.action = '/Permission/Edit';
+                form.submit();
+            };
+
+            document.getElementById('updateEntityBtn').onclick = function () {
+                var form = document.getElementById('EntityForm');
+                form.action = '/Entity/Edit';
+                form.submit();
+            };
+
+            function enableUpdatePermissionBtn(shouldShowUpdateButton) {
+                var savePermissionDiv = document.getElementById('savePermission');
+                var updatePermissionDiv = document.getElementById('updatePermission');
+
+                if (shouldShowUpdateButton) {
+                    savePermissionDiv.style.display = 'none';
+                    updatePermissionDiv.style.display = 'block';
+                } else {
+                    savePermissionDiv.style.display = 'block';
+                    updatePermissionDiv.style.display = 'none';
+                }
+            }
+
+            function enableUpdateEntityBtn(shouldShowUpdateButton) {
+                var saveDiv = document.getElementById('saveEntity');
+                var updateDiv = document.getElementById('updateEntity');
+
+                if (shouldShowUpdateButton) {
+                    saveDiv.style.display = 'none';
+                    updateDiv.style.display = 'block';
+                } else {
+                    saveDiv.style.display = 'block';
+                    updateDiv.style.display = 'none';
+                }
+            }
+
+            function reset() {
+                $('#Entity').val('');
+                $('#SelectedEntity')[0].selectize.clear();
+                $('#Value').val('');
+                $('#permissionModalLabel').text('Add Permission');
+                $('#entityModalLabel').text('Add Create');
+            };
 
 
         });

@@ -171,17 +171,18 @@
                 subcategorySelectize.enable();
                 table.draw();
             });
+
+            function updateRecord() {
+
+                var form = document.getElementById('subcategoryform');
+
+                form.action = '/CategorySubCategoryMapping/Update';
+
+                // Submit the form
+                form.submit();
+            }
         });
 
 
-        function updateRecord() {
-
-            var form = document.getElementById('subcategoryform');
-
-            form.action = '/CategorySubCategoryMapping/Update';
-
-            // Submit the form
-            form.submit();
-        }
     </script>
 }

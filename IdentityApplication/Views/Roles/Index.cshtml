@@ -266,9 +266,6 @@
             });
 
             $('#managemenuTable').on('change', '.checkbox-select', function () {
-
-                console.log('sad');
-
                 var rowIndex = manageMenuTable.row($(this).closest('tr')).index();
                 var rowData = manageMenuTable.row(rowIndex).data();
                 rowData.selected = this.checked;
@@ -299,12 +296,8 @@
                         $('#permissionmodel').modal('hide');
                     },
                     error: function (error) {
-                        // Hide any existing success messages
                         $('#successMessage').hide();
-
-                        // Show error message
                         $('#errorMessage').html('Permission update failed.').show();
-
                         $('#permissionmodel').modal('hide');
                         setTimeout(function () {
                             $("#errorMessage").fadeOut("slow");
@@ -337,12 +330,8 @@
                         $('#manageMenuModel').modal('hide');
                     },
                     error: function (error) {
-                        // Hide any existing success messages
                         $('#successMessage').hide();
-
-                        // Show error message
                         $('#errorMessage').html('Permission update failed.').show();
-
                         $('#manageMenuModel').modal('hide');
                         setTimeout(function () {
                             $("#errorMessage").fadeOut("slow");

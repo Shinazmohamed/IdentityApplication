@@ -5,6 +5,7 @@ namespace IdentityApplication.Core.ViewModel
 {
     public class CreatePermission
     {
+        public Guid PermissionId { get; set; }
         public string Value { get; set; }
         public string Entity { get; set; }
 

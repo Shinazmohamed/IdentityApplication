@@ -7,8 +7,8 @@ namespace IdentityApplication.Business.Contracts
     {
         Task<PaginationResponse<Entity>> GetEntitiesWithFilters(PaginationFilter filter);
         Task<PaginationResponse<Permission>> GetPermissionsWithFilters(PaginationFilter filter);
-        Task Create(CreatePermission request);
-        Task Update(CreatePermission request);
+        Task Create(ManagePermission request);
+        Task Update(ManagePermission request);
         Task Delete(string id);
     }
 }

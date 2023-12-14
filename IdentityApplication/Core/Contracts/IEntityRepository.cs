@@ -6,5 +6,7 @@ namespace IdentityApplication.Core.Contracts
     {
         IList<Entity> GetEntities();
         void Create(Entity request);
+        void Edit(Entity entity);
+        Task Delete(Guid id);
     }
 }

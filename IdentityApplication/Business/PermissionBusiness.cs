@@ -26,13 +26,13 @@ namespace IdentityApplication.Business
             return await _unitOfWork.Permission.GetPermissionsWithFilters(filter);
         }
 
-        public async Task Create(CreatePermission request)
+        public async Task Create(ManagePermission request)
         {
             var entity = _mapper.Map<Permission>(request);
             _unitOfWork.Permission.Create(entity);
         }
 
-        public async Task Update(CreatePermission request)
+        public async Task Update(ManagePermission request)
         {
             var entity = _mapper.Map<Permission>(request);
             _unitOfWork.Permission.Update(entity);
