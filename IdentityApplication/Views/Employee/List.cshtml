@@ -3,8 +3,8 @@
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
 @{
     var isAdmin = User.IsInRole(Constants.Roles.Administrator);
-    var deletepolicy = @PermissionsModel.Employee.Delete;
-    var editpolicy = @PermissionsModel.Employee.Edit;
+    var deletepolicy = @PermissionsModel.EmployeePermission.Delete;
+    var editpolicy = @PermissionsModel.EmployeePermission.Edit;
 }
 
 @if (TempData["SuccessMessage"] != null)

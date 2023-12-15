@@ -23,7 +23,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Audit.View}")]
+        [Authorize(policy: $"{PermissionsModel.AuditPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAllWithFilters(filter);

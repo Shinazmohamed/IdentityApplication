@@ -15,14 +15,14 @@ namespace IdentityApplication.Controllers
             _roleManager = roleManager;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Role.View}")]
+        [Authorize(policy: $"{PermissionsModel.RolePermission.View}")]
         public async Task<IActionResult> Index()
         {
             var roles = await _roleManager.Roles.ToListAsync();
             return View(roles);
         }
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Role.Create}")]
+        [Authorize(policy: $"{PermissionsModel.RolePermission.Create}")]
         public async Task<IActionResult> AddRole(string roleName)
         {
             if (roleName != null)

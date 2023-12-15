@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Areas.Identity.Data;
+﻿using AutoMapper;
+using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
@@ -13,13 +14,15 @@ namespace IdentityApplication.Core.Repositories
         private readonly ILogger<MenuRepository> _logger;
         private readonly IMemoryCache _cache;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public MenuRepository(ApplicationDbContext context, ILogger<MenuRepository> logger, IMemoryCache cache, IConfiguration configuration)
+        public MenuRepository(ApplicationDbContext context, ILogger<MenuRepository> logger, IMemoryCache cache, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _logger = logger;
             _cache = cache;
             _configuration = configuration;
+            _mapper = mapper;
         }
         public List<Menu> GetMenus()
         {
@@ -85,7 +88,6 @@ namespace IdentityApplication.Core.Repositories
             }
             return response;
         }
-
         public void Create(Menu request)
         {
             using (var transaction = _context.Database.BeginTransaction())
@@ -105,7 +107,6 @@ namespace IdentityApplication.Core.Repositories
                 }
             }
         }
-
         public PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter)
         {
             var response = new PaginationResponse<MenuViewModel>();
@@ -115,13 +116,15 @@ namespace IdentityApplication.Core.Repositories
 
                 var totalCount = query.Count();
                 var filteredEntities = query
+                    .Include(menu => menu.SubMenus)
                     .Skip(filter.start)
                     .Take(filter.length)
                     .Select(menu => new MenuViewModel
                     {
                         Id = menu.MenuId,
                         DisplayName = menu.DisplayName,
-                        Sort = (int)menu.Sort
+                        Sort = (int)menu.Sort,
+                        SubMenu = menu.SubMenus.Select(submenu => _mapper.Map<SubMenuViewModel>(submenu)).ToList()
                     })
                     .ToList();
 
@@ -138,5 +141,63 @@ namespace IdentityApplication.Core.Repositories
             }
             return response;
         }
+        public void Update(Menu entity)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (entity == null)
+                        throw new ArgumentNullException(nameof(entity));
+
+                    var existingMapping = _context.Menu
+                        .FirstOrDefault(e => e.MenuId == entity.MenuId);
+
+                    if (existingMapping == null)
+                    {
+                        throw new ArgumentNullException(nameof(entity));
+                    }
+
+                    existingMapping.DisplayName = entity.DisplayName;
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                    throw;
+                }
+            }
+        }
+
+        public async Task Delete(Guid id)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var entity = await _context.Menu.FirstOrDefaultAsync(e => e.MenuId == id);
+                    if(entity !=null)
+                        _context.Menu.Remove(entity);
+
+                    var entities = _context.SubMenu.Where(e => e.MenuId == id).ToList();
+                    if(entities.Any())
+                        _context.SubMenu.RemoveRange(entities);
+
+                    _context.SaveChanges();
+                    transaction.Commit();
+
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                    throw;
+                }
+            }
+        }
+
     }
 }

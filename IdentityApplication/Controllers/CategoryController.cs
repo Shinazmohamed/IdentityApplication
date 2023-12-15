@@ -17,7 +17,7 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Category.Create}")]
+        [Authorize(policy: $"{PermissionsModel.CategoryPermission.Create}")]
         public IActionResult Index()
         {
             return View();
@@ -51,7 +51,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Category.View}")]
+        [Authorize(policy: $"{PermissionsModel.CategoryPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAllWithFilters(filter);
@@ -66,7 +66,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Category.Create}")]
+        [Authorize(policy: $"{PermissionsModel.CategoryPermission.Create}")]
         public async Task<IActionResult> Create(CreateCategoryRequest request)
         {
             try
@@ -83,7 +83,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Category.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.CategoryPermission.Edit}")]
         public async Task<IActionResult> Update(CreateCategoryRequest request)
         {
             try
@@ -100,7 +100,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Category.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.CategoryPermission.Delete}")]
         public async Task<IActionResult> Delete(string mappingId)
         {
             try

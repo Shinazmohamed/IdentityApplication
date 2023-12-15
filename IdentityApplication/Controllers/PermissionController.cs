@@ -27,14 +27,14 @@ namespace IdentityApplication.Controllers
             _entitybusiness = entitybusiness;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Permission.View}")]
+        [Authorize(policy: $"{PermissionsModel.PermissionPermission.View}")]
         public async Task<ActionResult> Index()
         {
             var entities = _entitybusiness.GetEntities();
             
-            var create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Entity.Create);
-            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Entity.Edit);
-            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.Entity.Delete);
+            var create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Create);
+            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Edit);
+            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Delete);
 
             var response = new ManagePermission()
             {
@@ -49,7 +49,7 @@ namespace IdentityApplication.Controllers
             return View(response);
         }
 
-        [Authorize(policy: $"{PermissionsModel.Permission.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.PermissionPermission.Edit}")]
         public async Task<IActionResult> Update([FromBody] PermissionViewModel model)
         {
             try
@@ -152,7 +152,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Permission.Create}")]
+        [Authorize(policy: $"{PermissionsModel.PermissionPermission.Create}")]
         public async Task<IActionResult> Create(ManagePermission request)
         {
             try
@@ -170,7 +170,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Permission.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.PermissionPermission.Edit}")]
         public async Task<IActionResult> Edit(ManagePermission request)
         {
             try
@@ -188,7 +188,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Permission.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.PermissionPermission.Delete}")]
         public async Task<IActionResult> Delete(string Id)
         {
             try
@@ -206,7 +206,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.EntityPermission.Delete}")]
         public async Task<IActionResult> DeletePermission(string Id)
         {
             try

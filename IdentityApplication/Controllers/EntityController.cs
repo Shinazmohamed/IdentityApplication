@@ -15,14 +15,14 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Entity.View}")]
+        [Authorize(policy: $"{PermissionsModel.EntityPermission.View}")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Create}")]
+        [Authorize(policy: $"{PermissionsModel.EntityPermission.Create}")]
         public async Task<IActionResult> Create(ManagePermission request)
         {
             try
@@ -40,7 +40,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Entity.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.EntityPermission.Edit}")]
         public async Task<IActionResult> Edit(ManagePermission request)
         {
             try
@@ -57,7 +57,7 @@ namespace IdentityApplication.Controllers
             }
         }
 
-        [Authorize(policy: $"{PermissionsModel.Entity.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.EntityPermission.Delete}")]
         public async Task<IActionResult> Delete(string deleteEntityId)
         {
             try

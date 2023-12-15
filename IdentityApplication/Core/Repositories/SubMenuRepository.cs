@@ -159,5 +159,63 @@ namespace IdentityApplication.Core.Repositories
             }
             return response;
         }
+
+        public void Edit(CreateMenuRequest request)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (request == null)
+                        throw new ArgumentNullException(nameof(request));
+
+                    var existingMapping = _context.SubMenu
+                        .FirstOrDefault(e => e.SubMenuId == request.SubMenuId);
+
+                    if (existingMapping == null)
+                    {
+                        throw new ArgumentNullException(nameof(request));
+                    }
+
+                    existingMapping.Controller = request.Controller;
+                    existingMapping.DisplayName = request.DisplayName;
+                    existingMapping.Method = request.Method;
+                    existingMapping.MenuId = request.MenuId;
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                    throw;
+                }
+            }
+        }
+
+        public async Task Delete(Guid id)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var entity = await _context.SubMenu.FirstOrDefaultAsync(e => e.SubMenuId == id);
+                    if (entity != null)
+                        _context.SubMenu.Remove(entity);
+
+                    _context.SaveChanges();
+                    transaction.Commit();
+
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(MenuRepository));
+                    throw;
+                }
+            }
+        }
+
     }
 }

@@ -15,14 +15,14 @@ namespace IdentityApplication.Controllers
             _business = business;
         }
 
-        [Authorize(policy: $"{PermissionsModel.Department.Create}")]
+        [Authorize(policy: $"{PermissionsModel.DepartmentPermission.Create}")]
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Department.View}")]
+        [Authorize(policy: $"{PermissionsModel.DepartmentPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var response = await _business.GetAllWithFilters(filter);
@@ -37,7 +37,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Department.Create}")]
+        [Authorize(policy: $"{PermissionsModel.DepartmentPermission.Create}")]
         public async Task<IActionResult> Create(CreateDepartmentViewModel request)
         {
             try
@@ -54,7 +54,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Department.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.DepartmentPermission.Edit}")]
         public async Task<IActionResult> Update(CreateDepartmentViewModel request)
         {
             try
@@ -71,7 +71,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.Department.Delete}")]
+        [Authorize(policy: $"{PermissionsModel.DepartmentPermission.Delete}")]
         public async Task<IActionResult> Delete(string mappingId)
         {
             try

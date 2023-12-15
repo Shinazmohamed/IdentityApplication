@@ -9,5 +9,7 @@ namespace IdentityApplication.Core.Contracts
         List<SubMenu> GetAll();
         void Update(ManageMenuViewModel request);
         PaginationResponse<SubMenuViewModel> GetSubMenusWithFilters(PaginationFilter filter);
+        void Edit(CreateMenuRequest request);
+        Task Delete(Guid id);
     }
 }

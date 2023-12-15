@@ -9,5 +9,7 @@ namespace IdentityApplication.Business.Contracts
         void Create(CreateMenuRequest request);
         List<Menu> GetAll();
         PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter);
+        void Update(CreateMenuRequest request);
+        Task Delete(string id);
     }
 }

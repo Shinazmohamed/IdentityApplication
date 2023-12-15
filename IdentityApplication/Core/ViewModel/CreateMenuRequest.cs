@@ -6,6 +6,8 @@ namespace IdentityApplication.Core.ViewModel
 {
     public class CreateMenuRequest : BasePermissionViewModel
     {
+        public Guid MenuId { get; set; }
+        public Guid SubMenuId { get; set; }
         [Display(Name = "Menu")]
         public string? SelectedMenu { get; set; }
         public List<SelectListItem> Menus { get; set; }

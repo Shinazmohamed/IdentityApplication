@@ -19,7 +19,7 @@ namespace IdentityApplication.Controllers
             _menuBusiness = menuBusiness;
         }
 
-        [Authorize(policy: $"{PermissionsModel.SubMenu.View}")]
+        [Authorize(policy: $"{PermissionsModel.SubMenuPermission.View}")]
         public IActionResult Index()
         {
             var response = new CreateMenuRequest();
@@ -31,7 +31,7 @@ namespace IdentityApplication.Controllers
             return View(response);
         }
 
-        [Authorize(policy: $"{PermissionsModel.SubMenu.Create}")]
+        [Authorize(policy: $"{PermissionsModel.SubMenuPermission.Create}")]
         public async Task<IActionResult> Create(CreateMenuRequest request)
         {
             try
@@ -51,13 +51,13 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Employee creation failed.";
+                TempData["ErrorMessage"] = "Sub Menu creation failed.";
                 return RedirectToAction("Index");
             }
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.SubMenu.View}")]
+        [Authorize(policy: $"{PermissionsModel.SubMenuPermission.View}")]
         public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
         {
             var data = _business.GetSubMenusWithFilters(filter);
@@ -73,11 +73,46 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.SubMenu.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.SubMenuPermission.Edit}")]
         public ActionResult SaveMenuData([FromBody] ManageMenuViewModel menuData)
         {
             _business.Update(menuData);
             return Json(new { success = true, message = "Menu data saved successfully" });
+        }
+
+        [Authorize(policy: $"{PermissionsModel.SubMenuPermission.Edit}")]
+        public async Task<IActionResult> Edit(CreateMenuRequest request)
+        {
+            try
+            {
+                _business.Edit(request);
+                TempData["SuccessMessage"] = "Sub Menu update successfully.";
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Sub Menu update failed.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        [Authorize(policy: $"{PermissionsModel.SubMenuPermission.Delete}")]
+        public async Task<IActionResult> Delete(string hdnSubMenuId)
+        {
+            try
+            {
+                await _business.Delete(hdnSubMenuId);
+                TempData["SuccessMessage"] = "Record deleted successfully.";
+
+                return RedirectToAction("Index", "SubMenu");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Record delete failed.";
+                return RedirectToAction("Index", "SubMenu");
+            }
         }
     }
 }

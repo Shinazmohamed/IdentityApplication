@@ -26,7 +26,7 @@ namespace IdentityApplication.Controllers
             _userManager = userManager;
         }
 
-        [Authorize(policy: $"{PermissionsModel.User.View}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.View}")]
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsersWithRoles();
@@ -35,7 +35,7 @@ namespace IdentityApplication.Controllers
 
         }
 
-        [Authorize(policy: $"{PermissionsModel.User.Edit}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.Edit}")]
         public async Task<IActionResult> Edit(string userId)
         {
             var response = new EditUserViewModel();
@@ -73,7 +73,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.User.Create}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.Create}")]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
         {
             try
@@ -137,7 +137,7 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.User.ResetPassword}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.ResetPassword}")]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
         {
             var user = _unitOfWork.User.GetUser(request.User.Id);
@@ -159,13 +159,13 @@ namespace IdentityApplication.Controllers
             return RedirectToAction("Edit", new { userId = request.User.Id });
         }
 
-        [Authorize(policy: $"{PermissionsModel.User.Profile}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.Profile}")]
         public IActionResult Profile()
         {
             return Redirect("http://localhost:5258/Identity/Account/Manage");
         }
 
-        [Authorize(policy: $"{PermissionsModel.User.Register}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.Register}")]
         public IActionResult Register()
         {        
             return Redirect("http://localhost:5258/Identity/Account/Register");

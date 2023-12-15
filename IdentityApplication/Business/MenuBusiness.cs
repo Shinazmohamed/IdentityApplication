@@ -62,5 +62,16 @@ namespace IdentityApplication.Business
         {
             return _unitOfWork.Menu.GetMenusWithFilters(filter);
         }
+
+        public void Update(CreateMenuRequest request)
+        {
+            var entity = _mapper.Map<Menu>(request);
+            _unitOfWork.Menu.Update(entity);
+        }
+
+        public async Task Delete(string id)
+        {
+            await _unitOfWork.Menu.Delete(Guid.Parse(id));
+        }
     }
 }

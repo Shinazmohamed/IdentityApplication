@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account.Manage
 {
-    [Authorize(policy: $"{PermissionsModel.User.Profile}")]
+    [Authorize(policy: $"{PermissionsModel.UserPermission.Profile}")]
     public class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;

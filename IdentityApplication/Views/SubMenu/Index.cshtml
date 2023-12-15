@@ -1,22 +1,32 @@
 ﻿@model IdentityApplication.Core.ViewModel.CreateMenuRequest;
-<h2>Create Menu</h2>
+
+<style>
+    .hidden-column {
+        display: none;
+    }
+</style>
+
+
+<h2 id="pageHeader">Create Menu</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success mt-3">
+    <div class="alert alert-success mt-3" id="successMessage">
         @TempData["SuccessMessage"]
     </div>
 }
-
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger mt-3">
+    <div class="alert alert-danger mt-3" id="errorMessage">
         @TempData["ErrorMessage"]
     </div>
 }
+
 <div class="card">
     <div class="card-body">
-        <form method="post" asp-controller="SubMenu" asp-action="Create">
+        <form method="post" asp-controller="SubMenu" asp-action="Create" id="menuForm">
+            <input type="hidden" asp-for="MenuId" />
+            <input type="hidden" asp-for="SubMenuId" />
             <div class="mb-3 row">
                 <label asp-for="DisplayName" class="col-sm-2 col-form-label">Display Name</label>
                 <div class="col-sm-3">
@@ -46,13 +56,54 @@
                 <div class="mb-3 row">
                     <label asp-for="SelectedMenu" class="col-sm-2 col-form-label"></label>
                     <div class="col-sm-3">
-                        @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { @class = "form-select" })
+                        @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { id = "SelectedMenu" })
                     </div>
                 </div>
 
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-success" id="saveBtn">Save</button>
+            <button type="submit" class="btn btn-success" id="updateBtn">Update</button>
         </form>
+    </div>
+</div>
+<div class="modal fade" id="deleteMenuConfirmationModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="menuModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Menu" asp-action="Delete">
+                <div class="modal-body">
+                    <input type="hidden" id="Id" name="Id" />
+                    <p>Are you sure you want to delete this record?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteSubMenuConfirmationModal" tabindex="-1" aria-labelledby="subMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="subMenuModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="SubMenu" asp-action="Delete">
+                <div class="modal-body">
+                    <input type="hidden" id="hdnSubMenuId" name="Id" />
+                    <p>Are you sure you want to delete this record?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -72,7 +123,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- DataTable content will be loaded here dynamically -->
                 </tbody>
             </table>
         </div>
@@ -86,6 +136,12 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $('select').selectize({
+                sortField: 'text'
+            });
+
+            enableUpdateBtn(false);
 
             var hasDeletePermission = '@Model.Delete';
             var hasEditPermission = '@Model.Edit';
@@ -107,7 +163,7 @@
             }, 3000);
 
 
-            var table = $('#menuTable').DataTable({
+            var menutable = $('#menuTable').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
@@ -133,7 +189,7 @@
                         data: null,
                         defaultContent: ''
                     },
-                    { data: 'id' },
+                    { data: 'id', visible: false },
                     { data: 'displayName' },
                     { data: 'sort' },
                     {
@@ -164,9 +220,156 @@
                     }
                 ]
             });
+
+            function format(d) {
+                var subMenuTable = '<table id="subMenuTable" class="table table-bordered">' +
+                    '<thead>' +
+                    '<tr>' +
+                    '<th class="hidden-column">Id</th>' +
+                    '<th>DisplayName</th>' +
+                    '<th>Controller</th>' +
+                    '<th>Method</th>' +
+                    '<th>Action</th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody>';
+
+                if (d.subMenu) {
+                    d.subMenu.forEach(function (subMenu) {
+                        subMenuTable += '<tr>' +
+                            '<td class="hidden-column">' + subMenu.id + '</td>' +
+                            '<td>' + subMenu.displayName + '</td>' +
+                            '<td>' + subMenu.controller + '</td>' +
+                            '<td>' + subMenu.method + '</td>' +
+                            '<td>';
+
+                        var actionHtml = '<div class="btn-group">' +
+                            '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                            '<div class="dropdown-menu shadow animated--grow-in">';
+
+                        if (hasEditPermission) {
+                            actionHtml +=
+                                '<a class="dropdown-item">' +
+                                '<i class="fas fa-pencil-alt btn-submenu-edit" data-id="' + subMenu.id + '"> Edit</i>' +
+                                '</a>';
+                        }
+                        if (hasDeletePermission) {
+                            actionHtml +=
+                                '<form class="d-inline">' +
+                                '<a class="dropdown-item">' +
+                                '<i class="fas fa-trash-alt btn-submenu-delete" data-id="' + subMenu.id + '"> Delete</i>' +
+                                '</a>' +
+                                '</form>';
+                        }
+                        actionHtml += '</div></div>';
+
+                        subMenuTable += actionHtml + '</td></tr>';
+                    });
+                }
+                subMenuTable += '</tbody></table>';
+
+                return subMenuTable;
+            }
+
+            menutable.on('click', 'td.dt-control', function (e) {
+                var tr = e.target.closest('tr');
+                var row = menutable.row(tr);
+
+                $('#MenuId').val(row.data().id);
+
+                if (row.child.isShown()) {
+                    row.child.hide();
+                } else {
+                    row.child(format(row.data())).show();
+                }
+            });
+
+            //Menu
+
+            $('#menuTable').on('click', '.btn-edit', function () {
+                var rowData = menutable.row($(this).closest('tr')).data();
+                $('#MenuId').val(rowData.id);
+                $('#DisplayName').val(rowData.displayName);
+                enableUpdateBtn(true);
+
+            });
+
+            $('#menuTable').on('click', '.btn-delete', function () {
+                var rowData = menutable.row($(this).closest('tr')).data();
+                $('#Id').val(rowData.id);
+                $('#deleteMenuConfirmationModal').modal('show');
+            });
+
+            document.getElementById('updateBtn').onclick = function () {
+                var form = document.getElementById('menuForm');
+                form.action = '/Menu/Edit';
+                form.submit();
+            };
+
+
+            //Sub Menu
+
+            $('#menuTable').on('click', '.btn-submenu-edit', function () {
+                var row = $(this).closest('tr');
+                var subMemu = {
+                    Id: row.find('td:eq(0)').text().trim(),
+                    DisplayName: row.find('td:eq(1)').text().trim(),
+                    Controller: row.find('td:eq(2)').text().trim(),
+                    Method: row.find('td:eq(3)').text().trim()
+                };
+
+                document.getElementById("isParentCheckbox").checked = false;
+
+                $('#SubMenuId').val(subMemu.Id);
+                $('#DisplayName').val(subMemu.DisplayName);
+                $('#Controller').val(subMemu.Controller);
+                $('#Method').val(subMemu.Method);
+                $('#SelectedMenu')[0].selectize.setValue($('#MenuId').val());
+                toggleAdditionalFields();
+
+                enableUpdateBtn(true);
+
+            });
+
+            $('#menuTable').on('click', '.btn-submenu-delete', function () {
+                var row = $(this).closest('tr');
+                $('#hdnSubMenuId').val(row.find('td:eq(0)').text().trim());
+                $('#deleteSubMenuConfirmationModal').modal('show');
+            });
+
+            document.getElementById('updateBtn').onclick = function () {
+                var isChecked = $("#isParentCheckbox").prop("checked");
+                if (isChecked){
+                    var form = document.getElementById('menuForm');
+                    form.action = '/Menu/Edit';
+                    form.submit();
+                }
+                else {
+                    var form = document.getElementById('menuForm');
+                    form.action = '/SubMenu/Edit';
+                    form.submit();
+                }
+
+            };
+
+
+            function enableUpdateBtn(shouldShowUpdateButton) {
+                var savebtn = document.getElementById('saveBtn');
+                var updatebtn = document.getElementById('updateBtn');
+
+                if (shouldShowUpdateButton) {
+                    savebtn.style.display = 'none';
+                    updatebtn.style.display = 'block';
+                    $('#pageHeader').text('Edit Menu');
+                } else {
+                    savebtn.style.display = 'block';
+                    updatebtn.style.display = 'none';
+                    $('#pageHeader').text('Save Menu');
+                }
+            }
+
         });
 
     </script>
 
 }
-

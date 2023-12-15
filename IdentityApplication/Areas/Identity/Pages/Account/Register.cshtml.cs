@@ -19,7 +19,7 @@ using IdentityApplication.Core.PermissionHelper;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account
 {
-    [Authorize(policy: $"{PermissionsModel.User.Register}")]
+    [Authorize(policy: $"{PermissionsModel.UserPermission.Register}")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

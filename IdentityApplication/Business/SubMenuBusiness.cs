@@ -33,5 +33,13 @@ namespace IdentityApplication.Business
         {
             return _unitOfWork.SubMenu.GetSubMenusWithFilters(filter);
         }
+        public void Edit(CreateMenuRequest request)
+        {
+            _unitOfWork.SubMenu.Edit(request);
+        }
+        public async Task Delete(string id)
+        {
+            await _unitOfWork.SubMenu.Delete(Guid.Parse(id));
+        }
     }
 }

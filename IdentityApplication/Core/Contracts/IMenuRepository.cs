@@ -9,5 +9,7 @@ namespace IdentityApplication.Core.Contracts
         List<Menu> GetMenuById(string roleId);
         void Create(Menu request);
         PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter);
+        void Update(Menu entity);
+        Task Delete(Guid id);
     }
 }
