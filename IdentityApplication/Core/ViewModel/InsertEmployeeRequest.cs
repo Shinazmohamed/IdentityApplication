@@ -1,10 +1,9 @@
-﻿using IdentityApplication.Core.Entities;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace IdentityApplication.Core.ViewModel
 {
-    public class InsertEmployeeRequest
+    public class InsertEmployeeRequest : BasePermissionViewModel
     {
         [Display(Name = "Id")]
         public string? EmployeeId { get; set; }

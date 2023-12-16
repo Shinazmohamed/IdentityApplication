@@ -1,7 +1,5 @@
 ﻿using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Identity;
-using NuGet.Packaging.Signing;
-using System.Diagnostics.Metrics;
 using System.Reflection;
 using System.Security.Claims;
 

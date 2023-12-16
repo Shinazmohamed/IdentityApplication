@@ -1,11 +1,6 @@
 ﻿@using IdentityApplication.Core;
 @using IdentityApplication.Core.PermissionHelper
 @model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
-@{
-    var isAdmin = User.IsInRole(Constants.Roles.Administrator);
-    var deletepolicy = @PermissionsModel.EmployeePermission.Delete;
-    var editpolicy = @PermissionsModel.EmployeePermission.Edit;
-}
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -102,23 +97,23 @@
                     <input type="hidden" asp-for="EmployeeId" class="form-control" />
                     <div class="mb-3">
                         <label asp-for="SelectedLocation" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, (isAdmin) ? new { id = "SelectedLocation" } : new { id = "SelectedLocation", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, (Model.IsAdminOrSuperDev) ? new { id = "SelectedLocation" } : new { id = "SelectedLocation", disabled = true })
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="SelectedDepartment" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, (isAdmin) ? new { id = "department" } : new { id = "department", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, (Model.IsAdminOrSuperDev) ? new { id = "department" } : new { id = "department", disabled = true })
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="SelectedCategory" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, (isAdmin) ? new { id = "category" } : new { id = "category", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, (Model.IsAdminOrSuperDev) ? new { id = "category" } : new { id = "category", disabled = true })
                         <input type="hidden" id="SelectedCategoryId" class="form-control" />
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="SelectedSubCategory" class="form-label"></label>
-                        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, (isAdmin) ? new { id = "subcategory" } : new { id = "subcategory", disabled = true })
+                        @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, (Model.IsAdminOrSuperDev) ? new { id = "subcategory" } : new { id = "subcategory", disabled = true })
                         <input type="hidden" id="SelectedSubCategoryId" class="form-control" />
                     </div>
 
@@ -155,28 +150,13 @@
 
     <script type="text/javascript">
 
-        var deletepolicy = '@deletepolicy';
-        var editpolicy = '@editpolicy';
+        var hasDeletePermission = '@Model.Delete';
+        var hasEditPermission = '@Model.Edit';
 
         $(document).ready(function () {
             $('select').selectize({
                 sortField: 'text'
             });
-
-            var hasDeletePermission = false;
-            var hasEditPermission = false;
-
-            fetch('/Permission/CheckPermissions?policyname=' + deletepolicy)
-                .then(response => response.json())
-                .then(data => {
-                    hasDeletePermission = data.hasPermission;
-                });
-
-            fetch('/Permission/CheckPermissions?policyname=' + editpolicy)
-                .then(response => response.json())
-                .then(data => {
-                    hasEditPermission = data.hasPermission;
-                });
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
@@ -281,7 +261,7 @@
             });
 
             $(document).on('click', '#reset', function () {
-                var isAdmin = '@isAdmin'.toLowerCase();
+                var isAdmin = '@Model.IsAdminOrSuperDev'.toLowerCase();
                 if (isAdmin === 'true') {
                     $('#locationSearch')[0].selectize.setValue(0);
                 }

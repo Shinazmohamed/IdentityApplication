@@ -20,14 +20,16 @@ namespace IdentityApplication.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAuthorizationService _authorizationService;
 
-        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
         {
             _business = business;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
@@ -39,9 +41,8 @@ namespace IdentityApplication.Controllers
             var locations = _unitOfWork.Location.GetLocations();
             var departments = _unitOfWork.Department.GetDepartments();
             var categories = _unitOfWork.Category.GetCategories();
-            var isAdmin = User.IsInRole(Constants.Roles.Administrator);
 
-            if (user?.LocationId != Guid.Empty && !isAdmin)
+            if (user?.LocationId != Guid.Empty && !isAdminOrSuperDev())
             {
                 var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
                 employee.SelectedLocation = user?.LocationId.ToString();
@@ -97,10 +98,11 @@ namespace IdentityApplication.Controllers
         {
             var response = new InsertEmployeeRequest();
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            var isAdmin = User.IsInRole(Constants.Roles.Administrator);
+            var _isadminordev = isAdminOrSuperDev();
+
 
             var locations = _unitOfWork.Location.GetLocations();
-            if (!isAdmin)
+            if (!_isadminordev)
             {
                 var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
                 response.SelectedLocation = user?.LocationId.ToString();
@@ -119,6 +121,13 @@ namespace IdentityApplication.Controllers
             response.Departments = departments.Select(department =>
                     new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
 
+
+            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EmployeePermission.Edit);
+            response.Edit = edit.Succeeded;
+            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EmployeePermission.Delete);
+            response.Delete = delete.Succeeded;
+
+            response.IsAdminOrSuperDev = _isadminordev;
             return View(response);
         }
 
@@ -126,7 +135,7 @@ namespace IdentityApplication.Controllers
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            if (!User.IsInRole(Constants.Roles.Administrator)) filter.location = user.LocationId.ToString();
+            if (!isAdminOrSuperDev()) filter.location = user.LocationId.ToString();
 
             var response = await _business.GetAll(filter);
             var dataSrc = new
@@ -192,6 +201,13 @@ namespace IdentityApplication.Controllers
                 TempData["ErrorMessage"] = "Record delete failed.";
                 return RedirectToAction("List");
             }
+        }
+
+        public bool isAdminOrSuperDev()
+        {
+            var isAdmin = User.IsInRole(Constants.Roles.Administrator);
+            var isSuperDev = User.IsInRole(Constants.Roles.SuperDeveloper);
+            return isAdmin || isSuperDev;
         }
     }
 }

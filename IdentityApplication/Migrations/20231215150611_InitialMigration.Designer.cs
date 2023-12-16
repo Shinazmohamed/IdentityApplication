@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231209084523_InitialMigration")]
+    [Migration("20231215150611_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -209,6 +209,21 @@ namespace IdentityApplication.Migrations
                     b.ToTable("SPDec2023", "Identity");
                 });
 
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Entity", b =>
+                {
+                    b.Property<Guid>("EntityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EntityId");
+
+                    b.ToTable("Entity", "Identity");
+                });
+
             modelBuilder.Entity("IdentityApplication.Core.Entities.Location", b =>
                 {
                     b.Property<Guid>("LocationId")
@@ -240,6 +255,26 @@ namespace IdentityApplication.Migrations
                     b.HasKey("MenuId");
 
                     b.ToTable("Menu", "Identity");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityId");
+
+                    b.ToTable("Permission", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
@@ -460,6 +495,17 @@ namespace IdentityApplication.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Permission", b =>
+                {
+                    b.HasOne("IdentityApplication.Core.Entities.Entity", "Entity")
+                        .WithMany("Permissions")
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entity");
+                });
+
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubCategory", b =>
                 {
                     b.HasOne("IdentityApplication.Core.Entities.Category", "Category")
@@ -549,6 +595,11 @@ namespace IdentityApplication.Migrations
             modelBuilder.Entity("IdentityApplication.Core.Entities.Department", b =>
                 {
                     b.Navigation("Categories");
+                });
+
+            modelBuilder.Entity("IdentityApplication.Core.Entities.Entity", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Menu", b =>

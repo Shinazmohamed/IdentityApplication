@@ -49,6 +49,19 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Entity",
+                schema: "Identity",
+                columns: table => new
+                {
+                    EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Entity", x => x.EntityId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Location",
                 schema: "Identity",
                 columns: table => new
@@ -129,6 +142,27 @@ namespace IdentityApplication.Migrations
                         principalSchema: "Identity",
                         principalTable: "Department",
                         principalColumn: "DepartmentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permission",
+                schema: "Identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permission", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Permission_Entity_EntityId",
+                        column: x => x.EntityId,
+                        principalSchema: "Identity",
+                        principalTable: "Entity",
+                        principalColumn: "EntityId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -352,6 +386,12 @@ namespace IdentityApplication.Migrations
                 column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Permission_EntityId",
+                schema: "Identity",
+                table: "Permission",
+                column: "EntityId");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "Identity",
                 table: "Role",
@@ -424,6 +464,10 @@ namespace IdentityApplication.Migrations
                 schema: "Identity");
 
             migrationBuilder.DropTable(
+                name: "Permission",
+                schema: "Identity");
+
+            migrationBuilder.DropTable(
                 name: "RoleClaims",
                 schema: "Identity");
 
@@ -453,6 +497,10 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTokens",
+                schema: "Identity");
+
+            migrationBuilder.DropTable(
+                name: "Entity",
                 schema: "Identity");
 
             migrationBuilder.DropTable(
