@@ -84,11 +84,6 @@
 
             $('#update').hide();
 
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-
             table  = $('#subcategoryTable').DataTable({
                 processing: true,
                 serverSide: true,

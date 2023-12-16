@@ -30,6 +30,19 @@ namespace IdentityApplication.Migrations
         private string createEmployeeSubMenu = Guid.NewGuid().ToString();
         private string listEmployeeSubMenu = Guid.NewGuid().ToString();
         private string profileUserSubMenu = Guid.NewGuid().ToString();
+
+        private string employeePermission = Guid.NewGuid().ToString();
+        private string entityPermission = Guid.NewGuid().ToString();
+        private string permissionPermission = Guid.NewGuid().ToString();
+        private string categoryPermission = Guid.NewGuid().ToString();
+        private string departmentPermission = Guid.NewGuid().ToString();
+        private string rolePermission = Guid.NewGuid().ToString();
+        private string subcategoryPermission = Guid.NewGuid().ToString();
+        private string userPermission = Guid.NewGuid().ToString();
+        private string auditPermission = Guid.NewGuid().ToString();
+        private string subMenuPermission = Guid.NewGuid().ToString();
+        private string menuPermission = Guid.NewGuid().ToString();
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             SeedLocations(migrationBuilder);
@@ -39,6 +52,8 @@ namespace IdentityApplication.Migrations
             SeedMenu(migrationBuilder);
             SeedSubMenu(migrationBuilder);
             SeedSubMenuRole(migrationBuilder);
+            SeedEntities(migrationBuilder);
+            SeedEntityPermissions(migrationBuilder);
         }
 
         private void SeedLocations(MigrationBuilder migrationBuilder)
@@ -126,6 +141,101 @@ namespace IdentityApplication.Migrations
                 INSERT INTO [identity].[SubMenuRoles] (SubMenuId, Id) VALUES 
                     ('{createEmployeeSubMenu}','{UserRoleId}'),
                     ('{listEmployeeSubMenu}','{UserRoleId}');");
+        }
+        private void SeedEntities(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Entity] ([EntityId], [Name]) VALUES 
+                ('{employeePermission}', 'Employee'),
+                ('{entityPermission}', 'Entity'),
+                ('{permissionPermission}', 'Permission'),
+                ('{categoryPermission}', 'Category'),
+                ('{departmentPermission}', 'Department'),
+                ('{rolePermission}', 'Role'),
+                ('{subcategoryPermission}', 'Sub Category'),
+                ('{userPermission}', 'User'),
+                ('{auditPermission}', 'Audit'),
+                ('{subMenuPermission}', 'Sub Menu'),
+                ('{menuPermission}', 'Menu');");
+        }
+        private void SeedEntityPermissions(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{employeePermission}', NEWID(), 'Permissions.Employee.Create'),
+                ('{employeePermission}', NEWID(), 'Permissions.Employee.View'),
+                ('{employeePermission}', NEWID(), 'Permissions.Employee.Edit'),
+                ('{employeePermission}', NEWID(), 'Permissions.Employee.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{entityPermission}', NEWID(), 'Permissions.Entity.Create'),
+                ('{entityPermission}', NEWID(), 'Permissions.Entity.View'),
+                ('{entityPermission}', NEWID(), 'Permissions.Entity.Edit'),
+                ('{entityPermission}', NEWID(), 'Permissions.Entity.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{permissionPermission}', NEWID(), 'Permissions.Permission.Create'),
+                ('{permissionPermission}', NEWID(), 'Permissions.Permission.View'),
+                ('{permissionPermission}', NEWID(), 'Permissions.Permission.Edit'),
+                ('{permissionPermission}', NEWID(), 'Permissions.Permission.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{categoryPermission}', NEWID(), 'Permissions.Category.Create'),
+                ('{categoryPermission}', NEWID(), 'Permissions.Category.View'),
+                ('{categoryPermission}', NEWID(), 'Permissions.Category.Edit'),
+                ('{categoryPermission}', NEWID(), 'Permissions.Category.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{departmentPermission}', NEWID(), 'Permissions.Department.Create'),
+                ('{departmentPermission}', NEWID(), 'Permissions.Department.View'),
+                ('{departmentPermission}', NEWID(), 'Permissions.Department.Edit'),
+                ('{departmentPermission}', NEWID(), 'Permissions.Department.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{rolePermission}', NEWID(), 'Permissions.Role.Create'),
+                ('{rolePermission}', NEWID(), 'Permissions.Role.View'),
+                ('{rolePermission}', NEWID(), 'Permissions.Role.Edit'),
+                ('{rolePermission}', NEWID(), 'Permissions.Role.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.Create'),
+                ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.View'),
+                ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.Edit'),
+                ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{userPermission}', NEWID(), 'Permissions.User.Create'),
+                ('{userPermission}', NEWID(), 'Permissions.User.View'),
+                ('{userPermission}', NEWID(), 'Permissions.User.Edit'),
+                ('{userPermission}', NEWID(), 'Permissions.User.Delete'),
+                ('{userPermission}', NEWID(), 'Permissions.User.ResetPassword'),
+                ('{userPermission}', NEWID(), 'Permissions.User.Profile'),
+                ('{userPermission}', NEWID(), 'Permissions.User.Register');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{auditPermission}', NEWID(), 'Permissions.Audit.View');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.Create'),
+                ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.View'),
+                ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.Edit'),
+                ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.Delete');");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                ('{menuPermission}', NEWID(), 'Permissions.Menu.Create'),
+                ('{menuPermission}', NEWID(), 'Permissions.Menu.View'),
+                ('{menuPermission}', NEWID(), 'Permissions.Menu.Edit'),
+                ('{menuPermission}', NEWID(), 'Permissions.Menu.Delete');");
         }
     }
 }

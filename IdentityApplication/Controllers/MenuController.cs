@@ -1,6 +1,4 @@
-﻿using IdentityApplication.Business;
-using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core.Contracts;
+﻿using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -12,28 +10,9 @@ namespace IdentityApplication.Controllers
     public class MenuController : Controller
     {
         private readonly IMenuBusiness _business;
-        private readonly IAuthorizationService _authorizationService;
-        public MenuController(IMenuBusiness business, IAuthorizationService authorizationService)
+        public MenuController(IMenuBusiness business)
         {
             _business = business;
-            _authorizationService = authorizationService;
-        }
-
-        [Authorize(policy: $"{PermissionsModel.MenuPermission.Create}")]
-        public async Task<IActionResult> Index()
-        {
-            var create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MenuPermission.Create);
-            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MenuPermission.Edit);
-            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MenuPermission.Delete);
-
-            var response = new ManagePermission()
-            {
-                Create = create.Succeeded,
-                Edit = edit.Succeeded,
-                Delete = delete.Succeeded
-            };
-
-            return View(response);
         }
 
         [HttpPost]

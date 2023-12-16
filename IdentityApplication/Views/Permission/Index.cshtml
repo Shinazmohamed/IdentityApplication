@@ -29,15 +29,18 @@
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-end">
-            @if (Model.Create)
+            @if (Model.EntityPermission.Create)
             {
                 <button type="button" class="fas fa-plus btn btn-primary" id="btnEntity" style="margin-right: 10px;">
                     Add Entity
                 </button>
             }
-            <button type="button" class="fas fa-plus btn btn-primary" id="btnPermission">
-                Add Permission
-            </button>
+            @if (Model.PermissionPermission.Create)
+            {
+                <button type="button" class="fas fa-plus btn btn-primary" id="btnPermission">
+                    Add Permission
+                </button>
+            }
         </div>
 
 
@@ -170,25 +173,34 @@
                 sortField: 'text'
             });
 
-            var hasDeletePermission = '@Model.Delete';
-            var hasEditPermission = '@Model.Edit';
+            var hasEntityDeletePermission = @Html.Raw(Model.EntityPermission.Delete.ToString().ToLower());
+            var hasEntityEditPermission = @Html.Raw(Model.EntityPermission.Edit.ToString().ToLower());
+
+            var hasPermissionDeletePermission = @Html.Raw(Model.PermissionPermission.Delete.ToString().ToLower());
+            var hasPermissionEditPermission = @Html.Raw(Model.PermissionPermission.Edit.ToString().ToLower());
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
                 $("#errorMessage").fadeOut("slow");
             }, 3000);
 
-            document.getElementById('btnPermission').onclick = function () {
-                reset();
-                enableUpdatePermissionBtn(false);
-                $('#permissionModal').modal('show');
-            };
+            var btnPermission = document.getElementById('btnPermission');
+            if (btnPermission) {
+                btnPermission.onclick = function () {
+                    reset();
+                    enableUpdatePermissionBtn(false);
+                    $('#permissionModal').modal('show');
+                };
+            }
 
-            document.getElementById('btnEntity').onclick = function () {
-                reset();
-                enableUpdateEntityBtn(false);
-                $('#entityModal').modal('show');
-            };
+            var btnEntity = document.getElementById('btnEntity');
+            if (btnEntity) {
+                btnEntity.onclick = function () {
+                    reset();
+                    enableUpdateEntityBtn(false);
+                    $('#entityModal').modal('show');
+                };
+            }
 
             var table = $('#entityTable').DataTable({
                 processing: true,
@@ -225,13 +237,13 @@
                                 '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                                 '<div class="dropdown-menu shadow animated--grow-in">';
 
-                            if (hasEditPermission) {
+                            if (hasEntityEditPermission) {
                                 actionHtml +=
                                     '<a class="dropdown-item">' +
                                     '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
                                     '</a>';
                             }
-                            if (hasDeletePermission) {
+                            if (hasEntityDeletePermission) {
                                 actionHtml +=
                                     '<form class="d-inline">' +
                                     '<a class="dropdown-item">' +
@@ -269,13 +281,13 @@
                             '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                             '<div class="dropdown-menu shadow animated--grow-in">';
 
-                        if (hasEditPermission) {
+                        if (hasPermissionEditPermission) {
                             actionHtml +=
                                 '<a class="dropdown-item">' +
                                 '<i class="fas fa-pencil-alt btn-permission-edit" data-id="' + permission.id + '"> Edit</i>' +
                                 '</a>';
                         }
-                        if (hasDeletePermission) {
+                        if (hasPermissionDeletePermission) {
                             actionHtml +=
                                 '<form class="d-inline">' +
                                 '<a class="dropdown-item">' +

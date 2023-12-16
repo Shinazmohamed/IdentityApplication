@@ -150,8 +150,8 @@
 
     <script type="text/javascript">
 
-        var hasDeletePermission = '@Model.Delete';
-        var hasEditPermission = '@Model.Edit';
+        var hasDeletePermission = @Html.Raw(Model.Delete.ToString().ToLower());
+        var hasEditPermission = @Html.Raw(Model.Edit.ToString().ToLower());
 
         $(document).ready(function () {
             $('select').selectize({

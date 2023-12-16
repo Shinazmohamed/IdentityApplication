@@ -12,21 +12,46 @@ namespace IdentityApplication.Controllers
     {
         private readonly ISubMenuBusiness _business;
         private readonly IMenuBusiness _menuBusiness;
+        private readonly IAuthorizationService _authorizationService;
 
-        public SubMenuController(ISubMenuBusiness business, IMenuBusiness menuBusiness)
+        public SubMenuController(ISubMenuBusiness business, IMenuBusiness menuBusiness, IAuthorizationService authorizationService)
         {
             _business = business;
             _menuBusiness = menuBusiness;
+            _authorizationService = authorizationService;
         }
 
         [Authorize(policy: $"{PermissionsModel.SubMenuPermission.View}")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var response = new CreateMenuRequest();
             var menus = _menuBusiness.GetAll();
 
             response.Menus = menus.Select(menu =>
                 new SelectListItem(menu.DisplayName, menu.MenuId.ToString(), false)).ToList();
+
+            var menu_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MenuPermission.Create);
+            var menu_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MenuPermission.Edit);
+            var menu_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MenuPermission.Delete);
+            var menuPermission = new BasePermissionViewModel()
+            {
+                Create = menu_create.Succeeded,
+                Edit = menu_edit.Succeeded,
+                Delete = menu_delete.Succeeded,
+            };
+
+            var submenu_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.SubMenuPermission.Create);
+            var submenu_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.SubMenuPermission.Edit);
+            var submenu_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.SubMenuPermission.Delete);
+            var submenuPermission = new BasePermissionViewModel()
+            {
+                Create = submenu_create.Succeeded,
+                Edit = submenu_edit.Succeeded,
+                Delete = submenu_delete.Succeeded,
+            };
+
+            response.MenuPermission = menuPermission;
+            response.SubMenuPermission = submenuPermission;
 
             return View(response);
         }

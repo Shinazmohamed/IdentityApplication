@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IdentityApplication.Core.ViewModel
 {
-    public class CreateMenuRequest : BasePermissionViewModel
+    public class CreateMenuRequest
     {
         public Guid MenuId { get; set; }
         public Guid SubMenuId { get; set; }
@@ -21,5 +21,8 @@ namespace IdentityApplication.Core.ViewModel
         public string? Method { get; set; }
         [Required]
         public bool IsParent { get; set; }
+
+        public BasePermissionViewModel MenuPermission { get; set; }
+        public BasePermissionViewModel SubMenuPermission { get; set; }
     }
 }

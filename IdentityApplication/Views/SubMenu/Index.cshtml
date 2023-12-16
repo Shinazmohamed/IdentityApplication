@@ -22,48 +22,55 @@
     </div>
 }
 
-<div class="card">
-    <div class="card-body">
-        <form method="post" asp-controller="SubMenu" asp-action="Create" id="menuForm">
-            <input type="hidden" asp-for="MenuId" />
-            <input type="hidden" asp-for="SubMenuId" />
-            <div class="mb-3 row">
-                <label asp-for="DisplayName" class="col-sm-2 col-form-label">Display Name</label>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" asp-for="DisplayName">
-                </div>
+<div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="menuModalLabel">Create Menu</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="mb-3 row">
-                <label asp-for="IsParent" class="col-sm-2 col-form-label">Is Parent</label>
-                <div class="col-sm-3">
-                    <input class="form-check-input" type="checkbox" asp-for="IsParent" checked id="isParentCheckbox">
-                </div>
+            <div class="modal-body">
+                <form method="post" asp-controller="SubMenu" asp-action="Create" id="menuForm">
+                    <input type="hidden" asp-for="MenuId" />
+                    <input type="hidden" asp-for="SubMenuId" />
+                    <div class="col-md-12">
+                        <label asp-for="DisplayName" class="col-sm-4 col-form-label">Display Name</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" asp-for="DisplayName">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label asp-for="IsParent" class="col-sm-4 col-form-label">Is Parent</label>
+                        <div class="col-sm-12">
+                            <input class="form-check-input" type="checkbox" asp-for="IsParent" checked id="isParentCheckbox">
+                        </div>
+                    </div>
+                    <div id="additionalFields" style="display: @(Model.IsParent ? "none" : "block")">
+                        <div class="col-md-12">
+                            <label asp-for="Controller" class="col-sm-4 col-form-label">Controller</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" asp-for="Controller">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label asp-for="Method" class="col-sm-4 col-form-label">Method</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" asp-for="Method">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label asp-for="SelectedMenu" class="col-sm-4 col-form-label"></label>
+                            <div class="col-sm-12">
+                                @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { id = "SelectedMenu" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <button type="submit" class="btn btn-success" id="saveBtn">Save</button>
+                    <button type="submit" class="btn btn-success" id="updateBtn">Update</button>
+                </form>
             </div>
-            <div id="additionalFields" style="display: @(Model.IsParent ? "none" : "block")">
-                <div class="mb-3 row">
-                    <label asp-for="Controller" class="col-sm-2 col-form-label">Controller</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control" asp-for="Controller">
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label asp-for="Method" class="col-sm-2 col-form-label">Method</label>
-                    <div class="col-sm-3">
-                        <input type="text" class="form-control" asp-for="Method">
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label asp-for="SelectedMenu" class="col-sm-2 col-form-label"></label>
-                    <div class="col-sm-3">
-                        @Html.DropDownListFor(m => m.SelectedMenu, Model.Menus, "Select a menu", new { id = "SelectedMenu" })
-                    </div>
-                </div>
-
-            </div>
-            <button type="submit" class="btn btn-success" id="saveBtn">Save</button>
-            <button type="submit" class="btn btn-success" id="updateBtn">Update</button>
-        </form>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="deleteMenuConfirmationModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
@@ -95,7 +102,7 @@
             </div>
             <form method="post" asp-controller="SubMenu" asp-action="Delete">
                 <div class="modal-body">
-                    <input type="hidden" id="hdnSubMenuId" name="Id" />
+                    <input type="hidden" id="hdnSubMenuId" name="hdnSubMenuId" />
                     <p>Are you sure you want to delete this record?</p>
                 </div>
                 <div class="modal-footer">
@@ -110,7 +117,14 @@
 <br />
 <div class="card">
     <div class="card-body">
-
+        <div class="d-flex justify-content-end">
+            @if (Model.MenuPermission.Create || Model.SubMenuPermission.Create)
+            {
+                <button type="button" class="fas fa-plus btn btn-primary" id="btnCreateMenu">
+                    Add Menu
+                </button>
+            }
+        </div>
         <div id="viewAll" class="card-body table-responsive">
             <table id="menuTable" class="table table-striped table-bordered">
                 <thead>
@@ -143,8 +157,18 @@
 
             enableUpdateBtn(false);
 
-            var hasDeletePermission = '@Model.Delete';
-            var hasEditPermission = '@Model.Edit';
+            var hasMenuDeletePermission = @Html.Raw(Model.MenuPermission.Delete.ToString().ToLower());
+            var hasMenuEditPermission = @Html.Raw(Model.MenuPermission.Edit.ToString().ToLower());
+
+            var hasSubMenuDeletePermission = @Html.Raw(Model.SubMenuPermission.Delete.ToString().ToLower());
+            var hasSubMenuEditPermission = @Html.Raw(Model.SubMenuPermission.Edit.ToString().ToLower());
+
+            var btnCreateMenu = document.getElementById('btnCreateMenu');
+            if (btnCreateMenu) {
+                btnCreateMenu.onclick = function () {
+                    $('#menuModal').modal('show');
+                };
+            }
 
             toggleAdditionalFields();
 
@@ -199,13 +223,13 @@
                                 '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                                 '<div class="dropdown-menu shadow animated--grow-in">';
 
-                            if (hasEditPermission) {
+                            if (hasMenuEditPermission) {
                                 actionHtml +=
                                     '<a class="dropdown-item">' +
                                     '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
                                     '</a>';
                             }
-                            if (hasDeletePermission) {
+                            if (hasMenuDeletePermission) {
                                 actionHtml +=
                                     '<form class="d-inline">' +
                                     '<a class="dropdown-item">' +
@@ -247,13 +271,13 @@
                             '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                             '<div class="dropdown-menu shadow animated--grow-in">';
 
-                        if (hasEditPermission) {
+                        if (hasSubMenuEditPermission) {
                             actionHtml +=
                                 '<a class="dropdown-item">' +
                                 '<i class="fas fa-pencil-alt btn-submenu-edit" data-id="' + subMenu.id + '"> Edit</i>' +
                                 '</a>';
                         }
-                        if (hasDeletePermission) {
+                        if (hasSubMenuDeletePermission) {
                             actionHtml +=
                                 '<form class="d-inline">' +
                                 '<a class="dropdown-item">' +
@@ -291,7 +315,7 @@
                 $('#MenuId').val(rowData.id);
                 $('#DisplayName').val(rowData.displayName);
                 enableUpdateBtn(true);
-
+                $('#menuModal').modal('show');
             });
 
             $('#menuTable').on('click', '.btn-delete', function () {
@@ -329,6 +353,8 @@
 
                 enableUpdateBtn(true);
 
+                $('#menuModal').modal('show');
+
             });
 
             $('#menuTable').on('click', '.btn-submenu-delete', function () {
@@ -339,7 +365,7 @@
 
             document.getElementById('updateBtn').onclick = function () {
                 var isChecked = $("#isParentCheckbox").prop("checked");
-                if (isChecked){
+                if (isChecked) {
                     var form = document.getElementById('menuForm');
                     form.action = '/Menu/Edit';
                     form.submit();
@@ -351,7 +377,6 @@
                 }
 
             };
-
 
             function enableUpdateBtn(shouldShowUpdateButton) {
                 var savebtn = document.getElementById('saveBtn');

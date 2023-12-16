@@ -83,9 +83,9 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-        $('select').selectize({
-          sortField: 'text'
-        });
+            $('select').selectize({
+                sortField: 'text'
+            });
 
             setTimeout(function () {
                 $("#successMessage").fadeOut("slow");
@@ -93,11 +93,6 @@
             }, 3000);
 
             $('#update').hide();
-
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
 
             var table = $('#subcategoryTable').DataTable({
                 processing: true,

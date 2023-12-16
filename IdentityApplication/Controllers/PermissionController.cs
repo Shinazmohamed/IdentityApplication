@@ -31,16 +31,31 @@ namespace IdentityApplication.Controllers
         public async Task<ActionResult> Index()
         {
             var entities = _entitybusiness.GetEntities();
-            
-            var create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Create);
-            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Edit);
-            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Delete);
+
+            var entity_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Create);
+            var entity_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Edit);
+            var entity_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Delete);
+            var entityPermission = new BasePermissionViewModel()
+            {
+                Create = entity_create.Succeeded,
+                Edit = entity_edit.Succeeded,
+                Delete = entity_delete.Succeeded
+            };
+
+            var permission_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Create);
+            var permission_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Edit);
+            var permission_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Delete);
+            var permissionPermission = new BasePermissionViewModel()
+            {
+                Create = permission_create.Succeeded,
+                Edit = permission_edit.Succeeded,
+                Delete = permission_delete.Succeeded
+            };
 
             var response = new ManagePermission()
             {
-                Create = create.Succeeded,
-                Edit = edit.Succeeded,
-                Delete = delete.Succeeded
+                EntityPermission = entityPermission,
+                PermissionPermission = permissionPermission
             };
 
             response.Entities = entities.Select(entity =>
