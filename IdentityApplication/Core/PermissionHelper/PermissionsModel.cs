@@ -53,6 +53,8 @@
             public const string Create = "Permissions.Role.Create";
             public const string Edit = "Permissions.Role.Edit";
             public const string Delete = "Permissions.Role.Delete";
+            public const string AssignPermission = "Permissions.Role.AssignPermission";
+            public const string AssignMenu = "Permissions.Role.AssignMenu";
         }
         public static class SubCategoryPermission
         {

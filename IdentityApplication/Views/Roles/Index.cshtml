@@ -1,6 +1,6 @@
 ﻿@using IdentityApplication.Core
-@using Microsoft.AspNetCore.Identity;
-@model IEnumerable<IdentityRole>
+@using IdentityApplication.Core.ViewModel;
+@model RolesViewModel
 <h1>Roles</h1>
 <br />
 <style>
@@ -22,14 +22,17 @@
     }
 </div>
 
-<form method="post" asp-action="addrole" asp-controller="roles">
-    <div class="input-group">
-        <input name="roleName" class="form-control w-25">
-        <span class="input-group-btn">
-            <button class="btn btn-info">Add New Role</button>
-        </span>
-    </div>
-</form>
+@if (Model.Create)
+{
+    <form method="post" asp-action="addrole" asp-controller="roles">
+        <div class="input-group">
+            <input name="roleName" class="form-control w-25">
+            <span class="input-group-btn">
+                <button class="btn btn-info">Add New Role</button>
+            </span>
+        </div>
+    </form>
+}
 
 <div class="modal fade" id="permissionmodel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -110,7 +113,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var role in Model)
+        @foreach (var role in Model.Roles)
         {
             <tr>
                 <td>
@@ -133,12 +136,19 @@
                             </form>
                             @if (role.Name != $"{Constants.Roles.SuperDeveloper}")
                             {
-                                <a style='margin-right:16px' class="dropdown-item btn-permission" data-id="@role.Id" href="#">
-                                    <i class="fas fa-wrench"></i> Manage Permissions
-                                </a>
-                                <a style='margin-right:16px' class="dropdown-item btn-menu" data-id="@role.Id" href="#">
-                                    <i class="fas fa-wrench"></i> Manage Menu
-                                </a>
+                                if (Model.AssignPermission)
+                                {
+                                    <a style='margin-right:16px' class="dropdown-item btn-permission" data-id="@role.Id" href="#">
+                                        <i class="fas fa-wrench"></i> Manage Permissions
+                                    </a>
+                                }
+                                if (Model.AssignMenu)
+                                {
+                                    <a style='margin-right:16px' class="dropdown-item btn-menu" data-id="@role.Id" href="#">
+                                        <i class="fas fa-wrench"></i> Manage Menu
+                                    </a>
+                                }
+
                             }
                         </div>
                     </div>
