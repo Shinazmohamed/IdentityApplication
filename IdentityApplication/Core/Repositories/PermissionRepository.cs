@@ -23,11 +23,6 @@ namespace IdentityApplication.Core.Repositories
 
                 var query = _context.Entity.OrderBy(e => e.EntityId).AsQueryable();
 
-                //if (!string.IsNullOrEmpty(filter.entity))
-                //{
-                //    query = query.Where(e => e.Entity.Name == filter.entity);
-                //}
-
                 var totalCount = await query.CountAsync();
                 var filteredEntities = await query.Skip(filter.start).Take(filter.length).Include(e => e.Permissions).ToListAsync();
 
@@ -44,7 +39,6 @@ namespace IdentityApplication.Core.Repositories
             }
             return response;
         }
-
         public async Task<PaginationResponse<Permission>> GetPermissionsWithFilters(PaginationFilter filter)
         {
             var response = new PaginationResponse<Permission>();
@@ -67,7 +61,6 @@ namespace IdentityApplication.Core.Repositories
             }
             return response;
         }
-
         public void Create(Entities.Permission request)
         {
             using (var transaction = _context.Database.BeginTransaction())

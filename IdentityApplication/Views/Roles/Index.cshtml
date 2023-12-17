@@ -9,30 +9,52 @@
     }
 </style>
 
-<div class="alert alert-success mt-3" id="successMessage" style="display:none">
-    @if (TempData["SuccessMessage"] != null)
-    {
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3" id="successMessage">
         @TempData["SuccessMessage"]
-    }
-</div>
-<div class="alert alert-danger mt-3" id="errorMessage" style="display:none">
-    @if (TempData["ErrorMessage"] != null)
-    {
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3" id="errorMessage">
         @TempData["ErrorMessage"]
-    }
-</div>
+    </div>
+}
 
 @if (Model.Create)
 {
-    <form method="post" asp-action="addrole" asp-controller="roles">
+    <form method="post" asp-action="addrole" asp-controller="roles" id="roleForm">
         <div class="input-group">
-            <input name="roleName" class="form-control w-25">
+
+            <input type="hidden" asp-for="RoleId" />
+            <input asp-for="RoleName" class="form-control w-25">
             <span class="input-group-btn">
-                <button class="btn btn-info">Add New Role</button>
+                <button class="btn btn-info" id="btnAdd">Add New Role</button>
             </span>
         </div>
     </form>
 }
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Roles" asp-action="Delete">
+                <div class="modal-body">
+                    <input type="hidden" id="Id" name="Id" />
+                    <p>Are you sure you want to delete this record?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="permissionmodel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -128,12 +150,18 @@
                             Action
                         </button>
                         <div class="dropdown-menu shadow animated--grow-in">
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-pencil-alt"></i> Edit
-                            </a>
-                            <form class="d-inline-block" type="submit">
-                                <a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i> Delete</a>
-                            </form>
+                            @if (Model.Edit)
+                            {
+                                <a style='margin-right:16px' class="dropdown-item btn-edit" data-id="@role.Id" href="#">
+                                    <i class="fas fa-pencil-alt"></i> Edit
+                                </a>
+                            }
+                            @if (Model.Delete)
+                            {
+                                <a style='margin-right:16px' class="dropdown-item btn-delete" data-id="@role.Id" href="#">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
+                            }
                             @if (role.Name != $"{Constants.Roles.SuperDeveloper}")
                             {
                                 if (Model.AssignPermission)
@@ -148,7 +176,6 @@
                                         <i class="fas fa-wrench"></i> Manage Menu
                                     </a>
                                 }
-
                             }
                         </div>
                     </div>
@@ -269,6 +296,25 @@
                 $('#permissionmodel').modal('show');
             });
 
+            $('#roleTable').on('click', '.btn-delete', function () {
+                var id = $(this).data('id');
+                $('#Id').val(id);
+                $('#deleteConfirmationModal').modal('show');
+            });
+
+            $('#roleTable').on('click', '.btn-edit', function () {
+
+                var clickedRow = $(this).closest('tr');
+                var role = clickedRow.find('td:nth-child(1)').text();
+                var id = $(this).data('id');
+
+                $('#RoleId').val(id);
+                $('#RoleName').val(role);
+
+                var button = document.getElementById("btnAdd");
+                button.innerHTML = "Update";
+            });
+
             $('#permissionTable').on('change', '.checkbox-select', function () {
                 var rowIndex = table.row($(this).closest('tr')).index();
                 var rowData = table.row(rowIndex).data();
@@ -350,6 +396,19 @@
                 });
 
             });
+
+            document.getElementById('btnAdd').onclick = function () {
+
+                var form = document.getElementById('roleForm');
+                var button = document.getElementById("btnAdd");
+
+                if (button.innerHTML === "Add New Role") {
+                    form.submit();
+                } else {
+                    form.action = '/Roles/Edit';
+                    form.submit();
+                }
+            };
         });
     </script>
 }
