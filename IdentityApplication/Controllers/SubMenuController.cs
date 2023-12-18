@@ -13,12 +13,15 @@ namespace IdentityApplication.Controllers
         private readonly ISubMenuBusiness _business;
         private readonly IMenuBusiness _menuBusiness;
         private readonly IAuthorizationService _authorizationService;
+        private readonly ILogger<SubMenuController> _logger;
 
-        public SubMenuController(ISubMenuBusiness business, IMenuBusiness menuBusiness, IAuthorizationService authorizationService)
+
+        public SubMenuController(ISubMenuBusiness business, IMenuBusiness menuBusiness, IAuthorizationService authorizationService, ILogger<SubMenuController> logger)
         {
             _business = business;
             _menuBusiness = menuBusiness;
             _authorizationService = authorizationService;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.SubMenuPermission.View}")]
@@ -71,38 +74,55 @@ namespace IdentityApplication.Controllers
                     _business.Create(request);
                     TempData["SuccessMessage"] = "Sub Menu created successfully.";
                 }
-
-                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Sub Menu creation failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.SubMenuPermission.View}")]
         public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
         {
-            var data = _business.GetSubMenusWithFilters(filter);
+            var response = new PaginationResponse<SubMenuViewModel>();
 
-            var dataSrc = new
+            try
+            {
+                response = _business.GetSubMenusWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
+            }
+            return Json(new
             {
                 filter.draw,
-                recordsTotal = data.TotalCount,
-                recordsFiltered = data.TotalCount,
-                data = data.Data
-            };
-            return Json(dataSrc);
+                recordsTotal = response?.TotalCount,
+                recordsFiltered = response?.TotalCount,
+                data = response?.Data
+            });
         }
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.SubMenuPermission.Edit}")]
         public ActionResult SaveMenuData([FromBody] ManageMenuViewModel menuData)
         {
-            _business.Update(menuData);
-            return Json(new { success = true, message = "Menu data saved successfully" });
+            try
+            {
+                _business.Update(menuData);
+                TempData["SuccessMessage"] = "Sub Menu update successfully.";
+
+                return Json(new { success = true, message = "Menu data saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
+            }
+            return Json(new { success = false, message = "Menu data saved failed" });
         }
 
         [Authorize(policy: $"{PermissionsModel.SubMenuPermission.Edit}")]
@@ -112,14 +132,14 @@ namespace IdentityApplication.Controllers
             {
                 _business.Edit(request);
                 TempData["SuccessMessage"] = "Sub Menu update successfully.";
-
-                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Sub Menu update failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -130,14 +150,13 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Delete(hdnSubMenuId);
                 TempData["SuccessMessage"] = "Record deleted successfully.";
-
-                return RedirectToAction("Index", "SubMenu");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index", "SubMenu");
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
+            return RedirectToAction("Index", "SubMenu");
         }
     }
 }

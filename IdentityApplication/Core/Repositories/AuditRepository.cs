@@ -21,6 +21,7 @@ namespace IdentityApplication.Core.Repositories
 
         public async Task<PaginationResponse<ListAuditModel>> GetEntitiesWithFilters(PaginationFilter filter)
         {
+            var response = new PaginationResponse<ListAuditModel>();
             try
             {
                 var query = _context.AuditLogs.OrderBy(e => e.Id).AsQueryable();
@@ -28,18 +29,16 @@ namespace IdentityApplication.Core.Repositories
                 var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
                 var resultViewModel = filteredEntities.Select(entity => _mapper.Map<ListAuditModel>(entity)).Take(250).ToList();
 
-                return new PaginationResponse<ListAuditModel>(
-                    resultViewModel,
-                    totalCount,
-                    filter.draw,
-                    filter.length
-                );
+                response.Data = resultViewModel;
+                response.TotalCount = totalCount;
+                response.CurrentPage = filter.draw;
+                response.PageSize = filter.length;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "{Repo} All function error", typeof(AuditRepository));
-                throw;
             }
+            return response;
         }
     }
 }

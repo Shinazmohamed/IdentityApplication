@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IdentityApplication.Business.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.Helpers;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
@@ -18,48 +19,58 @@ namespace IdentityApplication.Controllers
         private readonly IPermissionBusiness _business;
         private readonly IEntityBusiness _entitybusiness;
         private readonly IMapper _mapper;
-        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper, IEntityBusiness entitybusiness)
+        private readonly ILogger<PermissionController> _logger;
+        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper, IEntityBusiness entitybusiness, ILogger<PermissionController> logger)
         {
             _roleManager = roleManager;
             _authorizationService = authorizationService;
             _business = business;
             _mapper = mapper;
             _entitybusiness = entitybusiness;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.PermissionPermission.View}")]
         public async Task<ActionResult> Index()
         {
-            var entities = _entitybusiness.GetEntities();
-
-            var entity_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Create);
-            var entity_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Edit);
-            var entity_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Delete);
-            var entityPermission = new BasePermissionViewModel()
+            var response = new ManagePermission();
+            try
             {
-                Create = entity_create.Succeeded,
-                Edit = entity_edit.Succeeded,
-                Delete = entity_delete.Succeeded
-            };
+                var entities = _entitybusiness.GetEntities();
 
-            var permission_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Create);
-            var permission_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Edit);
-            var permission_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Delete);
-            var permissionPermission = new BasePermissionViewModel()
+                var entity_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Create);
+                var entity_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Edit);
+                var entity_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EntityPermission.Delete);
+                var entityPermission = new BasePermissionViewModel()
+                {
+                    Create = entity_create.Succeeded,
+                    Edit = entity_edit.Succeeded,
+                    Delete = entity_delete.Succeeded
+                };
+
+                var permission_create = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Create);
+                var permission_edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Edit);
+                var permission_delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.PermissionPermission.Delete);
+                var permissionPermission = new BasePermissionViewModel()
+                {
+                    Create = permission_create.Succeeded,
+                    Edit = permission_edit.Succeeded,
+                    Delete = permission_delete.Succeeded
+                };
+
+                response.EntityPermission = entityPermission;
+                response.PermissionPermission = permissionPermission;
+
+                if (entities.Any())
+                {
+                    response.Entities = entities.Select(entity =>
+                        new SelectListItem(entity.Name, entity.EntityId.ToString(), false)).ToList();
+                }
+            }
+            catch (Exception ex)
             {
-                Create = permission_create.Succeeded,
-                Edit = permission_edit.Succeeded,
-                Delete = permission_delete.Succeeded
-            };
-
-            var response = new ManagePermission()
-            {
-                EntityPermission = entityPermission,
-                PermissionPermission = permissionPermission
-            };
-
-            response.Entities = entities.Select(entity =>
-                new SelectListItem(entity.Name, entity.EntityId.ToString(), false)).ToList();
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+            }
 
             return View(response);
         }
@@ -71,14 +82,20 @@ namespace IdentityApplication.Controllers
             {
                 var role = await _roleManager.FindByIdAsync(model.RoleId);
                 var claims = await _roleManager.GetClaimsAsync(role);
-                foreach (var claim in claims)
+                if(claims.Any())
                 {
-                    await _roleManager.RemoveClaimAsync(role, claim);
+                    foreach (var claim in claims)
+                    {
+                        await _roleManager.RemoveClaimAsync(role, claim);
+                    }
                 }
-                var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
-                foreach (var claim in selectedClaims)
+                if (model.RoleClaims.Any())
                 {
-                    await _roleManager.AddPermissionClaim(role, claim.Value);
+                    var selectedClaims = model.RoleClaims.Where(a => a.Selected).ToList();
+                    foreach (var claim in selectedClaims)
+                    {
+                        await _roleManager.AddPermissionClaim(role, claim.Value);
+                    }
                 }
 
                 TempData["SuccessMessage"] = "Permission updated successfully.";
@@ -86,7 +103,7 @@ namespace IdentityApplication.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Employee creation failed.";
-                return BadRequest(ex.Message);
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
             return Ok();
         }
@@ -100,48 +117,60 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+            return Unauthorized();
         }
 
         [HttpPost]
         public async Task<IActionResult> GetPermissionByRole([FromBody] PaginationFilter filter)
         {
             var response = new PermissionViewModel();
-            var model = new List<RoleClaimsViewModel>();
-
-            var data = await _business.GetPermissionsWithFilters(filter);
-            var allPermissions = data.Data;
-
-            var role = await _roleManager.FindByIdAsync(filter.roleId);
-            var claims = await _roleManager.GetClaimsAsync(role);
-            var allClaimValues = allPermissions.Select(a => a.Value).ToList();
-            var roleClaimValues = claims.Select(a => a.Value).ToList();
-            var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
-
-            foreach (var permission in allPermissions)
+            var paginationResponse = new PaginationResponse<Permission>();
+            try
             {
-                var claim = new RoleClaimsViewModel();
-                claim.Type = permission.Entity.Name;
-                claim.Value = permission.Value;
-
-                if (authorizedClaims.Any(a => a == permission.Value))
+                var model = new List<RoleClaimsViewModel>();
+                var permission = await _business.GetPermissionsWithFilters(filter);
+                if(permission != null)
                 {
-                    claim.Selected = true;
+                    if (permission.Data.Any())
+                    {
+                        var role = await _roleManager.FindByIdAsync(filter.roleId);
+                        var claims = await _roleManager.GetClaimsAsync(role);
+
+                        var allClaimValues = permission.Data.Select(a => a.Value).ToList();
+                        var roleClaimValues = claims.Select(a => a.Value).ToList();
+                        var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
+
+                        foreach (var item in permission.Data)
+                        {
+                            var claim = new RoleClaimsViewModel();
+                            claim.Type = item.Entity.Name;
+                            claim.Value = item.Value;
+
+                            if (authorizedClaims.Any(a => a == item.Value))
+                            {
+                                claim.Selected = true;
+                            }
+
+                            model.Add(claim);
+                        }
+                        response.RoleClaims = model;
+                    }
                 }
-
-                model.Add(claim);
+                paginationResponse.Data = permission.Data;
             }
-            response.RoleClaims = model;
-
-            var dataSrc = new
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+            }
+            return Json(new
             {
                 filter.draw,
-                recordsTotal = data.TotalCount,
-                recordsFiltered = data.TotalCount,
+                recordsTotal = paginationResponse.TotalCount,
+                recordsFiltered = paginationResponse.TotalCount,
                 data = response.RoleClaims
-            };
-            return Json(dataSrc);
+            });
         }
 
         [HttpPost]
@@ -173,15 +202,14 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-
                 TempData["SuccessMessage"] = "Permission created successfully.";
-                return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Permission creation failed.";
-                return RedirectToAction("Index");
+                TempData["ErrorMessage"] = "Record create failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -191,15 +219,14 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Update(request);
-
                 TempData["SuccessMessage"] = "Record updated successfully.";
-                return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record update failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -210,14 +237,14 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Delete(Id);
                 TempData["SuccessMessage"] = "Record deleted successfully.";
-
-                return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -228,14 +255,13 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Delete(Id);
                 TempData["SuccessMessage"] = "Record deleted successfully.";
-
-                return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+            return RedirectToAction("Index");
         }
     }
 }

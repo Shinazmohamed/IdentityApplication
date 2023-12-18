@@ -11,10 +11,12 @@ namespace IdentityApplication.Controllers
     public class SubCategoryController : Controller
     {
         private readonly ISubCategoryBusiness _business;
+        private readonly ILogger<SubCategoryController> _logger;
 
-        public SubCategoryController(ISubCategoryBusiness business)
+        public SubCategoryController(ISubCategoryBusiness business, ILogger<SubCategoryController> logger)
         {
             _business = business;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.SubCategoryPermission.View}")]
@@ -27,15 +29,22 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.SubCategoryPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
-            var response = await _business.GetAllWithFilters(filter);
-            var jsonD = new
+            var response = new PaginationResponse<ListSubCategoryModel>();
+            try
+            {
+                response = await _business.GetAllWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
+            }
+            return Json(new
             {
                 filter.draw,
                 recordsTotal = response.TotalCount,
                 recordsFiltered = response.TotalCount,
                 data = response.Data
-            };
-            return Json(jsonD);
+            });
         }
 
         [HttpPost]
@@ -47,9 +56,10 @@ namespace IdentityApplication.Controllers
                 await _business.Create(request);
                 TempData["SuccessMessage"] = "Sub category created successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Sub category created failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
             return RedirectToAction("Index");
@@ -64,9 +74,10 @@ namespace IdentityApplication.Controllers
                 await _business.Update(request);
                 TempData["SuccessMessage"] = "Sub category updated successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Sub category update failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
             return RedirectToAction("Index");
@@ -78,51 +89,42 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                if (User.HasClaim("Permission", "RequireAdmin"))
-                {
-                    await _business.Delete(mappingId);
-
-                    TempData["SuccessMessage"] = "Record deleted successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Authorization error: You do not have permission to perform this action.";
-                }
-
-                return RedirectToAction("Index");
+                await _business.Delete(mappingId);
+                TempData["SuccessMessage"] = "Record deleted successfully.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
         public IActionResult GetSubcategories(string id)
         {
+            var response = new List<SelectListItem>();
             try
             {
-                var response = _business.GetSubCategoriesByCategoryId(id);
-
-                var sub = new List<SelectListItem>
-                {
-                    new SelectListItem { Value = "", Text = "All" }
-                };
-
-                sub.AddRange(response.Select(item => new SelectListItem
-                {
-                    Value = item.Id.ToString(),
-                    Text = item.Name.ToString()
-                }));
-
-                return Json(sub);
+                var subCategories = _business.GetSubCategoriesByCategoryId(id);
+                response =
+                [
+                    new SelectListItem { Value = "", Text = "All" },
+                    .. subCategories.Select(item => new SelectListItem
+                    {
+                        Value = item.Id.ToString(),
+                        Text = item.Name.ToString()
+                    }),
+                ];
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "No Records found.";
-                return StatusCode(500, "Internal Server Error");
+                _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
+
+            return Json(response);
         }
 
     }

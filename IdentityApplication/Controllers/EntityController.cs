@@ -9,10 +9,12 @@ namespace IdentityApplication.Controllers
     public class EntityController : Controller
     {
         private readonly IEntityBusiness _business;
+        private readonly ILogger<EntityController> _logger;
 
-        public EntityController(IEntityBusiness business)
+        public EntityController(IEntityBusiness business, ILogger<EntityController> logger)
         {
             _business = business;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.EntityPermission.View}")]
@@ -28,15 +30,14 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-
                 TempData["SuccessMessage"] = "Entity created successfully.";
-                return RedirectToAction("Index", "Permission");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Entity creation failed.";
-                return RedirectToAction("Index", "Permission");
+                _logger.LogError(ex, "{Controller} All function error", typeof(EntityController));
             }
+            return RedirectToAction("Index", "Permission");
         }
 
         [HttpPost]
@@ -46,15 +47,14 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Edit(request);
-
                 TempData["SuccessMessage"] = "Entity update successfully.";
-                return RedirectToAction("Index", "Permission");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Entity update failed.";
-                return RedirectToAction("Index", "Permission");
+                _logger.LogError(ex, "{Controller} All function error", typeof(EntityController));
             }
+            return RedirectToAction("Index", "Permission");
         }
 
         [Authorize(policy: $"{PermissionsModel.EntityPermission.Delete}")]
@@ -64,13 +64,13 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Delete(deleteEntityId);
                 TempData["SuccessMessage"] = "Entity deleted successfully.";
-                return RedirectToAction("Index", "Permission");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Entity delete failed.";
-                return RedirectToAction("Index", "Permission");
+                _logger.LogError(ex, "{Controller} All function error", typeof(EntityController));
             }
+            return RedirectToAction("Index", "Permission");
         }
     }
 }

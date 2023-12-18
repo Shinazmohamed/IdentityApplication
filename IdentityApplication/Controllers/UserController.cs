@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using IdentityApplication.Areas.Identity.Data;
+﻿using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
@@ -15,22 +14,21 @@ namespace IdentityApplication.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<UserController> logger)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
-            _mapper = mapper;
             _userManager = userManager;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.View}")]
         public IActionResult Index()
         {
             var users = _unitOfWork.User.GetUsersWithRoles();
-            //var source = _mapper.Map<List<ListUsersModel>>(users);
             return View(users);
 
         }
@@ -64,9 +62,10 @@ namespace IdentityApplication.Controllers
                 response.Roles = roleItems;
                 response.Locations = locationItems;
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Error Occured! Please contact admin";
+                _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
             return View(response);
@@ -127,9 +126,10 @@ namespace IdentityApplication.Controllers
                 TempData["SuccessMessage"] = "User is updated successfull.";
 
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "User is updated unsuccessfull";
+                _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
 

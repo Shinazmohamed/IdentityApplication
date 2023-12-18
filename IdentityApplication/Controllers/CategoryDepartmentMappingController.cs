@@ -12,41 +12,60 @@ namespace IdentityApplication.Controllers
     {
         private readonly ICategoryDepartmentMappingBusiness _business;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CategoryDepartmentMappingController> _logger;
 
-        public CategoryDepartmentMappingController(ICategoryDepartmentMappingBusiness business, IUnitOfWork unitOfWork)
+        public CategoryDepartmentMappingController(ICategoryDepartmentMappingBusiness business, IUnitOfWork unitOfWork, ILogger<CategoryDepartmentMappingController> logger)
         {
             _business = business;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
             var response = new CreateCategoryDepartmentMappingViewModel();
-
-            var categories = _unitOfWork.Category.GetCategories();
-            var departments = _unitOfWork.Department.GetDepartments();
-
-            response.Departments = departments.Select(department =>
-                new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
-
-            response.Categories = categories.Select(category =>
-                new SelectListItem(category?.CategoryName, category?.CategoryId.ToString(), false)).ToList();
-
+            try
+            {
+                var categories = _unitOfWork.Category.GetCategories();
+                var departments = _unitOfWork.Department.GetDepartments();
+                if (categories != null)
+                {
+                    response.Departments = departments.Select(department =>
+                        new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
+                }
+                if (departments != null)
+                {
+                    response.Categories = categories.Select(category =>
+                        new SelectListItem(category?.CategoryName, category?.CategoryId.ToString(), false)).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
+            }
             return View(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
-            var response = await _business.GetAllWithFilters(filter);
-            var jsonD = new
+            var response = new PaginationResponse<ListCategoryDepartmentMappingViewModel>();
+
+            try
+            {
+                response = await _business.GetAllWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
+            }
+            return Json(new
             {
                 filter.draw,
                 recordsTotal = response.TotalCount,
                 recordsFiltered = response.TotalCount,
                 data = response.Data
-            };
-            return Json(jsonD);
+            });
         }
 
         [HttpPost]
@@ -57,9 +76,10 @@ namespace IdentityApplication.Controllers
                 await _business.CreateMapping(request);
                 TempData["SuccessMessage"] = "Category Mapped Successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Category Mapping Failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
 
             return RedirectToAction("Index");
@@ -73,36 +93,29 @@ namespace IdentityApplication.Controllers
                 await _business.UpdateMapping(request);
                 TempData["SuccessMessage"] = "Category mapping updated successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Category mapping update failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
 
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public IActionResult Delete(string mappingId)
         {
             try
             {
-                if (User.HasClaim("Permission", "RequireAdmin"))
-                {
-                    _business.DeleteMapping(mappingId);
-
-                    TempData["SuccessMessage"] = "Record deleted successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Authorization error: You do not have permission to perform this action.";
-                }
-
-                return RedirectToAction("Index");
+                _business.DeleteMapping(mappingId);
+                TempData["SuccessMessage"] = "Record deleted successfully.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
+            return RedirectToAction("Index");
         }
     }
 }

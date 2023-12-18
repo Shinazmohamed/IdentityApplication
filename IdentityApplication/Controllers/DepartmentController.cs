@@ -10,9 +10,11 @@ namespace IdentityApplication.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentBusiness _business;
-        public DepartmentController(IDepartmentBusiness business)
+        private readonly ILogger<DepartmentController> _logger;
+        public DepartmentController(IDepartmentBusiness business, ILogger<DepartmentController> logger)
         {
             _business = business;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.DepartmentPermission.Create}")]
@@ -25,15 +27,22 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.DepartmentPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
-            var response = await _business.GetAllWithFilters(filter);
-            var jsonD = new
+            var response = new PaginationResponse<ListDepartmentViewModel>();
+            try
+            {
+                response = await _business.GetAllWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
+            }
+            return Json(new
             {
                 filter.draw,
-                recordsTotal = response.TotalCount,
-                recordsFiltered = response.TotalCount,
-                data = response.Data
-            };
-            return Json(jsonD);
+                recordsTotal = response?.TotalCount,
+                recordsFiltered = response?.TotalCount,
+                data = response?.Data
+            });
         }
 
         [HttpPost]
@@ -45,11 +54,11 @@ namespace IdentityApplication.Controllers
                 await _business.Create(request);
                 TempData["SuccessMessage"] = "Department created successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Department created failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
-
             return RedirectToAction("Index");
         }
 
@@ -62,11 +71,11 @@ namespace IdentityApplication.Controllers
                 await _business.Update(request);
                 TempData["SuccessMessage"] = "Department updated successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Department update failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
-
             return RedirectToAction("Index");
         }
 
@@ -76,24 +85,15 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                if (User.HasClaim("Permission", "RequireAdmin"))
-                {
-                    await _business.Delete(mappingId);
-
-                    TempData["SuccessMessage"] = "Record deleted successfully.";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Authorization error: You do not have permission to perform this action.";
-                }
-
-                return RedirectToAction("Index");
+                await _business.Delete(mappingId);
+                TempData["SuccessMessage"] = "Record deleted successfully.";
             }
-            catch (Exception)
-            {
+            catch (Exception ex)
+            { 
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
+            return RedirectToAction("Index");
         }
     }
 }

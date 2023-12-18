@@ -10,25 +10,33 @@ namespace IdentityApplication.Controllers
     public class MenuController : Controller
     {
         private readonly IMenuBusiness _business;
-        public MenuController(IMenuBusiness business)
+        private readonly ILogger<MenuController> _logger;
+        public MenuController(IMenuBusiness business, ILogger<MenuController> logger)
         {
             _business = business;
+            _logger = logger;
         }
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.MenuPermission.View}")]
         public async Task<IActionResult> GetAll([FromBody] PaginationFilter filter)
         {
-            var data = _business.GetMenusWithFilters(filter);
-
-            var dataSrc = new
+            var response = new PaginationResponse<MenuViewModel>();
+            try
+            {
+                response = _business.GetMenusWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+            }
+            return Json(new
             {
                 filter.draw,
-                recordsTotal = data.TotalCount,
-                recordsFiltered = data.TotalCount,
-                data = data.Data
-            };
-            return Json(dataSrc);
+                recordsTotal = response?.TotalCount,
+                recordsFiltered = response?.TotalCount,
+                data = response?.Data
+            });
         }
 
         [HttpPost]
@@ -39,14 +47,14 @@ namespace IdentityApplication.Controllers
             {
                 _business.Update(request);
                 TempData["SuccessMessage"] = "Menu updated successfully.";
-
-                return RedirectToAction("Index", "SubMenu");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Menu creation failed.";
-                return RedirectToAction("Index", "SubMenu");
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+
+            return RedirectToAction("Index", "SubMenu");
         }
 
         [HttpPost]
@@ -57,14 +65,14 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Delete(Id);
                 TempData["SuccessMessage"] = "Record deleted successfully.";
-
-                return RedirectToAction("Index", "SubMenu");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index", "SubMenu");
+                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
+
+            return RedirectToAction("Index", "SubMenu");
         }
     }
 }

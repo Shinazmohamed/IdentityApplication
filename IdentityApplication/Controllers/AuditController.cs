@@ -10,10 +10,12 @@ namespace IdentityApplication.Controllers
     public class AuditController : Controller
     {
         private readonly IAuditBusiness _business;
+        private readonly ILogger<AuditController> _logger;
 
-        public AuditController(IAuditBusiness business)
+        public AuditController(IAuditBusiness business, ILogger<AuditController> logger)
         {
             _business = business;
+            _logger = logger;
         }
 
 
@@ -26,15 +28,22 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.AuditPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
-            var response = await _business.GetAllWithFilters(filter);
-            var jsonD = new
+            var response = new PaginationResponse<ListAuditModel>();
+            try
+            {
+                response = await _business.GetAllWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(AuditController));
+            }
+            return Json(new
             {
                 filter.draw,
-                recordsTotal = response.TotalCount,
-                recordsFiltered = response.TotalCount,
-                data = response.Data
-            };
-            return Json(jsonD);
+                recordsTotal = response?.TotalCount,
+                recordsFiltered = response?.TotalCount,
+                data = response?.Data
+            });
         }
     }
 }

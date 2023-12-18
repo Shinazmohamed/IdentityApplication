@@ -3,6 +3,7 @@ using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
 using IdentityApplication.Core.Contracts;
+using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -21,8 +22,9 @@ namespace IdentityApplication.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
+        private readonly ILogger<EmployeeController> _logger;
 
-        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService)
+        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService, ILogger<EmployeeController> logger)
         {
             _business = business;
             _mapper = mapper;
@@ -30,42 +32,60 @@ namespace IdentityApplication.Controllers
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
+            _logger = logger;
         }
 
         [HttpGet]
         [Authorize(policy: $"{PermissionsModel.EmployeePermission.Create}")]
         public async Task<IActionResult> Create()
         {
-            var employee = new InsertEmployeeRequest();
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            var locations = _unitOfWork.Location.GetLocations();
-            var departments = _unitOfWork.Department.GetDepartments();
-            var categories = _unitOfWork.Category.GetCategories();
-
-            if (user?.LocationId != Guid.Empty && !isAdminOrSuperDev())
+            var response = new InsertEmployeeRequest();
+            try
             {
-                var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
-                employee.SelectedLocation = user?.LocationId.ToString();
-                employee.Locations = new List<SelectListItem>
+                response.SubCategories = new List<SelectListItem>();
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var locations = _unitOfWork.Location.GetLocations();
+                var departments = _unitOfWork.Department.GetDepartments();
+                var categories = _unitOfWork.Category.GetCategories();
+
+                if (user?.LocationId != Guid.Empty && !isAdminOrSuperDev())
                 {
-                    new SelectListItem(itemLocation?.LocationName, itemLocation?.LocationId.ToString(), false)
-                };
+                    if (locations.Any())
+                    {
+                        var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
+                        response.Locations = new List<SelectListItem>
+                    {
+                        new SelectListItem(itemLocation?.LocationName, itemLocation?.LocationId.ToString(), false)
+                    };
+                    }
+                    response.SelectedLocation = user?.LocationId.ToString();
+                }
+                else
+                {
+                    if (locations.Any())
+                    {
+                        response.Locations = locations.Select(location =>
+                            new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
+                    }
+                }
+
+                if (departments.Any())
+                {
+                    response.Departments = departments.Select(department =>
+                        new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
+                }
+                if (categories.Any())
+                {
+                    response.Categories = categories.Select(category =>
+                        new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                employee.Locations = locations.Select(location =>
-                    new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
 
-            employee.Departments = departments.Select(department =>
-                new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
-
-            employee.Categories = categories.Select(category =>
-                new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
-
-            employee.SubCategories = new List<SelectListItem>();
-
-            return View(employee);
+            return View(response);
         }
 
         [HttpPost]
@@ -85,11 +105,12 @@ namespace IdentityApplication.Controllers
                 TempData["SuccessMessage"] = "Employee created successfully.";
                 return RedirectToAction("Create");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Employee creation failed.";
-                return View("Create", model);
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
+            return View("Create", model);
         }
 
         [HttpGet]
@@ -97,74 +118,107 @@ namespace IdentityApplication.Controllers
         public async Task<IActionResult> List()
         {
             var response = new InsertEmployeeRequest();
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            var _isadminordev = isAdminOrSuperDev();
 
-
-            var locations = _unitOfWork.Location.GetLocations();
-            if (!_isadminordev)
+            try
             {
-                var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
-                response.SelectedLocation = user?.LocationId.ToString();
-                response.Locations = new List<SelectListItem>
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var _isadminordev = isAdminOrSuperDev();
+
+                var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EmployeePermission.Edit);
+                response.Edit = edit.Succeeded;
+                var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EmployeePermission.Delete);
+                response.Delete = delete.Succeeded;
+                response.IsAdminOrSuperDev = _isadminordev;
+
+                var locations = _unitOfWork.Location.GetLocations();
+                var departments = _unitOfWork.Department.GetDepartments();
+
+                if (!_isadminordev)
                 {
-                    new SelectListItem(itemLocation?.LocationName, itemLocation?.LocationId.ToString(), false)
-                };
+                    if (locations.Any())
+                    {
+                        var itemLocation = locations.FirstOrDefault(e => e.LocationId == user?.LocationId);
+                        response.Locations = new List<SelectListItem>
+                        {
+                            new SelectListItem(itemLocation?.LocationName, itemLocation?.LocationId.ToString(), false)
+                        };
+                    }
+                    response.SelectedLocation = user?.LocationId.ToString();
+                }
+                else
+                {
+                    if (locations.Any())
+                    {
+                        response.Locations = locations.Select(location =>
+                        new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
+                    }
+                }
+                if (departments.Any())
+                {
+                    response.Departments = departments.Select(department =>
+                            new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                response.Locations = locations.Select(location =>
-                    new SelectListItem(location.LocationName, location.LocationId.ToString(), false)).ToList();
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
 
-            var departments = _unitOfWork.Department.GetDepartments();
-            response.Departments = departments.Select(department =>
-                    new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
-
-
-            var edit = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EmployeePermission.Edit);
-            response.Edit = edit.Succeeded;
-            var delete = await _authorizationService.AuthorizeAsync(User, PermissionsModel.EmployeePermission.Delete);
-            response.Delete = delete.Succeeded;
-
-            response.IsAdminOrSuperDev = _isadminordev;
             return View(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            if (!isAdminOrSuperDev()) filter.location = user.LocationId.ToString();
-
-            var response = await _business.GetAll(filter);
-            var dataSrc = new
+            var response = new PaginationResponse<Employee>();
+            try
             {
-                draw = filter.draw,
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (!isAdminOrSuperDev()) filter.location = user?.LocationId.ToString();
+
+                response = await _business.GetAll(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
+            }
+            return Json(new
+            {
+                filter.draw,
                 recordsTotal = response.TotalCount,
-                recordsFiltered = response.TotalCount, // Use the total count as recordsFiltered
+                recordsFiltered = response.TotalCount,
                 data = response.Data.Select(e => _mapper.Map<ViewEmployeeModel>(e))
-            };
-            return Json(dataSrc);
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var currentData = await _business.GetById(id);
-            var entity = _mapper.Map<InsertEmployeeRequest>(currentData);
+            var response = new InsertEmployeeRequest();
+            try
+            {
+                var entity = await _business.GetById(id);
+                response = _mapper.Map<InsertEmployeeRequest>(entity);
 
-            var category = _unitOfWork.Category.GetCategoryByName(currentData.CategoryName);
-            var subCategory = _unitOfWork.SubCategory.GetSubCategoryByName(currentData.SubCategoryName);
-            var location = _unitOfWork.Location.GetLocationByName(currentData.LocationName);
-            var department = _unitOfWork.Department.GetDepartmentByName(currentData.DepartmentName);
+                var category = _unitOfWork.Category.GetCategoryByName(entity.CategoryName);
+                var subCategory = _unitOfWork.SubCategory.GetSubCategoryByName(entity.SubCategoryName);
+                var location = _unitOfWork.Location.GetLocationByName(entity.LocationName);
+                var department = _unitOfWork.Department.GetDepartmentByName(entity.DepartmentName);
 
-            entity.SelectedCategory = category.CategoryId.ToString();
-            entity.SelectedSubCategory = subCategory.SubCategoryId.ToString();
-            entity.SelectedDepartment = department.DepartmentId.ToString();
-            entity.SelectedLocation = location.LocationId.ToString();
-
-            return Json(entity);
+                if(category != null)
+                    response.SelectedCategory = category.CategoryId.ToString();
+                if(subCategory != null)
+                    response.SelectedSubCategory = subCategory.SubCategoryId.ToString();
+                if(department != null)
+                    response.SelectedDepartment = department.DepartmentId.ToString();
+                if(location != null)
+                    response.SelectedLocation = location.LocationId.ToString();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
+            }
+            return Json(response);
         }
 
         [HttpPost]
@@ -173,16 +227,16 @@ namespace IdentityApplication.Controllers
         {
             try
             {
-                await _business.Update(request, User.IsInRole(Constants.Roles.Administrator));
+                await _business.Update(request, isAdminOrSuperDev());
 
                 TempData["SuccessMessage"] = "Record updated successfully.";
-                return RedirectToAction("List");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record update failed.";
-                return RedirectToAction("List");
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
+            return RedirectToAction("List");
         }
 
         [HttpPost]
@@ -193,14 +247,13 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Delete(Id);
                 TempData["SuccessMessage"] = "Record deleted successfully.";
-
-                return RedirectToAction("List");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("List");
+                _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
+            return RedirectToAction("List");
         }
 
         public bool isAdminOrSuperDev()

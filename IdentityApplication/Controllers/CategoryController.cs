@@ -1,5 +1,4 @@
 ﻿using IdentityApplication.Business.Contracts;
-using IdentityApplication.Core;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +11,11 @@ namespace IdentityApplication.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryBusiness _business;
-        public CategoryController(ICategoryBusiness business)
+        private readonly ILogger<CategoryController> _logger;
+        public CategoryController(ICategoryBusiness business, ILogger<CategoryController> logger)
         {
             _business = business;
+            _logger = logger;
         }
 
         [Authorize(policy: $"{PermissionsModel.CategoryPermission.Create}")]
@@ -26,43 +27,51 @@ namespace IdentityApplication.Controllers
         [HttpGet]
         public IActionResult GetCategoryByDepartmentId(string id)
         {
+            var response = new List<SelectListItem>();
             try
             {
-                var response = _business.GetCategoryByDepartmentId(id);
-
-                var sub = new List<SelectListItem>
+                var categories = _business.GetCategoryByDepartmentId(id);
+                if (categories != null)
                 {
-                    new SelectListItem { Value = "", Text = "All" }
-                };
-
-                sub.AddRange(response.Select(item => new SelectListItem
-                {
-                    Value = item.Id.ToString(),
-                    Text = item.Name
-                }));
-
-                return Json(sub);
+                    response =
+                    [
+                        new SelectListItem { Value = "", Text = "All" },
+                        .. categories.Select(item => new SelectListItem
+                        {
+                            Value = item.Id.ToString(),
+                            Text = item.Name
+                        }),
+                    ];
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "No Records found.";
-                return StatusCode(500, "Internal Server Error");
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
+            return Json(response);
         }
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.CategoryPermission.View}")]
         public async Task<IActionResult> GetList([FromBody] PaginationFilter filter)
         {
-            var response = await _business.GetAllWithFilters(filter);
-            var jsonD = new
+            var response = new PaginationResponse<ListCategoryModel>();
+            try
+            {
+                response = await _business.GetAllWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
+            }
+            return Json(new
             {
                 filter.draw,
-                recordsTotal = response.TotalCount,
-                recordsFiltered = response.TotalCount,
-                data = response.Data
-            };
-            return Json(jsonD);
+                recordsTotal = response?.TotalCount,
+                recordsFiltered = response?.TotalCount,
+                data = response?.Data
+            });
         }
 
         [HttpPost]
@@ -74,9 +83,10 @@ namespace IdentityApplication.Controllers
                 await _business.Create(request);
                 TempData["SuccessMessage"] = "Category created successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Category created failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
 
             return RedirectToAction("Index");
@@ -91,9 +101,10 @@ namespace IdentityApplication.Controllers
                 await _business.Update(request);
                 TempData["SuccessMessage"] = "Category updated successfully.";
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Category update failed.";
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
 
             return RedirectToAction("Index");
@@ -106,16 +117,15 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(mappingId);
-
                 TempData["SuccessMessage"] = "Record deleted successfully.";
-
-                return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record delete failed.";
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
+
+            return RedirectToAction("Index");
         }
 
     }
