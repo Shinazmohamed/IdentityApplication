@@ -1,6 +1,5 @@
 ﻿using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
-using IdentityApplication.Core.Repositories;
 using IdentityApplication.Core.ViewModel;
 
 namespace IdentityApplication.Business

@@ -1,5 +1,4 @@
 ﻿using IdentityApplication.Core.Entities;
-using IdentityApplication.Core.Repositories;
 using IdentityApplication.Core.ViewModel;
 
 namespace IdentityApplication.Core.Contracts

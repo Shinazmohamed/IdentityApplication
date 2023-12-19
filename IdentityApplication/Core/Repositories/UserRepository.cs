@@ -35,43 +35,6 @@ namespace IdentityApplication.Core.Repositories
                 .ToList();
         }
 
-        public ICollection<ListUsersModel> GetUsersWithRoless()
-        {
-            var usersWithRoles = _context.Users
-                .Include(e => e.Location)
-                .Join(
-                    _context.UserRoles,
-                    user => user.Id,
-                    userRole => userRole.UserId,
-                    (user, userRole) => new
-                    {
-                        User = user,
-                        RoleId = userRole.RoleId
-                    }
-                )
-                .Join(
-                    _context.Roles,
-                    userRole => userRole.RoleId,
-                    role => role.Id,
-                    (userRole, role) => new
-                    {
-                        userRole.User,
-                        RoleName = role.Name
-                    }
-                )
-                .GroupBy(x => x.User)
-                .Select(group => new ListUsersModel
-                {
-                    Id = Guid.Parse(group.Key.Id),
-                    Email = group.Key.Email,
-                    LocationName = group.Key.Location.LocationName,
-                    Role = group.Select(x => x.RoleName).FirstOrDefault()
-                })
-                .ToList();
-
-            return usersWithRoles;
-        }
-
         public ICollection<ListUsersModel> GetUsersWithRoles()
         {
             var usersWithRoles = _context.Users
@@ -82,7 +45,7 @@ namespace IdentityApplication.Core.Repositories
                     (user, userRole) => new
                     {
                         User = user,
-                        RoleId = userRole.RoleId
+                        userRole.RoleId
                     }
                 )
                 .Join(
@@ -103,7 +66,7 @@ namespace IdentityApplication.Core.Repositories
                     {
                         user.User,
                         Location = location,
-                        RoleName = user.RoleName // Add this line to include RoleName in the grouping
+                        user.RoleName
                     }
                 )
                 .GroupBy(x => new { x.User.Id, x.User.Email, x.Location.LocationName, x.RoleName })
@@ -112,7 +75,7 @@ namespace IdentityApplication.Core.Repositories
                     Id = Guid.Parse(group.Key.Id),
                     Email = group.Key.Email,
                     LocationName = group.Key.LocationName,
-                    Role = group.Key.RoleName // Update this line to use RoleName from the grouping
+                    Role = group.Key.RoleName
                 })
                 .ToList();
 

@@ -10,45 +10,95 @@ namespace IdentityApplication.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<CategoryBusiness> _logger;
 
-        public CategoryBusiness(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryBusiness(IUnitOfWork unitOfWork, IMapper mapper, ILogger<CategoryBusiness> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public ListCategoryModel GetCategoryById(string id)
         {
-            var category = _unitOfWork.Category.GetCategoryById(Guid.Parse(id));
-            return _mapper.Map<ListCategoryModel>(category);
+            var response = new ListCategoryModel();
+            try
+            {
+                var category = _unitOfWork.Category.GetCategoryById(Guid.Parse(id));
+                response = _mapper.Map<ListCategoryModel>(category);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
+            return response;
         }
 
         public async Task<PaginationResponse<ListCategoryModel>> GetAllWithFilters(PaginationFilter filter)
         {
-            return await _unitOfWork.Category.GetEntitiesWithFilters(filter);
+            var response = new PaginationResponse<ListCategoryModel>();
+            try
+            {
+                response = await _unitOfWork.Category.GetEntitiesWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
+            return response;
         }
 
         public async Task Create(CreateCategoryRequest request)
         {
-            var entity = _mapper.Map<Category>(request);
-            _unitOfWork.Category.Create(entity);
+            try
+            {
+                var entity = _mapper.Map<Category>(request);
+                _unitOfWork.Category.Create(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
         }
 
         public async Task Update(CreateCategoryRequest request)
         {
-            var entity = _mapper.Map<Category>(request);
-            _unitOfWork.Category.Update(entity);
+            try
+            {
+                var entity = _mapper.Map<Category>(request);
+                _unitOfWork.Category.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
         }
 
         public async Task Delete(string id)
         {
-            await _unitOfWork.Category.Delete(Guid.Parse(id));
+            try
+            {
+                await _unitOfWork.Category.Delete(Guid.Parse(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
         }
 
         public List<ListCategoryModel> GetCategoryByDepartmentId(string id)
         {
-            var category = _unitOfWork.Category.GetCategoryByDepartmentId(Guid.Parse(id));
-            return _mapper.Map<List<ListCategoryModel>>(category);
+            var response = new List<ListCategoryModel>();
+            try
+            {
+                var category = _unitOfWork.Category.GetCategoryByDepartmentId(Guid.Parse(id));
+                response = _mapper.Map<List<ListCategoryModel>>(category);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
+            return response;
         }
     }
 }

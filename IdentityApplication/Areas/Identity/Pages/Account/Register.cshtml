@@ -33,6 +33,10 @@
             <div class="form-floating mb-3">
                 @Html.DropDownListFor(m => m.Input.SelectedLocation, Model.Input.Locations, "Location", new { @class = "form-select" })
             </div>
+            <div class="form-floating mb-3">
+                @Html.DropDownListFor(m => m.Input.SelectedRole, Model.Input.Roles, "Role", new { @class = "form-select" })
+            </div>
+            <br />
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>

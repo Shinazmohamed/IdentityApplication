@@ -1,4 +1,5 @@
 ﻿using IdentityApplication.Areas.Identity.Data;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
@@ -14,15 +15,16 @@ namespace IdentityApplication.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<UserController> _logger;
-
-        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ILogger<UserController> logger)
+        private readonly IUserBusiness _business;
+        private readonly IConfiguration _configuration;
+        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, ILogger<UserController> logger, IUserBusiness business, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
-            _userManager = userManager;
             _logger = logger;
+            _business = business;
+            _configuration = configuration;
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.View}")]
@@ -72,59 +74,13 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpPost]
-        [Authorize(policy: $"{PermissionsModel.UserPermission.Create}")]
+        [Authorize(policy: $"{PermissionsModel.UserPermission.Edit}")]
         public async Task<IActionResult> OnPostAsync(EditUserViewModel request)
         {
             try
             {
-                var user = _unitOfWork.User.GetUser(request.User.Id);
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                var rolesToAdd = new List<string>();
-                var rolesToRemove = new List<string>();
-
-                var userRolesInDb = await _signInManager.UserManager.GetRolesAsync(user);
-                foreach (var role in request.Roles)
-                {
-                    var assignedInDb = userRolesInDb.FirstOrDefault(ur => ur == role.Text);
-                    if (role.Selected)
-                    {
-                        if (assignedInDb == null)
-                            rolesToAdd.Add(role.Text);
-
-                    }
-                    else
-                    {
-                        if (assignedInDb != null)
-                            rolesToRemove.Add(role.Text);
-
-                    }
-                }
-
-                if (rolesToAdd.Any())
-                {
-                    await _signInManager.UserManager.AddToRolesAsync(user, rolesToAdd);
-                }
-
-                if (rolesToRemove.Any())
-                {
-                    await _signInManager.UserManager.RemoveFromRolesAsync(user, rolesToRemove);
-                }
-
-                user.Email = request.User.Email;
-                user.UserName = request.User.Email;
-
-                user.NormalizedEmail = request.User.Email;
-                user.NormalizedUserName = request.User.Email;
-                user.LocationId = request.User.LocationId;
-
-                _unitOfWork.User.UpdateUser(user);
-
+                await _business.UpdateUser(request);
                 TempData["SuccessMessage"] = "User is updated successfull.";
-
             }
             catch (Exception ex)
             {
@@ -140,22 +96,23 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.UserPermission.ResetPassword}")]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
         {
-            var user = _unitOfWork.User.GetUser(request.User.Id);
-            if (user == null)
+            var defaultPassword = _configuration.GetSection("AppSettings")["DefaultPassword"];
+            if (string.IsNullOrEmpty(defaultPassword))
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Operation failed. Please set the default password in app settings.";
+                return RedirectToAction("Edit", new { userId = request.User.Id });
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetPassword = await _userManager.ResetPasswordAsync(user, token, "Admin@123");
-            if (!resetPassword.Succeeded)
+            var result = await _business.ResetPassword(request, defaultPassword);
+            if (!result)
             {
                 TempData["ErrorMessage"] = "Password reset is unsuccessfull";
             }
             else
             {
-                TempData["SuccessMessage"] = "Password reset is successfull.";
+                TempData["SuccessMessage"] = $"Operation Successful! Default Password set to {defaultPassword}.";
             }
+
             return RedirectToAction("Edit", new { userId = request.User.Id });
         }
 

@@ -10,42 +10,73 @@ namespace IdentityApplication.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public CategorySubCategoryBusiness(IUnitOfWork unitofwork, IMapper mapper)
+        private readonly ILogger<CategorySubCategoryBusiness> _logger;
+        public CategorySubCategoryBusiness(IUnitOfWork unitofwork, IMapper mapper, ILogger<CategorySubCategoryBusiness> logger)
         {
             _unitOfWork = unitofwork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task CreateMapping(CreateCategorySubCategoryRequest request)
         {
-            var entity = _mapper.Map<SubCategory>(request);
-            _unitOfWork.CategorySubCategory.Update(entity);
+            try
+            {
+                var entity = _mapper.Map<SubCategory>(request);
+                _unitOfWork.CategorySubCategory.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategorySubCategoryBusiness));
+            }
         }
 
         public async Task UpdateMapping(CreateCategorySubCategoryRequest request)
         {
-            var entity = new SubCategory()
+            try
             {
-                SubCategoryId = Guid.Parse(request.SelectedSubCategoryId),
-                CategoryId = Guid.Parse(request.SelectedCategory)
-            };
-            _unitOfWork.CategorySubCategory.Update(entity);
+                var entity = new SubCategory()
+                {
+                    SubCategoryId = Guid.Parse(request.SelectedSubCategoryId),
+                    CategoryId = Guid.Parse(request.SelectedCategory)
+                };
+                _unitOfWork.CategorySubCategory.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategorySubCategoryBusiness));
+            }
         }
 
         public async Task DeleteMapping(string subCategoryId)
         {
-            var entity = new SubCategory()
+            try
             {
-                SubCategoryId = Guid.Parse(subCategoryId),
-                CategoryId = null
-            };
-            _unitOfWork.CategorySubCategory.Update(entity);
+                var entity = new SubCategory()
+                {
+                    SubCategoryId = Guid.Parse(subCategoryId),
+                    CategoryId = null
+                };
+                _unitOfWork.CategorySubCategory.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategorySubCategoryBusiness));
+            }
         }
 
         public async Task<PaginationResponse<ListCategorySubCategoryModel>> GetAll(PaginationFilter filter)
         {
-            return await _unitOfWork.CategorySubCategory.GetEntitiesWithFilters(filter);
+            var response = new PaginationResponse<ListCategorySubCategoryModel>();
+            try
+            {
+                response = await _unitOfWork.CategorySubCategory.GetEntitiesWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategorySubCategoryBusiness));
+            }
+            return response;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace IdentityApplication.Core.Repositories
             _logger = logger;
         }
 
-        public IList<Entity> GetEntities()
+        public List<Entity> GetEntities()
         {
             var response = new List<Entity>();
             try

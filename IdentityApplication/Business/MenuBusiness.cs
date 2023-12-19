@@ -15,12 +15,14 @@ namespace IdentityApplication.Business
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public MenuBusiness(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        private readonly ILogger<MenuBusiness> _logger;
+        public MenuBusiness(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, ILogger<MenuBusiness> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         public async Task<List<MenuViewModel>> GetMenus()
@@ -49,29 +51,68 @@ namespace IdentityApplication.Business
 
         public List<Menu> GetAll()
         {
-            return _unitOfWork.Menu.GetMenus();
+            var response = new List<Menu>();
+            try
+            {
+                response = _unitOfWork.Menu.GetMenus();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(MenuBusiness));
+            }
+            return response;
         }
 
         public void Create(CreateMenuRequest request)
         {
-            var entity = _mapper.Map<Menu>(request);
-            _unitOfWork.Menu.Create(entity);
+            try
+            {
+                var entity = _mapper.Map<Menu>(request);
+                _unitOfWork.Menu.Create(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(MenuBusiness));
+            }
         }
 
         public PaginationResponse<MenuViewModel> GetMenusWithFilters(PaginationFilter filter)
         {
-            return _unitOfWork.Menu.GetMenusWithFilters(filter);
+            var response = new PaginationResponse<MenuViewModel>();
+            try
+            {
+                response = _unitOfWork.Menu.GetMenusWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(MenuBusiness));
+            }
+            return response;
         }
 
         public void Update(CreateMenuRequest request)
         {
-            var entity = _mapper.Map<Menu>(request);
-            _unitOfWork.Menu.Update(entity);
+            try
+            {
+                var entity = _mapper.Map<Menu>(request);
+                _unitOfWork.Menu.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(MenuBusiness));
+            }
         }
 
         public async Task Delete(string id)
         {
-            await _unitOfWork.Menu.Delete(Guid.Parse(id));
+            try
+            {
+                await _unitOfWork.Menu.Delete(Guid.Parse(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(MenuBusiness));
+            }
         }
     }
 }

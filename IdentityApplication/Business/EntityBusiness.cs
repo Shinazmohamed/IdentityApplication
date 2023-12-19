@@ -10,33 +10,65 @@ namespace IdentityApplication.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<EntityBusiness> _logger;
 
-        public EntityBusiness(IUnitOfWork unitofwork, IMapper mapper)
+        public EntityBusiness(IUnitOfWork unitofwork, IMapper mapper, ILogger<EntityBusiness> logger)
         {
             _unitOfWork = unitofwork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task Create(ManagePermission request)
         {
-            var entity = _mapper.Map<Entity>(request);
-            _unitOfWork.Entity.Create(entity);
+            try
+            {
+                var entity = _mapper.Map<Entity>(request);
+                _unitOfWork.Entity.Create(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(EntityBusiness));
+            }
         }
 
         public async Task Edit(ManagePermission request)
         {
-            var entity = _mapper.Map<Entity>(request);
-            _unitOfWork.Entity.Edit(entity);
+            try
+            {
+                var entity = _mapper.Map<Entity>(request);
+                _unitOfWork.Entity.Edit(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(EntityBusiness));
+            }
         }
 
         public IList<Entity> GetEntities()
         {
-            return _unitOfWork.Entity.GetEntities();
+            var response = new List<Entity>();
+            try
+            {
+                response = _unitOfWork.Entity.GetEntities();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(EntityBusiness));
+            }
+            return response;
         }
 
         public async Task Delete(string id)
         {
-            await _unitOfWork.Entity.Delete(Guid.Parse(id));
+            try
+            {
+                await _unitOfWork.Entity.Delete(Guid.Parse(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(EntityBusiness));
+            }
         }
     }
 }

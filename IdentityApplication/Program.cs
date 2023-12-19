@@ -109,4 +109,5 @@ void AddScoped()
     builder.Services.AddScoped<IEntityRepository, EntityRepository>();
 
     builder.Services.AddScoped<IRoleBusiness, RoleBusiness>();
+    builder.Services.AddScoped<IUserBusiness, UserBusiness>();
 }

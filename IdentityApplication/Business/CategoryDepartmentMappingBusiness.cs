@@ -10,42 +10,74 @@ namespace IdentityApplication.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<CategoryDepartmentMappingBusiness> _logger;
 
-        public CategoryDepartmentMappingBusiness(IUnitOfWork unitofwork, IMapper mapper)
+        public CategoryDepartmentMappingBusiness(IUnitOfWork unitofwork, IMapper mapper, ILogger<CategoryDepartmentMappingBusiness> logger)
         {
             _unitOfWork = unitofwork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task CreateMapping(CreateCategoryDepartmentMappingViewModel request)
         {
-            var entity = _mapper.Map<Category>(request);
-            _unitOfWork.CategoryDepartmentMapping.Update(entity);
+            try
+            {
+                var entity = _mapper.Map<Category>(request);
+                _unitOfWork.CategoryDepartmentMapping.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
         }
 
         public async Task UpdateMapping(CreateCategoryDepartmentMappingViewModel request)
         {
-            var entity = new Category()
+            try
             {
-                CategoryId = Guid.Parse(request.SelectedCategoryId),
-                DepartmentId = (string.IsNullOrWhiteSpace(request.SelectedDepartment)) ? null : Guid.Parse(request.SelectedDepartment)
-            };
-            _unitOfWork.CategoryDepartmentMapping.Update(entity);
+                var entity = new Category()
+                {
+                    CategoryId = Guid.Parse(request.SelectedCategoryId),
+                    DepartmentId = (string.IsNullOrWhiteSpace(request.SelectedDepartment)) ? null : Guid.Parse(request.SelectedDepartment)
+                };
+                _unitOfWork.CategoryDepartmentMapping.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
         }
 
         public void DeleteMapping(string categoryId)
         {
-            var entity = new Category()
+            try
             {
-                CategoryId = Guid.Parse(categoryId),
-                DepartmentId = null
-            };
-            _unitOfWork.CategoryDepartmentMapping.Update(entity);
+                var entity = new Category()
+                {
+                    CategoryId = Guid.Parse(categoryId),
+                    DepartmentId = null
+                };
+                _unitOfWork.CategoryDepartmentMapping.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
         }
 
         public async Task<PaginationResponse<ListCategoryDepartmentMappingViewModel>> GetAllWithFilters(PaginationFilter filter)
         {
-            return await _unitOfWork.CategoryDepartmentMapping.GetEntitiesWithFilters(filter);
+            var response = new PaginationResponse<ListCategoryDepartmentMappingViewModel>();
+            try
+            {
+                response = await _unitOfWork.CategoryDepartmentMapping.GetEntitiesWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(CategoryBusiness));
+            }
+            return response;
         }
     }
 }

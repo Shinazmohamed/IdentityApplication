@@ -66,7 +66,6 @@
         public static class UserPermission
         {
             public const string View = "Permissions.User.View";
-            public const string Create = "Permissions.User.Create";
             public const string Edit = "Permissions.User.Edit";
             public const string Delete = "Permissions.User.Delete";
             public const string ResetPassword = "Permissions.User.ResetPassword";

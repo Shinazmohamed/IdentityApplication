@@ -8,31 +8,63 @@ namespace IdentityApplication.Business
     public class RoleBusiness : IRoleBusiness
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<RoleBusiness> _logger;
 
-        public RoleBusiness(IUnitOfWork unitofwork)
+        public RoleBusiness(IUnitOfWork unitofwork, ILogger<RoleBusiness> logger)
         {
             _unitOfWork = unitofwork;
+            _logger = logger;
         }
 
         public async Task Delete(string id)
         {
-            await _unitOfWork.Role.Delete(id);
+            try
+            {
+                await _unitOfWork.Role.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+            }
         }
 
         public async Task Create(string roleName)
         {
-            await _unitOfWork.Role.CreateAsync(new IdentityRole(roleName.Trim()));
+            try
+            {
+                await _unitOfWork.Role.CreateAsync(new IdentityRole(roleName.Trim()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+            }
         }
 
         public async Task Update(RolesViewModel role)
         {
-            var entity = new IdentityRole() { Id = role.RoleId, Name = role.RoleName.Trim() };
-            await _unitOfWork.Role.UpdateAsync(entity);
+            try
+            {
+                var entity = new IdentityRole() { Id = role.RoleId, Name = role.RoleName.Trim() };
+                await _unitOfWork.Role.UpdateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+            }
         }
 
         public async Task<List<IdentityRole>> GetAll()
         {
-            return await _unitOfWork.Role.GetAll();
+            var response = new List<IdentityRole>();
+            try
+            {
+                response = await _unitOfWork.Role.GetAll();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+            }
+            return response;
         }
     }
 }

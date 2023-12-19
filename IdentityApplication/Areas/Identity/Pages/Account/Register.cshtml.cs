@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.PermissionHelper;
+using IdentityApplication.Business.Contracts;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account
 {
@@ -29,6 +30,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserBusiness _business;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -36,7 +38,8 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IUserBusiness business)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -45,6 +48,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _unitOfWork = unitOfWork;
+            _business = business;
         }
 
         /// <summary>
@@ -93,22 +97,25 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "Location")]
-            public string SelectedLocation { get; set; } // Change this to hold the selected location
+            public string SelectedLocation { get; set; }
 
             public List<SelectListItem> Locations { get; set; }
-        }
 
+            [Required]
+            [Display(Name = "Role")]
+            public string SelectedRole { get; set; }
+
+            public List<SelectListItem> Roles { get; set; }
+        }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            var locationItems = GetLocations();
-            // Populate the list of locations
             Input = new InputModel
             {
-                Locations = locationItems
+                Locations = GetLocations(),
+                Roles = GetRoles()
             };
         }
 
@@ -119,7 +126,6 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
                 user.LocationId = Guid.Parse(Input.SelectedLocation);
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
@@ -129,6 +135,10 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    _logger.LogInformation("Assigning User Role to new user.");
+
+                    await _business.UpdateUserRole(user, Input.SelectedRole);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -151,8 +161,6 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                         TempData["SuccessMessage"] = "User created successfully.";
                         await OnGetAsync();
                         return Page();
-                        //await _signInManager.SignInAsync(user, isPersistent: false);
-                        //return LocalRedirect(returnUrl);
                     }
                 }
                 foreach (var error in result.Errors)
@@ -161,14 +169,12 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                 }
             }
 
-            var locationItems = GetLocations();
-            // Populate the list of locations
             Input = new InputModel
             {
-                Locations = locationItems
+                Locations = GetLocations(),
+                Roles = GetRoles()
             };
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
 
@@ -180,6 +186,16 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                 new SelectListItem(
                 location.LocationName,
                 location.LocationId.ToString(), false)).ToList();
+        }
+
+        private List<SelectListItem> GetRoles()
+        {
+            var roles = _unitOfWork.Role.GetRoles();
+
+            return roles.Select(role =>
+                new SelectListItem(
+                role.Name,
+                role.Id.ToString(), false)).ToList();
         }
 
         private ApplicationUser CreateUser()

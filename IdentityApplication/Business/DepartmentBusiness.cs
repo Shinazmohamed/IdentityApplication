@@ -10,39 +10,80 @@ namespace IdentityApplication.Business
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<DepartmentBusiness> _logger;
 
-        public DepartmentBusiness(IUnitOfWork unitOfWork, IMapper mapper)
+        public DepartmentBusiness(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DepartmentBusiness> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public ListDepartmentViewModel GetDepartmentById(string id)
         {
-            var department = _unitOfWork.Department.GetDepartmentById(Guid.Parse(id));
-            return _mapper.Map<ListDepartmentViewModel>(department);
+            var response = new ListDepartmentViewModel();
+            try
+            {
+                var department = _unitOfWork.Department.GetDepartmentById(Guid.Parse(id));
+                response = _mapper.Map<ListDepartmentViewModel>(department);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(DepartmentBusiness));
+            }
+            return response;
         }
 
         public async Task<PaginationResponse<ListDepartmentViewModel>> GetAllWithFilters(PaginationFilter filter)
         {
-            return await _unitOfWork.Department.GetEntitiesWithFilters(filter);
+            var response = new PaginationResponse<ListDepartmentViewModel>();
+            try
+            {
+                response = await _unitOfWork.Department.GetEntitiesWithFilters(filter);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(DepartmentBusiness));
+            }
+            return response;
         }
 
         public async Task Create(CreateDepartmentViewModel request)
         {
-            var entity = _mapper.Map<Department>(request);
-            _unitOfWork.Department.Create(entity);
+            try
+            {
+                var entity = _mapper.Map<Department>(request);
+                _unitOfWork.Department.Create(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(DepartmentBusiness));
+            }
         }
 
         public async Task Update(CreateDepartmentViewModel request)
         {
-            var entity = _mapper.Map<Department>(request);
-            _unitOfWork.Department.Update(entity);
+            try
+            {
+                var entity = _mapper.Map<Department>(request);
+                _unitOfWork.Department.Update(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(DepartmentBusiness));
+            }
         }
 
         public async Task Delete(string id)
         {
-            await _unitOfWork.Department.Delete(Guid.Parse(id));
+            try
+            {
+                await _unitOfWork.Department.Delete(Guid.Parse(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Business} All function error", typeof(DepartmentBusiness));
+            }
         }
     }
 }
