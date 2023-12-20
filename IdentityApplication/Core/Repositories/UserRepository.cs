@@ -37,52 +37,66 @@ namespace IdentityApplication.Core.Repositories
 
         public ICollection<ListUsersModel> GetUsersWithRoles()
         {
-            var usersWithRoles = _context.Users
-                .Join(
-                    _context.UserRoles,
-                    user => user.Id,
-                    userRole => userRole.UserId,
-                    (user, userRole) => new
-                    {
-                        User = user,
-                        userRole.RoleId
-                    }
-                )
-                .Join(
-                    _context.Roles,
-                    userRole => userRole.RoleId,
-                    role => role.Id,
-                    (userRole, role) => new
-                    {
-                        userRole.User,
-                        RoleName = role.Name
-                    }
-                )
-                .Join(
-                    _context.Location,
-                    user => user.User.LocationId,
-                    location => location.LocationId,
-                    (user, location) => new
-                    {
-                        user.User,
-                        Location = location,
-                        user.RoleName
-                    }
-                )
-                .GroupBy(x => new { x.User.Id, x.User.Email, x.Location.LocationName, x.RoleName })
-                .Select(group => new ListUsersModel
+            return _context.Users
+            .GroupJoin(
+                _context.UserRoles,
+                user => user.Id,
+                userRole => userRole.UserId,
+                (user, userRoles) => new
                 {
-                    Id = Guid.Parse(group.Key.Id),
-                    Email = group.Key.Email,
-                    LocationName = group.Key.LocationName,
-                    Role = group.Key.RoleName
-                })
-                .ToList();
+                    User = user,
+                    UserRoles = userRoles
+                }
+            )
+            .SelectMany(
+                x => x.UserRoles.DefaultIfEmpty(),
+                (user, userRole) => new
+                {
+                    User = user.User,
+                    RoleId = userRole != null ? userRole.RoleId : null
+                }
+            )
+            .GroupJoin(
+                _context.Roles,
+                userRole => userRole.RoleId,
+                role => role.Id,
+                (userRole, roles) => new
+                {
+                    User = userRole.User,
+                    Roles = roles
+                }
+            )
+            .SelectMany(
+                x => x.Roles.DefaultIfEmpty(),
+                (userRole, role) => new
+                {
+                    User = userRole.User,
+                    RoleName = role != null ? role.Name : null
+                }
+            )
+            .Join(
+                _context.Location,
+                user => user.User.LocationId,
+                location => location.LocationId,
+                (user, location) => new
+                {
+                    user.User,
+                    Location = location,
+                    user.RoleName
+                }
+            )
+            .GroupBy(x => new { x.User.Id, x.User.Email, x.Location.LocationName, x.RoleName })
+            .Select(group => new ListUsersModel
+            {
+                Id = Guid.Parse(group.Key.Id),
+                Email = group.Key.Email,
+                LocationName = group.Key.LocationName,
+                Role = group.Key.RoleName
+            })
+            .ToList();
 
-            return usersWithRoles;
+
         }
-
-
 
     }
 }
