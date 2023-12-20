@@ -7,6 +7,7 @@ public class ApplicationUser : IdentityUser
 {
     public Guid LocationId { get; set; }
     public Location Location { get; set; }
+    public bool? IsLoggedIn { get; set; }
 }
 
 public class ApplicationRole : IdentityRole

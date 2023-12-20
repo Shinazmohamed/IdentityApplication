@@ -109,10 +109,10 @@ namespace IdentityApplication.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LocationName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DepartmentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LocationName = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DepartmentName = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CategoryName = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SubCategoryName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     E1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     E2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     C = table.Column<double>(type: "float", nullable: true),
@@ -172,6 +172,7 @@ namespace IdentityApplication.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LocationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsLoggedIn = table.Column<bool>(type: "bit", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -380,6 +381,12 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuditLogs_DateTime",
+                schema: "Identity",
+                table: "AuditLogs",
+                column: "DateTime");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Category_DepartmentId",
                 schema: "Identity",
                 table: "Category",
@@ -404,6 +411,12 @@ namespace IdentityApplication.Migrations
                 schema: "Identity",
                 table: "RoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SPDec2023_LocationName_CategoryName_SubCategoryName_DepartmentName",
+                schema: "Identity",
+                table: "SPDec2023",
+                columns: new[] { "LocationName", "CategoryName", "SubCategoryName", "DepartmentName" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubCategory_CategoryId",

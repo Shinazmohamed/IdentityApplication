@@ -42,6 +42,9 @@ namespace IdentityApplication.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsLoggedIn")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -130,6 +133,8 @@ namespace IdentityApplication.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DateTime");
+
                     b.ToTable("AuditLogs", "Identity");
                 });
 
@@ -178,10 +183,10 @@ namespace IdentityApplication.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("CategoryName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DepartmentName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("E1")
                         .HasColumnType("nvarchar(max)");
@@ -190,7 +195,7 @@ namespace IdentityApplication.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocationName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("M1")
                         .HasColumnType("nvarchar(max)");
@@ -199,9 +204,11 @@ namespace IdentityApplication.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SubCategoryName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocationName", "CategoryName", "SubCategoryName", "DepartmentName");
 
                     b.ToTable("SPDec2023", "Identity");
                 });

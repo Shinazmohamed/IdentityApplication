@@ -8,6 +8,7 @@ using IdentityApplication.Business;
 using Serilog;
 using IdentityApplication.Core.PermissionHelper;
 using Microsoft.AspNetCore.Authorization;
+using IdentityApplication.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddSignInManager<CustomSignInManager>();
 
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
