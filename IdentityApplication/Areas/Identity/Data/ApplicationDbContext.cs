@@ -3,9 +3,6 @@ using IdentityApplication.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Reflection.Emit;
-using System.Security.AccessControl;
 using System.Security.Claims;
 
 namespace IdentityApplication.Areas.Identity.Data;
@@ -107,6 +104,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Ignore<ApplicationRole>();
 
         #endregion
+
+        #region Index
+        builder.Entity<Audit>()
+    .   HasIndex(a => a.DateTime);
+
+        builder.Entity<Employee>()
+            .HasIndex(a => new { a.LocationName, a.CategoryName, a.SubCategoryName, a.DepartmentName });
+        #endregion
     }
 
     private void OnBeforeSaveChanges(string userId)
@@ -159,22 +164,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public override int SaveChanges()
     {
-        OnBeforeSaveChanges(GetCurrentUserId());
+        OnBeforeSaveChanges(GetCurrentUserEmail());
         return base.SaveChanges();
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
-        OnBeforeSaveChanges(GetCurrentUserId());
+        OnBeforeSaveChanges(GetCurrentUserEmail());
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
-    private string GetCurrentUserId()
+    private string GetCurrentUserEmail()
     {
-        // Attempt to get the current user's ID from HttpContext
-        var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        return userId ?? "DefaultUserId";
+        var userEmail = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Email)?.Value;
+        return userEmail ?? "DefaultUserEmail";
     }
 
 }

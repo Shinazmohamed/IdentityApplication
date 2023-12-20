@@ -24,10 +24,19 @@ namespace IdentityApplication.Core.Repositories
             var response = new PaginationResponse<ListAuditModel>();
             try
             {
-                var query = _context.AuditLogs.OrderBy(e => e.Id).AsQueryable();
+                var query = _context.AuditLogs.OrderByDescending(a => a.DateTime).AsQueryable();
                 var totalCount = await query.CountAsync();
-                var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
-                var resultViewModel = filteredEntities.Select(entity => _mapper.Map<ListAuditModel>(entity)).Take(250).ToList();
+
+                var filteredEntities = await query
+                    .Skip(filter.start)
+                    .Take(filter.length)
+                    .ToListAsync();
+
+                // Take the last 250 transactions after sorting
+                var resultViewModel = filteredEntities
+                    .TakeLast(250)
+                    .Select(entity => _mapper.Map<ListAuditModel>(entity))
+                    .ToList();
 
                 response.Data = resultViewModel;
                 response.TotalCount = totalCount;
