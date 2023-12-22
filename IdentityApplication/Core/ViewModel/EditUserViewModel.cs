@@ -9,5 +9,6 @@ namespace IdentityApplication.Core.ViewModel
         public IList<SelectListItem> Roles { get; set; }
         public IList<SelectListItem> Locations { get; set; }
         public string SelectedRole { get; set; }
+        public bool IsLocked { get; set; }
     }
 }

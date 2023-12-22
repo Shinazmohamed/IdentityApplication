@@ -107,7 +107,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         #region Index
         builder.Entity<Audit>()
-    .   HasIndex(a => a.DateTime);
+    .       HasIndex(a => a.DateTime);
 
         builder.Entity<Employee>()
             .HasIndex(a => new { a.LocationName, a.CategoryName, a.SubCategoryName, a.DepartmentName });

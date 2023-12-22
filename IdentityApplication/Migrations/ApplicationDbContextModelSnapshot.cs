@@ -42,9 +42,6 @@ namespace IdentityApplication.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsLoggedIn")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uniqueidentifier");
 

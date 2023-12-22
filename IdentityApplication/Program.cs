@@ -8,7 +8,6 @@ using IdentityApplication.Business;
 using Serilog;
 using IdentityApplication.Core.PermissionHelper;
 using Microsoft.AspNetCore.Authorization;
-using IdentityApplication.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +20,6 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
-    //.AddSignInManager<CustomSignInManager>();
 
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
@@ -79,10 +77,10 @@ void AddScoped()
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IRoleRepository, RoleRepository>();
     builder.Services.AddScoped<ILocationRepository, LocationRepository>();
-    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); 
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped<IEmployeeBusiness, EmployeeBusiness>();
     builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-    
+
     builder.Services.AddScoped<ICategorySubCategoryRepository, CategorySubCategoryRepository>();
     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
     builder.Services.AddScoped<ICategorySubCategoryBusiness, CategorySubCategoryBusiness>();

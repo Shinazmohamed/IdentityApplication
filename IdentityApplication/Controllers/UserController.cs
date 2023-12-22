@@ -59,6 +59,10 @@ namespace IdentityApplication.Controllers
                     location.LocationName,
                     location.LocationId.ToString(),
                     locations.Any(e => e.LocationId == user.LocationId))).ToList();
+                if (user.LockoutEnd == null)
+                    response.IsLocked = false;
+                else 
+                    response.IsLocked = true;
 
                 response.User = user;
                 response.Roles = roleItems;

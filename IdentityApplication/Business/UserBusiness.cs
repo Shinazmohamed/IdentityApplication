@@ -77,9 +77,9 @@ namespace IdentityApplication.Business
                 user.NormalizedEmail = request.User.Email.ToUpper();
                 user.NormalizedUserName = request.User.Email.ToUpper();
                 user.LocationId = request.User.LocationId;
-                user.LockoutEnabled = request.User.LockoutEnabled;
-                if (user.LockoutEnabled)
-                    user.LockoutEnd = DateTime.Now.AddMinutes(20);
+
+                if (request.IsLocked)
+                    user.LockoutEnd = DateTime.Now.AddMinutes(15);
                 else
                     user.LockoutEnd = null;
 
