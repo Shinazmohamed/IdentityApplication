@@ -20,8 +20,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
-    .AddDefaultTokenProviders()
-    .AddSignInManager<CustomSignInManager>();
+    .AddDefaultTokenProviders();
+    //.AddSignInManager<CustomSignInManager>();
 
 
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

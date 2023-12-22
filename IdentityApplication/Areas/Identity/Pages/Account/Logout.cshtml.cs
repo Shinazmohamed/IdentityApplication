@@ -28,13 +28,13 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
         {
             await _signInManager.SignOutAsync();
 
-            // Update the IsLoggedIn property when the user logs out
-            var user = await _signInManager.UserManager.GetUserAsync(User);
-            if (user != null)
-            {
-                user.IsLoggedIn = false;
-                await _signInManager.UserManager.UpdateAsync(user);
-            }
+            //// Update the IsLoggedIn property when the user logs out
+            //var user = await _signInManager.UserManager.GetUserAsync(User);
+            //if (user != null)
+            //{
+            //    user.IsLoggedIn = false;
+            //    await _signInManager.UserManager.UpdateAsync(user);
+            //}
 
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
