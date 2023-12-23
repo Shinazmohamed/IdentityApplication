@@ -22,11 +22,11 @@
         </div>
     }
 
-    <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+    <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="createMenuModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="menuModalLabel">Create Menu</h1>
+                    <h1 class="modal-title fs-5" id="createMenuModalLabel">Create Menu</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -115,30 +115,35 @@
     </div>
 
     <br />
-    <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-end">
-                @if (Model.MenuPermission.Create || Model.SubMenuPermission.Create)
-                {
-                    <button type="button" class="fas fa-plus btn btn-primary" id="btnCreateMenu">
-                        Add Menu
-                    </button>
-                }
-            </div>
-            <div id="viewAll" class="card-body table-responsive">
-                <table id="menuTable" class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Menu ID</th>
-                            <th>Display Name</th>
-                            <th>Sort</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+
+    <div style="height: 1000px; overflow-y: auto;">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-end">
+                    @if (Model.MenuPermission.Create || Model.SubMenuPermission.Create)
+                    {
+                        <button type="button" class="fas fa-plus btn btn-primary" id="btnCreateMenu">
+                            Add Menu
+                        </button>
+                    }
+                </div>
+                <div id="viewAll" class="card-body table-responsive">
+                    <table id="menuTable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Menu ID</th>
+                                <th>Display Name</th>
+                                <th>Sort</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Your table content goes here -->
+                        </tbody>
+                    </table>
+
+                </div>
             </div>
         </div>
     </div>
@@ -324,11 +329,11 @@
                 $('#deleteMenuConfirmationModal').modal('show');
             });
 
-            document.getElementById('updateBtn').onclick = function () {
-                var form = document.getElementById('menuForm');
-                form.action = '/Menu/Edit';
-                form.submit();
-            };
+            // document.getElementById('updateBtn').onclick = function () {
+            //     var form = document.getElementById('menuForm');
+            //     form.action = '/Menu/Edit';
+            //     form.submit();
+            // };
 
 
             //Sub Menu
@@ -364,19 +369,13 @@
             });
 
             document.getElementById('updateBtn').onclick = function () {
+                var form = document.getElementById('menuForm');
                 var isChecked = $("#isParentCheckbox").prop("checked");
-                if (isChecked) {
-                    var form = document.getElementById('menuForm');
-                    form.action = '/Menu/Edit';
-                    form.submit();
-                }
-                else {
-                    var form = document.getElementById('menuForm');
-                    form.action = '/SubMenu/Edit';
-                    form.submit();
-                }
 
+                form.action = isChecked ? '/Menu/Edit' : '/SubMenu/Edit';
+                form.submit();
             };
+
 
             function enableUpdateBtn(shouldShowUpdateButton) {
                 var savebtn = document.getElementById('saveBtn');
@@ -385,11 +384,11 @@
                 if (shouldShowUpdateButton) {
                     savebtn.style.display = 'none';
                     updatebtn.style.display = 'block';
-                    $('#pageHeader').text('Edit Menu');
+                    $('#createMenuModalLabel').text('Edit Menu');
                 } else {
                     savebtn.style.display = 'block';
                     updatebtn.style.display = 'none';
-                    $('#pageHeader').text('Save Menu');
+                    $('#createMenuModalLabel').text('Save Menu');
                 }
             }
 

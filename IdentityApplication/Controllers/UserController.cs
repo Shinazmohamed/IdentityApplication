@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
+using static IdentityApplication.Core.Constants;
 
 namespace IdentityApplication.Controllers
 {
@@ -18,6 +20,7 @@ namespace IdentityApplication.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly IUserBusiness _business;
         private readonly IConfiguration _configuration;
+        private readonly string _address;
         public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, ILogger<UserController> logger, IUserBusiness business, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
@@ -25,6 +28,7 @@ namespace IdentityApplication.Controllers
             _logger = logger;
             _business = business;
             _configuration = configuration;
+            _address = _configuration.GetSection("AppSettings")["Address"];
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.View}")]
@@ -123,13 +127,27 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.UserPermission.Profile}")]
         public IActionResult Profile()
         {
-            return Redirect("http://localhost:5258/Identity/Account/Manage");
+            return Redirect(_address + RedirectionPaths.Profile);
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.Register}")]
         public IActionResult Register()
         {        
-            return Redirect("http://localhost:5258/Identity/Account/Register");
+            return Redirect(_address + RedirectionPaths.UserRegisteration);
+        }
+
+        public async Task<IActionResult> Logout(string returnUrl = null)
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out.");
+            if (returnUrl != null)
+            {
+                return LocalRedirect(returnUrl);
+            }
+            else
+            {
+                return Redirect(_address + RedirectionPaths.Logout);
+            }
         }
 
     }

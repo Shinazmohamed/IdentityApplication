@@ -180,7 +180,7 @@ namespace IdentityApplication.Core.Repositories
                     existingMapping.Controller = request.Controller;
                     existingMapping.DisplayName = request.DisplayName;
                     existingMapping.Method = request.Method;
-                    existingMapping.MenuId = request.MenuId;
+                    existingMapping.MenuId = Guid.Parse(request.SelectedMenu);
                     _context.SaveChanges();
 
                     transaction.Commit();
