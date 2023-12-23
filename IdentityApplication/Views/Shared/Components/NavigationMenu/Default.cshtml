@@ -1,54 +1,41 @@
 ﻿@using IdentityApplication.Business.Contracts
 @using IdentityApplication.Core.ViewModel;
 
+<link rel="stylesheet" href="~/css/sidebars.css" />
+
 @inject IMenuBusiness _business;
 
 @if (User.Identity.IsAuthenticated)
 {
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Nolimit Tag Employee</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <div class="fixed-top flex-shrink-0 p-3 bg-white" style="width: 280px; z-index: 1000;">
+
+        <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+            <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap" /></svg>
+            <span class="fs-5 fw-semibold">Nolimit Tag Employee</span>
+        </a>
+        <ul class="list-unstyled ps-0">
             @{
-                var model = new IndexViewModel(_business);
-                if (model != null && model.MenuItems != null && model.MenuItems.Any())
+                var sidebarItems = new IndexViewModel(_business);
+                foreach (var item in sidebarItems.MenuItems)
                 {
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            @foreach (var menuItem in model.MenuItems)
-                            {
-                                <li class="nav-item @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "dropdown" : "")">
-                                    <a class="nav-link @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "dropdown-toggle" : "text-dark")"
-                                    @(menuItem.SubMenu != null && menuItem.SubMenu.Any() ? "data-bs-toggle=dropdown" : "")
-                                       href="#"
-                                       role="button"
-                                       aria-expanded="false">
-                                        @menuItem.DisplayName
-                                    </a>
-                                    @if (menuItem.SubMenu != null && menuItem.SubMenu.Any())
-                                    {
-                                        <ul class="dropdown-menu">
-                                            @foreach (var subMenuItem in menuItem.SubMenu)
-                                            {
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                       href="@Url.Action(subMenuItem.Method, subMenuItem.Controller )">
-                                                        @subMenuItem.DisplayName
-                                                    </a>
-                                                </li>
-                                            }
-                                        </ul>
-                                    }
-                                </li>
-                            }
-                        </ul>
-                    </div>
+                    <li class="mb-1">
+                        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#@(item.DisplayName.ToLower())-collapse" aria-expanded="false">
+                            @item.DisplayName
+                        </button>
+                        <div class="collapse" id="@(item.DisplayName.ToLower())-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                @foreach (var subItem in item.SubMenu)
+                                {
+                                    <li><a href="@Url.Action(subItem.Method, subItem.Controller )" class="link-dark rounded">@subItem.DisplayName</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
                 }
             }
-            <partial name="_LoginPartial" />
-        </div>
-    </nav>
+        </ul>
+
+    </div>
 }
+
+<script src="~/js/sidebars.js"></script>

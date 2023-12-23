@@ -1,80 +1,82 @@
 ﻿@using IdentityApplication.Core.ViewModel
 @model CreateCategoryDepartmentMappingViewModel
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success mt-3" id="successMessage">
-        @TempData["SuccessMessage"]
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-3" id="errorMessage">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-<form method="post" asp-controller="CategoryDepartmentMapping" asp-action="Create" id="categorydepartmentform">
-    <div class="row">
-        <div class="col-md-6">
-            <label for="categorySearch">Department :</label>
-            @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "All", new { id = "departmentSearch" })
-        </div>
-        <div class="col-md-6">
-            <label for="categorySearch">Category :</label>
-            @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { id = "categorySearch" })
-            <input asp-for="SelectedCategoryId" type="hidden" />
-        </div>
-    </div>
+<div class="container">
     <br />
-    <div class="row">
-        <div class="col-md-6">
-            <button type="submit" class="btn btn-success" id="save">Save</button>
-            <button type="button" class="btn btn-success" id="update" onclick="updateRecord()">Update</button>
-            <button type="button" id="search" class="btn btn-success">Search</button>
-            <button type="button" id="reset" class="btn btn-success">Reset All</button>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3" id="successMessage">
+            @TempData["SuccessMessage"]
         </div>
-    </div>
-    <br />
-</form>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3" id="errorMessage">
+            @TempData["ErrorMessage"]
+        </div>
+    }
 
-<hr class="my-4">
-
-<table id="categorydepartmentTable" class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Department Id</th>
-            <th>Category Id</th>
-            <th>Department</th>
-            <th>Category</th>
-            <th>Handle</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-
-<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <form method="post" asp-controller="CategoryDepartmentMapping" asp-action="Create" id="categorydepartmentform">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="categorySearch">Department :</label>
+                @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "All", new { id = "departmentSearch" })
             </div>
-            @using (Html.BeginForm("Delete", "CategoryDepartmentMapping", FormMethod.Post, new { id = "deleteConfirmationForm" }))
-            {
-                <div class="modal-body">
-                    <input type="hidden" id="mappingId" name="mappingId" />
-                    <p>Are you sure you want to delete this record ?</p>
+            <div class="col-md-6">
+                <label for="categorySearch">Category :</label>
+                @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { id = "categorySearch" })
+                <input asp-for="SelectedCategoryId" type="hidden" />
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success" id="save">Save</button>
+                <button type="button" class="btn btn-success" id="update" onclick="updateRecord()">Update</button>
+                <button type="button" id="search" class="btn btn-success">Search</button>
+                <button type="button" id="reset" class="btn btn-success">Reset All</button>
+            </div>
+        </div>
+        <br />
+    </form>
+
+    <hr class="my-4">
+
+    <table id="categorydepartmentTable" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Department Id</th>
+                <th>Category Id</th>
+                <th>Department</th>
+                <th>Category</th>
+                <th>Handle</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-dark" value="Delete" />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            }
+                @using (Html.BeginForm("Delete", "CategoryDepartmentMapping", FormMethod.Post, new { id = "deleteConfirmationForm" }))
+                {
+                    <div class="modal-body">
+                        <input type="hidden" id="mappingId" name="mappingId" />
+                        <p>Are you sure you want to delete this record ?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-dark" value="Delete" />
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

@@ -1,190 +1,191 @@
 ﻿@using IdentityApplication.Core
 @using IdentityApplication.Core.ViewModel;
 @model RolesViewModel
-<h1>Roles</h1>
-<br />
-<style>
-    .hidden-column {
-        display: none;
-    }
-</style>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success mt-3" id="successMessage">
-        @TempData["SuccessMessage"]
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-3" id="errorMessage">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-@if (Model.Create)
-{
-    <form method="post" asp-action="addrole" asp-controller="roles" id="roleForm">
-        <div class="input-group">
-
-            <input type="hidden" asp-for="RoleId" />
-            <input asp-for="RoleName" class="form-control w-25">
-            <span class="input-group-btn">
-                <button class="btn btn-info" id="btnAdd">Add New Role</button>
-            </span>
-        </div>
-    </form>
-}
-<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" asp-controller="Roles" asp-action="Delete">
-                <div class="modal-body">
-                    <input type="hidden" id="Id" name="Id" />
-                    <p>Are you sure you want to delete this record?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Delete</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="permissionmodel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="permissionForm" method="post">
-                <div class="modal-body">
-                    <input id="RoleId" type="hidden" />
-                    <table id="permissionTable" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Value</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="manageMenuModel" tabindex="-1" aria-labelledby="manageMenuModelLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="manageMenuModelLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="managemenuForm" method="post">
-                <div class="modal-body">
-                    <input id="RoleId" type="hidden" />
-                    <table id="managemenuTable" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>DisplayName</th>
-                                <th>Controller</th>
-                                <th>Method</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<table class="table table-striped" id="roleTable">
-    <thead>
-        <tr>
-            <th>
-                Role
-            </th>
-            <th>
-                Id
-            </th>
-            <th style="width:10%">
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var role in Model.Roles)
-        {
-            <tr>
-                <td>
-                    @role.Name
-                </td>
-                <td>
-                    @role.Id
-                </td>
-                <td class="text-right">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Action
-                        </button>
-                        <div class="dropdown-menu shadow animated--grow-in">
-                            @if (Model.Edit)
-                            {
-                                <a style='margin-right:16px' class="dropdown-item btn-edit" data-id="@role.Id" href="#">
-                                    <i class="fas fa-pencil-alt"></i> Edit
-                                </a>
-                            }
-                            @if (Model.Delete)
-                            {
-                                <a style='margin-right:16px' class="dropdown-item btn-delete" data-id="@role.Id" href="#">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </a>
-                            }
-                            @if (role.Name != $"{Constants.Roles.SuperDeveloper}")
-                            {
-                                if (Model.AssignPermission)
-                                {
-                                    <a style='margin-right:16px' class="dropdown-item btn-permission" data-id="@role.Id" href="#">
-                                        <i class="fas fa-wrench"></i> Manage Permissions
-                                    </a>
-                                }
-                                if (Model.AssignMenu)
-                                {
-                                    <a style='margin-right:16px' class="dropdown-item btn-menu" data-id="@role.Id" href="#">
-                                        <i class="fas fa-wrench"></i> Manage Menu
-                                    </a>
-                                }
-                            }
-                        </div>
-                    </div>
-                </td>
-            </tr>
+<div class="container">
+    <h1>Roles</h1>
+    <br />
+    <style>
+        .hidden-column {
+            display: none;
         }
-    </tbody>
-</table>
+    </style>
 
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3" id="successMessage">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3" id="errorMessage">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (Model.Create)
+    {
+        <form method="post" asp-action="addrole" asp-controller="roles" id="roleForm">
+            <div class="input-group">
+
+                <input type="hidden" asp-for="RoleId" />
+                <input asp-for="RoleName" class="form-control w-25">
+                <span class="input-group-btn">
+                    <button class="btn btn-info" id="btnAdd">Add New Role</button>
+                </span>
+            </div>
+        </form>
+    }
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-controller="Roles" asp-action="Delete">
+                    <div class="modal-body">
+                        <input type="hidden" id="Id" name="Id" />
+                        <p>Are you sure you want to delete this record?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="permissionmodel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="permissionForm" method="post">
+                    <div class="modal-body">
+                        <input id="RoleId" type="hidden" />
+                        <table id="permissionTable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="manageMenuModel" tabindex="-1" aria-labelledby="manageMenuModelLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="manageMenuModelLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="managemenuForm" method="post">
+                    <div class="modal-body">
+                        <input id="RoleId" type="hidden" />
+                        <table id="managemenuTable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>DisplayName</th>
+                                    <th>Controller</th>
+                                    <th>Method</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped" id="roleTable">
+        <thead>
+            <tr>
+                <th>
+                    Role
+                </th>
+                <th>
+                    Id
+                </th>
+                <th style="width:10%">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var role in Model.Roles)
+            {
+                <tr>
+                    <td>
+                        @role.Name
+                    </td>
+                    <td>
+                        @role.Id
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Action
+                            </button>
+                            <div class="dropdown-menu shadow animated--grow-in">
+                                @if (Model.Edit)
+                                {
+                                    <a style='margin-right:16px' class="dropdown-item btn-edit" data-id="@role.Id" href="#">
+                                        <i class="fas fa-pencil-alt"></i> Edit
+                                    </a>
+                                }
+                                @if (Model.Delete)
+                                {
+                                    <a style='margin-right:16px' class="dropdown-item btn-delete" data-id="@role.Id" href="#">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </a>
+                                }
+                                @if (role.Name != $"{Constants.Roles.SuperDeveloper}")
+                                {
+                                    if (Model.AssignPermission)
+                                    {
+                                        <a style='margin-right:16px' class="dropdown-item btn-permission" data-id="@role.Id" href="#">
+                                            <i class="fas fa-wrench"></i> Manage Permissions
+                                        </a>
+                                    }
+                                    if (Model.AssignMenu)
+                                    {
+                                        <a style='margin-right:16px' class="dropdown-item btn-menu" data-id="@role.Id" href="#">
+                                            <i class="fas fa-wrench"></i> Manage Menu
+                                        </a>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

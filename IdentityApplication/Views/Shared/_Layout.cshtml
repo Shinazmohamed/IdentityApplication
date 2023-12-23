@@ -15,18 +15,11 @@
     <header>
         @await Component.InvokeAsync("NavigationMenu")
     </header>
-    <div class="container">
+    <div class="container mt-5" style="margin-left: 280px;">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-@*     <footer class="border-top footer text-muted">
-        <div class="container">
-        &copy; 2023 - No limit Application - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
-
 
     <script src="~/js/popper.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -8,159 +8,159 @@
     }
 </style>
 
+<div class="container">
+    <h1>Manage Permissions</h1>
+    <br />
 
-<h1>Manage Permissions</h1>
-<br />
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success mt-3" id="successMessage">
-        @TempData["SuccessMessage"]
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger mt-3" id="errorMessage">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-<br />
-<div class="card">
-    <div class="card-body">
-        <div class="d-flex justify-content-end">
-            @if (Model.EntityPermission.Create)
-            {
-                <button type="button" class="fas fa-plus btn btn-primary" id="btnEntity" style="margin-right: 10px;">
-                    Add Entity
-                </button>
-            }
-            @if (Model.PermissionPermission.Create)
-            {
-                <button type="button" class="fas fa-plus btn btn-primary" id="btnPermission">
-                    Add Permission
-                </button>
-            }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3" id="successMessage">
+            @TempData["SuccessMessage"]
         </div>
-
-
-        <div id="viewAll" class="card-body table-responsive">
-            <table id="entityTable" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Entity ID</th>
-                        <th>Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- DataTable content will be loaded here dynamically -->
-                </tbody>
-            </table>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3" id="errorMessage">
+            @TempData["ErrorMessage"]
         </div>
-    </div>
-</div>
+    }
 
-<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <br />
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-end">
+                @if (Model.EntityPermission.Create)
+                {
+                    <button type="button" class="fas fa-plus btn btn-primary" id="btnEntity" style="margin-right: 10px;">
+                        Add Entity
+                    </button>
+                }
+                @if (Model.PermissionPermission.Create)
+                {
+                    <button type="button" class="fas fa-plus btn btn-primary" id="btnPermission">
+                        Add Permission
+                    </button>
+                }
             </div>
-            <form method="post" asp-controller="Permission" asp-action="Delete">
-                <div class="modal-body">
-                    <input type="hidden" id="Id" name="Id" />
-                    <p>Are you sure you want to delete this record?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Delete</button>
-                </div>
-            </form>
+
+
+            <div id="viewAll" class="card-body table-responsive">
+                <table id="entityTable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Entity ID</th>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTable content will be loaded here dynamically -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-<div class="modal fade" id="deleteEntityConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" asp-controller="Entity" asp-action="Delete">
-                <div class="modal-body">
-                    <input type="hidden" id="deleteEntityId" name="deleteEntityId" />
-                    <p>Are you sure you want to delete this record?</p>
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Delete</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="permissionModalLabel">Add Permission</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" asp-controller="Permission" asp-action="Create" id="PermissionForm">
-                    <input type="hidden" id="PermissionId" name="permissionId" />
-                    <div class="col-md-6">
-                        <label for="categorySearch">Entity :</label>
-                        @Html.DropDownListFor(m => m.SelectedEntity, Model.Entities, "All", new { id = "SelectedEntity" })
+                <form method="post" asp-controller="Permission" asp-action="Delete">
+                    <div class="modal-body">
+                        <input type="hidden" id="Id" name="Id" />
+                        <p>Are you sure you want to delete this record?</p>
                     </div>
-                    <div class="col-md-6">
-                        <label asp-for="Value" class="form-label">Value</label>
-                        <input asp-for="Value" id="Value" name="Value" class="form-control" />
-                    </div>
-                    <br />
-                    <div class="col-md-6" id="savePermission">
-                        <button type="submit" class="btn btn-success" id="save">Save</button>
-                    </div>
-                    <div class="col-md-6" style="display:none" id="updatePermission">
-                        <button type="button" class="btn btn-success" id="updatePermissionBtn">Update</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
-
-
-<div class="modal fade" id="entityModal" tabindex="-1" aria-labelledby="entityModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="entityModalLabel">Add Entity</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" asp-controller="Entity" asp-action="Create" id="EntityForm">
-                    <input type="hidden" id="EntityId" name="entityId" />
-                    <div class="col-md-6">
-                        <label asp-for="Entity" class="form-label">Entity</label>
-                        <input asp-for="Entity" class="form-control" />
+    <div class="modal fade" id="deleteEntityConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-controller="Entity" asp-action="Delete">
+                    <div class="modal-body">
+                        <input type="hidden" id="deleteEntityId" name="deleteEntityId" />
+                        <p>Are you sure you want to delete this record?</p>
                     </div>
-                    <br />
-                    <div class="col-md-6" id="saveEntity">
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </div>
-                    <div class="col-md-6" style="display:none" id="updateEntity">
-                        <button type="submit" class="btn btn-success" id="updateEntityBtn">Update</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
+    <div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="permissionModalLabel">Add Permission</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-controller="Permission" asp-action="Create" id="PermissionForm">
+                        <input type="hidden" id="PermissionId" name="permissionId" />
+                        <div class="col-md-6">
+                            <label for="categorySearch">Entity :</label>
+                            @Html.DropDownListFor(m => m.SelectedEntity, Model.Entities, "All", new { id = "SelectedEntity" })
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Value" class="form-label">Value</label>
+                            <input asp-for="Value" id="Value" name="Value" class="form-control" />
+                        </div>
+                        <br />
+                        <div class="col-md-6" id="savePermission">
+                            <button type="submit" class="btn btn-success" id="save">Save</button>
+                        </div>
+                        <div class="col-md-6" style="display:none" id="updatePermission">
+                            <button type="button" class="btn btn-success" id="updatePermissionBtn">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+
+    <div class="modal fade" id="entityModal" tabindex="-1" aria-labelledby="entityModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="entityModalLabel">Add Entity</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-controller="Entity" asp-action="Create" id="EntityForm">
+                        <input type="hidden" id="EntityId" name="entityId" />
+                        <div class="col-md-6">
+                            <label asp-for="Entity" class="form-label">Entity</label>
+                            <input asp-for="Entity" class="form-control" />
+                        </div>
+                        <br />
+                        <div class="col-md-6" id="saveEntity">
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+                        <div class="col-md-6" style="display:none" id="updateEntity">
+                            <button type="submit" class="btn btn-success" id="updateEntityBtn">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
