@@ -17,13 +17,15 @@
         display: block;
         overflow: hidden;
         border: thin;
-        height: 200px; /* or 0 */
     }
 
     .search_filters {
         display: block;
+        height: 0;
+        overflow: hidden;
         transition: height 0.3s;
     }
+
 
     .scrollable-container {
         padding: 0 10px;
@@ -59,7 +61,7 @@
 
 
     <button class="collapsible" onclick="toggleFilters()">
-        <i class="fas fa-chevron-up"></i>
+        <i class="fas fa-chevron-down"></i>
     </button>
     <span style="text-align:left; font-size:18px;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; padding-bottom:100px;">Search Filters</span>
 

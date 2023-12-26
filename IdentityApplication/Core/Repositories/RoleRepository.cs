@@ -40,6 +40,10 @@ namespace IdentityApplication.Core.Repositories
         {
             try
             {
+                var entity = _context.Roles.Where(e => e.Name == role.Name).FirstOrDefault();
+                if (entity != null)
+                    throw new Exception("Record name already existed");
+
                 await _roleManager.CreateAsync(role);
             }
             catch (Exception e)

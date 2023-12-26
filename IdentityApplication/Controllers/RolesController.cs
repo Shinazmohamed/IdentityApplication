@@ -59,16 +59,17 @@ namespace IdentityApplication.Controllers
                 if (roleName != null)
                 {
                     await _business.Create(roleName);
-                    TempData["SuccessMessage"] = "Record deleted successfully.";
+                    TempData["SuccessMessage"] = "Record created successfully.";
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Record delete failed.";
+                    TempData["ErrorMessage"] = "Record creation failed.";
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Controller} All function error", typeof(RolesController));
+                TempData["ErrorMessage"] = "Record creation failed.";
             }
             return RedirectToAction("Index");
         }

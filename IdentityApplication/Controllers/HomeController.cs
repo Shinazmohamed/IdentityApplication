@@ -1,5 +1,4 @@
-﻿using IdentityApplication.Core;
-using IdentityApplication.Models;
+﻿using IdentityApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;

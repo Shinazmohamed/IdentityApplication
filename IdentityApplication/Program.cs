@@ -8,6 +8,7 @@ using IdentityApplication.Business;
 using Serilog;
 using IdentityApplication.Core.PermissionHelper;
 using Microsoft.AspNetCore.Authorization;
+using IdentityApplication.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseMiddleware<RequireLogoutMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

@@ -104,7 +104,7 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SPDec2023",
+                name: "SP_Table",
                 schema: "Identity",
                 columns: table => new
                 {
@@ -121,7 +121,7 @@ namespace IdentityApplication.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SPDec2023", x => x.Id);
+                    table.PrimaryKey("PK_SP_Table", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -412,9 +412,9 @@ namespace IdentityApplication.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SPDec2023_LocationName_CategoryName_SubCategoryName_DepartmentName",
+                name: "IX_SP_Table_LocationName_CategoryName_SubCategoryName_DepartmentName",
                 schema: "Identity",
-                table: "SPDec2023",
+                table: "SP_Table",
                 columns: new[] { "LocationName", "CategoryName", "SubCategoryName", "DepartmentName" });
 
             migrationBuilder.CreateIndex(
@@ -484,7 +484,7 @@ namespace IdentityApplication.Migrations
                 schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "SPDec2023",
+                name: "SP_Table",
                 schema: "Identity");
 
             migrationBuilder.DropTable(

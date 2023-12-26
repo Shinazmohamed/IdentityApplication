@@ -26,6 +26,7 @@ namespace IdentityApplication.Migrations
         private string auditMenu = Guid.NewGuid().ToString();
         private string roleMenu = Guid.NewGuid().ToString();
         private string permissionMenu = Guid.NewGuid().ToString();
+        private string settingsMenu = Guid.NewGuid().ToString();
 
         private string createEmployeeSubMenu = Guid.NewGuid().ToString();
         private string listEmployeeSubMenu = Guid.NewGuid().ToString();
@@ -77,7 +78,7 @@ namespace IdentityApplication.Migrations
         {
             migrationBuilder.Sql($@"
                 INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
-                VALUES ('{AdminId}', 'admin@test.com', '{LocationId}', 'ADMIN@TEST.COM', 'admin@test.com', 'ADMIN@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '9337b27a-86df-425c-a68b-10e97e15d4ae', NULL, 0, 0, NULL, 0, 0)");
+                VALUES ('{AdminId}', 'admin@test.com', '{LocationId}', 'ADMIN@TEST.COM', 'admin@test.com', 'ADMIN@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '9337b27a-86df-425c-a68b-10e97e15d4ae', NULL, 0, 0, NULL, 1, 0)");
 
             migrationBuilder.Sql($@"
                 INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
@@ -114,7 +115,8 @@ namespace IdentityApplication.Migrations
                 ('{auditMenu}', 'Audit', 6),
                 ('{roleMenu}', 'Roles', 7),
                 ('{permissionMenu}', 'Permission', 8),
-                ('{menuMenu}', 'Menu', 9);");
+                ('{menuMenu}', 'Menu', 9),
+                ('{settingsMenu}', 'Settings', 10);");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {
@@ -133,6 +135,7 @@ namespace IdentityApplication.Migrations
                     (NEWID(), 'Create', 'Department', 'Index', '{departmentMenu}'),
                     (NEWID(), 'View', 'Roles', 'Index', '{roleMenu}'),
                     (NEWID(), 'View', 'Permission', 'Index', '{permissionMenu}'),
+                    (NEWID(), 'Logout', 'User', 'Logout', '{settingsMenu}'),
                     (NEWID(), 'Mapping', 'CategorySubCategoryMapping', 'Index', '{subcategoryMenu}');");
         }
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)

@@ -11,13 +11,13 @@ https://www.youtube.com/watch?v=A1Qjg4B0VnQ&list=PLJo5QOn8moNw43NcHM6ZfZ5AMzPuGM
 
 How to import data
 
-1. Rename Table in app settings SPDec2023
+1. Rename Table in app settings SP_Table
 
 2. Restart Application (Open Cmd as admin and run 'ISSRESET'
 
 3. Import data from excel into temperory table 
 
-4. Run the query ( copy data from temp table into SPDec2023 with ID)
+4. Run the query ( copy data from temp table into SP_Table with ID)
 
 
 Setup Application (Run this command in Package Manager Console)

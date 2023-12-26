@@ -10,7 +10,7 @@ BEGIN
 	CREATE TABLE #DistinctDepartments (DepartmentName NVARCHAR(255));
 	INSERT INTO #DistinctDepartments (DepartmentName)
     SELECT DISTINCT DepartmentName
-    FROM [Identity].SPDec2023
+    FROM [Identity].SP_Table
     WHERE DepartmentName IS NOT NULL;
 
     -- Insert into [Identity].Department table
@@ -22,7 +22,7 @@ BEGIN
     CREATE TABLE #DistinctLocations (LocationName NVARCHAR(255));
     INSERT INTO #DistinctLocations (LocationName)
     SELECT DISTINCT LocationName
-    FROM [Identity].SPDec2023
+    FROM [Identity].SP_Table
     WHERE LocationName IS NOT NULL;
 
 
@@ -35,7 +35,7 @@ BEGIN
 	CREATE TABLE #DistinctCategories (CategoryName NVARCHAR(255));
     INSERT INTO #DistinctCategories (CategoryName)
     SELECT DISTINCT CategoryName
-    FROM [Identity].SPDec2023 S
+    FROM [Identity].SP_Table S
     WHERE S.CategoryName IS NOT NULL;
 
 	-- Insert into [Identity].[Category] table
@@ -47,7 +47,7 @@ BEGIN
 	CREATE TABLE #DistinctSubCategories (SubCategoryName NVARCHAR(255));
     INSERT INTO #DistinctSubCategories (SubCategoryName)
     SELECT DISTINCT SubCategoryName
-    FROM [Identity].SPDec2023
+    FROM [Identity].SP_Table
     WHERE SubCategoryName IS NOT NULL;
 
 	-- Insert into [Identity].[SubCategory] table
@@ -62,7 +62,7 @@ BEGIN
 	
 	-- Declare the cursor
 	DECLARE update_mapping_cursor CURSOR FOR
-	    SELECT CategoryName, SubCategoryName, DepartmentName FROM [Identity].SPDec2023
+	    SELECT CategoryName, SubCategoryName, DepartmentName FROM [Identity].SP_Table
 	
 	-- Open the cursor
 	OPEN update_mapping_cursor;

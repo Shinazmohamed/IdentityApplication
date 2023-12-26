@@ -207,7 +207,7 @@ namespace IdentityApplication.Migrations
 
                     b.HasIndex("LocationName", "CategoryName", "SubCategoryName", "DepartmentName");
 
-                    b.ToTable("SPDec2023", "Identity");
+                    b.ToTable("SP_Table", "Identity");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.Entity", b =>

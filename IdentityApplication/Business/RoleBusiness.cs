@@ -25,6 +25,7 @@ namespace IdentityApplication.Business
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+                throw ex;
             }
         }
 
@@ -37,6 +38,7 @@ namespace IdentityApplication.Business
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+                throw ex;
             }
         }
 
@@ -50,6 +52,7 @@ namespace IdentityApplication.Business
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+                throw ex;
             }
         }
 
@@ -63,6 +66,7 @@ namespace IdentityApplication.Business
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Business} All function error", typeof(RoleBusiness));
+                throw ex;
             }
             return response;
         }
