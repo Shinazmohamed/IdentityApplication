@@ -1,8 +1,24 @@
 ﻿@using IdentityApplication.Core.ViewModel
+<style>
+    .scrollable-container {
+        padding: 0 10px;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 500px;
+    }
 
+    #departmentTable {
+        width: 100%;
+        table-layout: auto;
+    }
+
+    .container {
+        font-size: 14px;
+    }
+</style>
 @model CreateDepartmentViewModel
 <div class="container">
-    <h1>Department</h1>
+    <h4>Manage Department</h4>
     <br />
     @if (TempData["SuccessMessage"] != null)
     {
