@@ -9,19 +9,6 @@
 <div class="container">
     <h2 id="pageHeader">Create Menu</h2>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="createMenuModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -186,12 +173,6 @@
                 $("#additionalFields").toggle(!isChecked);
             }
 
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-
-
             var menutable = $('#menuTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -329,14 +310,6 @@
                 $('#deleteMenuConfirmationModal').modal('show');
             });
 
-            // document.getElementById('updateBtn').onclick = function () {
-            //     var form = document.getElementById('menuForm');
-            //     form.action = '/Menu/Edit';
-            //     form.submit();
-            // };
-
-
-            //Sub Menu
 
             $('#menuTable').on('click', '.btn-submenu-edit', function () {
                 var row = $(this).closest('tr');

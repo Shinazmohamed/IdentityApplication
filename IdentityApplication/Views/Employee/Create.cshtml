@@ -3,19 +3,6 @@
 <div class="container">
     <h4>Create New Tag Employee</h4>
     <br />
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     <form method="post" asp-controller="Employee" asp-action="CreateEmployee">
 
         <div class="row">
@@ -77,11 +64,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-
             $('#categoryDropdown').change(function () {
                 var selectedCategory = $(this).val();
                 $.ajax({
@@ -96,9 +78,6 @@
                                 text: item.text
                             }));
                         });
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.error('Error fetching subcategories:', textStatus, errorThrown);
                     }
                 });
             });
@@ -117,9 +96,6 @@
                                 text: item.text
                             }));
                         });
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.error('Error fetching categories:', textStatus, errorThrown);
                     }
                 });
             });

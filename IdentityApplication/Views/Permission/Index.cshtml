@@ -11,21 +11,6 @@
 <div class="container">
     <h1>Manage Permissions</h1>
     <br />
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
-    <br />
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-end">
@@ -178,11 +163,6 @@
 
             var hasPermissionDeletePermission = @Html.Raw(Model.PermissionPermission.Delete.ToString().ToLower());
             var hasPermissionEditPermission = @Html.Raw(Model.PermissionPermission.Edit.ToString().ToLower());
-
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
 
             var btnPermission = document.getElementById('btnPermission');
             if (btnPermission) {
@@ -413,8 +393,6 @@
                 $('#permissionModalLabel').text('Add Permission');
                 $('#entityModalLabel').text('Add Create');
             };
-
-
         });
     </script>
 

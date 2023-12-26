@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -14,14 +15,15 @@ namespace IdentityApplication.Controllers
         private readonly IMenuBusiness _menuBusiness;
         private readonly IAuthorizationService _authorizationService;
         private readonly ILogger<SubMenuController> _logger;
+        private readonly INotyfService _notyf;
 
-
-        public SubMenuController(ISubMenuBusiness business, IMenuBusiness menuBusiness, IAuthorizationService authorizationService, ILogger<SubMenuController> logger)
+        public SubMenuController(ISubMenuBusiness business, IMenuBusiness menuBusiness, IAuthorizationService authorizationService, ILogger<SubMenuController> logger, INotyfService notyf)
         {
             _business = business;
             _menuBusiness = menuBusiness;
             _authorizationService = authorizationService;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.SubMenuPermission.View}")]
@@ -65,19 +67,15 @@ namespace IdentityApplication.Controllers
             try
             {
                 if (request.IsParent)
-                {
                     _menuBusiness.Create(request);
-                    TempData["SuccessMessage"] = "Menu created successfully.";
-                }
                 else
-                {
                     _business.Create(request);
-                    TempData["SuccessMessage"] = "Sub Menu created successfully.";
-                }
+                
+                _notyf.Success("Record created successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Sub Menu creation failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
@@ -96,6 +94,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
             return Json(new
@@ -114,12 +113,13 @@ namespace IdentityApplication.Controllers
             try
             {
                 _business.Update(menuData);
-                TempData["SuccessMessage"] = "Sub Menu update successfully.";
+                _notyf.Success("Record updated successfully.");
 
-                return Json(new { success = true, message = "Menu data saved successfully" });
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
             return Json(new { success = false, message = "Menu data saved failed" });
@@ -131,11 +131,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 _business.Edit(request);
-                TempData["SuccessMessage"] = "Sub Menu update successfully.";
+                _notyf.Success("Record updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Sub Menu update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
@@ -149,11 +149,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(hdnSubMenuId);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Record deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
             return RedirectToAction("Index", "SubMenu");

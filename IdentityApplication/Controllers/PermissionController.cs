@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AutoMapper;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.Helpers;
@@ -11,8 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize]
-    public class PermissionController : Controller
+    public class PermissionController : BaseController
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IAuthorizationService _authorizationService;
@@ -20,7 +20,8 @@ namespace IdentityApplication.Controllers
         private readonly IEntityBusiness _entitybusiness;
         private readonly IMapper _mapper;
         private readonly ILogger<PermissionController> _logger;
-        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper, IEntityBusiness entitybusiness, ILogger<PermissionController> logger)
+        private readonly INotyfService _notyf;
+        public PermissionController(RoleManager<IdentityRole> roleManager, IAuthorizationService authorizationService, IPermissionBusiness business, IMapper mapper, IEntityBusiness entitybusiness, ILogger<PermissionController> logger, INotyfService notyf)
         {
             _roleManager = roleManager;
             _authorizationService = authorizationService;
@@ -28,6 +29,7 @@ namespace IdentityApplication.Controllers
             _mapper = mapper;
             _entitybusiness = entitybusiness;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.PermissionPermission.View}")]
@@ -69,7 +71,8 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _notyf.Error("Operation Failed. Please contact administrator");
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
 
             return View(response);
@@ -97,13 +100,12 @@ namespace IdentityApplication.Controllers
                         await _roleManager.AddPermissionClaim(role, claim.Value);
                     }
                 }
-
-                TempData["SuccessMessage"] = "Permission updated successfully.";
+                _notyf.Success("Permission updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Employee creation failed.";
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _notyf.Error("Operation Failed. Please contact administrator");
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
             return Ok();
         }
@@ -117,7 +119,8 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _notyf.Error("Operation Failed. Please contact administrator");
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
             return Unauthorized();
         }
@@ -162,7 +165,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
             return Json(new
             {
@@ -202,12 +205,12 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-                TempData["SuccessMessage"] = "Permission created successfully.";
+                _notyf.Success("Permission created successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record create failed.";
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _notyf.Error("Error Occured.");
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
             return RedirectToAction("Index");
         }
@@ -219,12 +222,12 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Update(request);
-                TempData["SuccessMessage"] = "Record updated successfully.";
+                _notyf.Success("Permission updated successfully.");
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Record update failed.";
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
             return RedirectToAction("Index");
         }
@@ -236,12 +239,12 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(Id);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Permission deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _notyf.Error("Error Occured.");
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
 
             return RedirectToAction("Index");
@@ -254,12 +257,12 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(Id);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Entity deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
-                _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
+                _notyf.Error("Error Occured.");
+                _logger.LogError(ex, "{Controller} All function error", typeof(PermissionController));
             }
             return RedirectToAction("Index");
         }

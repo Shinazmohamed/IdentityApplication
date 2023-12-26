@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@ namespace IdentityApplication.Controllers
     {
         private readonly IDepartmentBusiness _business;
         private readonly ILogger<DepartmentController> _logger;
-        public DepartmentController(IDepartmentBusiness business, ILogger<DepartmentController> logger)
+        private readonly INotyfService _notyf;
+        public DepartmentController(IDepartmentBusiness business, ILogger<DepartmentController> logger, INotyfService notyf)
         {
             _business = business;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.DepartmentPermission.Create}")]
@@ -34,6 +37,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
             return Json(new
@@ -52,11 +56,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-                TempData["SuccessMessage"] = "Department created successfully.";
+                _notyf.Success("Department created successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Department created failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
             return RedirectToAction("Index");
@@ -69,11 +73,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Update(request);
-                TempData["SuccessMessage"] = "Department updated successfully.";
+                _notyf.Success("Department updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Department update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
             return RedirectToAction("Index");
@@ -86,11 +90,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(mappingId);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Record deleted successfully");
             }
             catch (Exception ex)
-            { 
-                TempData["ErrorMessage"] = "Record delete failed.";
+            {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(DepartmentController));
             }
             return RedirectToAction("Index");

@@ -4,20 +4,6 @@
 <div class="container">
     <h1>Roles</h1>
     <br />
-    <style>
-        .hidden-column {
-            display: none;
-        }
-    </style>
-
-    <div class="alert alert-success mt-3" id="successMessage">
-        @TempData["SuccessMessage"]
-    </div>
-
-    <div class="alert alert-danger mt-3" id="errorMessage">
-        @TempData["ErrorMessage"]
-    </div>
-
     @if (Model.Create)
     {
         <form method="post" asp-action="addrole" asp-controller="roles" id="roleForm">
@@ -195,14 +181,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-
-            $("#successMessage").addClass("hidden-column");
-            $("#errorMessage").addClass("hidden-column");
-
             var table = $('#permissionTable').DataTable();
             var manageMenuTable = $('#manageMenuTable').DataTable();
 
@@ -351,23 +329,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify(json),
                     success: function (response) {
-                        $('#errorMessage').hide();
-                        $('#successMessage').html('Permission updated successfully.').show();
                         $('#permissionmodel').modal('hide');
-
-                        setTimeout(function () {
-                            $("#successMessage").fadeOut("slow");
-                            $("#errorMessage").fadeOut("slow");
-                        }, 3000);
-                    },
-                    error: function (error) {
-                        $('#successMessage').hide();
-                        $('#errorMessage').html('Permission update failed.').show();
-                        $('#permissionmodel').modal('hide');
-
-                        setTimeout(function () {
-                            $("#errorMessage").fadeOut("slow");
-                        }, 3000);
                     }
                 });
             });
@@ -386,23 +348,7 @@
                     contentType: 'application/json',
                     data: JSON.stringify(json),
                     success: function (response) {                        
-                        $('#errorMessage').hide();
-                        $('#successMessage').html('Menu updated successfully.').show();
                         $('#manageMenuModel').modal('hide');
-
-                        setTimeout(function () {
-                            $("#successMessage").fadeOut("slow");
-                            $("#errorMessage").fadeOut("slow");
-                        }, 3000);
-                    },
-                    error: function (error) {
-                        $('#successMessage').hide();
-                        $('#errorMessage').html('Operation failed.').show();
-                        $('#manageMenuModel').modal('hide');
-
-                        setTimeout(function () {
-                            $("#errorMessage").fadeOut("slow");
-                        }, 3000);
                     }
                 });
 

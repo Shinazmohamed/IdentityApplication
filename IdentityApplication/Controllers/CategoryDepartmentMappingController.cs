@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +14,14 @@ namespace IdentityApplication.Controllers
         private readonly ICategoryDepartmentMappingBusiness _business;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CategoryDepartmentMappingController> _logger;
+        private readonly INotyfService _notyf;
 
-        public CategoryDepartmentMappingController(ICategoryDepartmentMappingBusiness business, IUnitOfWork unitOfWork, ILogger<CategoryDepartmentMappingController> logger)
+        public CategoryDepartmentMappingController(ICategoryDepartmentMappingBusiness business, IUnitOfWork unitOfWork, ILogger<CategoryDepartmentMappingController> logger, INotyfService notyf)
         {
             _business = business;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _notyf = notyf;
         }
 
         public IActionResult Index()
@@ -41,6 +44,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
             return View(response);
@@ -57,6 +61,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
             return Json(new
@@ -74,11 +79,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.CreateMapping(request);
-                TempData["SuccessMessage"] = "Category Mapped Successfully.";
+                _notyf.Success("Category Mapped Successfully");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Category Mapping Failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
 
@@ -91,11 +96,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.UpdateMapping(request);
-                TempData["SuccessMessage"] = "Category mapping updated successfully.";
+                _notyf.Success("Category mapping updated successfully");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Category mapping update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
 
@@ -108,11 +113,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 _business.DeleteMapping(mappingId);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Category mapping deleted successfully");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryDepartmentMappingController));
             }
             return RedirectToAction("Index");

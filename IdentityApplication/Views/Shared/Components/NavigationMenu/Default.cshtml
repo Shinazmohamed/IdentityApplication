@@ -8,10 +8,10 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="fixed-top flex-shrink-0 p-3" style="width: 280px; z-index: 1000;">
+    <div class="fixed-top flex-shrink-0 p-3">
 
         <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-            <span class="fs-5 fw-semibold">Nolimit Tag Employee</span>
+            <span class="fs-5 fw-semibold">Nolimit Tag Employees</span>
         </a>
         <ul class="list-unstyled ps-0">
             @{
@@ -20,13 +20,15 @@
                 {
                     <li class="mb-1">
                         <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#@(item.DisplayName.Replace(" ", "_").ToLower())-collapse" aria-expanded="false">
-                            @item.DisplayName
+                            @item.DisplayName <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="collapse" id="@(item.DisplayName.Replace(" ", "_").ToLower())-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 @foreach (var subItem in item.SubMenu)
                                 {
-                                    <li><a href="@Url.Action(subItem.Method, subItem.Controller )" class="link-dark rounded">@subItem.DisplayName</a></li>
+                                    <li>
+                                        <a href="@Url.Action(subItem.Method, subItem.Controller )" class="link-dark rounded">@subItem.DisplayName</a>
+                                    </li>
                                 }
                             </ul>
                         </div>

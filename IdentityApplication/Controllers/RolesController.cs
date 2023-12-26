@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -6,17 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize]
-    public class RolesController : Controller
+    public class RolesController : BaseController
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IRoleBusiness _business;
         private readonly ILogger<RolesController> _logger;
-        public RolesController(IAuthorizationService authorizationService, IRoleBusiness business, ILogger<RolesController> logger)
+        private readonly INotyfService _notyf;
+        public RolesController(IAuthorizationService authorizationService, IRoleBusiness business, ILogger<RolesController> logger, INotyfService notyf)
         {
             _authorizationService = authorizationService;
             _business = business;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.RolePermission.View}")]
@@ -59,17 +61,17 @@ namespace IdentityApplication.Controllers
                 if (roleName != null)
                 {
                     await _business.Create(roleName);
-                    TempData["SuccessMessage"] = "Record created successfully.";
+                    _notyf.Success("New role created successfully.");
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Record creation failed.";
+                    _notyf.Error("Please validate the data.");
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Controller} All function error", typeof(RolesController));
-                TempData["ErrorMessage"] = "Record creation failed.";
+                _notyf.Error("Error Occured!.");
             }
             return RedirectToAction("Index");
         }
@@ -81,11 +83,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(Id);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Role deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Error Occured!.");
                 _logger.LogError(ex, "{Controller} All function error", typeof(RolesController));
             }
             return RedirectToAction("Index");
@@ -100,15 +102,16 @@ namespace IdentityApplication.Controllers
                 if (role != null)
                 {
                     await _business.Update(role);
-                    TempData["SuccessMessage"] = "Record updated successfully.";
+                    _notyf.Success("Role updated successfully.");
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Record update failed.";
+                    _notyf.Error("Please validate the data.");
                 }
             }
             catch (Exception ex)
             {
+                _notyf.Error("Error Occured!.");
                 _logger.LogError(ex, "{Controller} All function error", typeof(RolesController));
             }
 

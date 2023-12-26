@@ -3,18 +3,6 @@
 <div class="container">
     <h1>Sub Category</h1>
     <br />
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
 
     <form method="post" asp-controller="SubCategory" asp-action="Create" id="subcategoryform">
         <div class="row">
@@ -79,11 +67,6 @@
     <script type="text/javascript">
         var table;
         $(document).ready(function () {
-
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
 
             $('#update').hide();
 

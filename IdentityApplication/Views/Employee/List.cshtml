@@ -46,19 +46,6 @@
 <div class="container">
     <h4>Employee Management</h4>
     <br />
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
 
     <button class="collapsible" onclick="toggleFilters()">
         <i class="fas fa-chevron-down"></i>
@@ -212,11 +199,6 @@
                 sortField: 'text'
             });
 
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-
             var table = $('#employeeTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -254,9 +236,9 @@
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            var actionHtml = '<div class="btn-group btn-group-sm">' + // Add 'btn-group-sm' for smaller button group
+                            var actionHtml = '<div class="btn-group btn-group-sm">' + 
                                 '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                                '<div class="dropdown-menu dropdown-menu-sm shadow animated--grow-in">'; // Add 'dropdown-menu-sm' for smaller dropdown menu
+                                '<div class="dropdown-menu dropdown-menu-sm shadow animated--grow-in">';
                             if (hasEditPermission) {
                                 actionHtml +=
                                     '<a class="dropdown-item">' +

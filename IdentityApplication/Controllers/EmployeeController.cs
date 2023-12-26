@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AutoMapper;
 using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
@@ -23,8 +24,9 @@ namespace IdentityApplication.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizationService _authorizationService;
         private readonly ILogger<EmployeeController> _logger;
+        private readonly INotyfService _notyf;
 
-        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService, ILogger<EmployeeController> logger)
+        public EmployeeController(IEmployeeBusiness business, IMapper mapper, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IAuthorizationService authorizationService, ILogger<EmployeeController> logger, INotyfService notyf)
         {
             _business = business;
             _mapper = mapper;
@@ -33,6 +35,7 @@ namespace IdentityApplication.Controllers
             _httpContextAccessor = httpContextAccessor;
             _authorizationService = authorizationService;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [HttpGet]
@@ -82,6 +85,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
 
@@ -102,12 +106,13 @@ namespace IdentityApplication.Controllers
                 }
 
                 _business.Create(model);
-                TempData["SuccessMessage"] = "Employee created successfully.";
+                _notyf.Success("Record created successfully.");
+
                 return RedirectToAction("Create");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Employee creation failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
             return View("Create", model);
@@ -161,6 +166,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
 
@@ -180,6 +186,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
             return Json(new
@@ -216,6 +223,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
             return Json(response);
@@ -229,11 +237,11 @@ namespace IdentityApplication.Controllers
             {
                 await _business.Update(request, isAdminOrSuperDev());
 
-                TempData["SuccessMessage"] = "Record updated successfully.";
+                _notyf.Success("Record updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
             return RedirectToAction("List");
@@ -246,11 +254,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(Id);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Record deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
             }
             return RedirectToAction("List");

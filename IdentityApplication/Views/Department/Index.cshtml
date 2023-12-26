@@ -20,18 +20,6 @@
 <div class="container">
     <h4>Manage Department</h4>
     <br />
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
 
     <form method="post" asp-controller="Department" asp-action="Create" id="departmentform">
         <div class="row">
@@ -99,11 +87,6 @@
         $(document).ready(function () {
 
             $('#update').hide();
-
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
 
             table = $('#departmentTable').DataTable({
                 processing: true,

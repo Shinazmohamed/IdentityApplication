@@ -9,6 +9,8 @@ using Serilog;
 using IdentityApplication.Core.PermissionHelper;
 using Microsoft.AspNetCore.Authorization;
 using IdentityApplication.Middlewares;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,8 @@ AddScoped();
 //Add support to logging with SERILOG
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 3; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 
 var app = builder.Build();
 
@@ -66,6 +70,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseMiddleware<RequireLogoutMiddleware>();
+
+app.UseNotyf();
 
 app.MapControllerRoute(
     name: "default",

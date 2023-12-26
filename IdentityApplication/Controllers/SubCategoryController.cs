@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +13,13 @@ namespace IdentityApplication.Controllers
     {
         private readonly ISubCategoryBusiness _business;
         private readonly ILogger<SubCategoryController> _logger;
+        private readonly INotyfService _notyf;
 
-        public SubCategoryController(ISubCategoryBusiness business, ILogger<SubCategoryController> logger)
+        public SubCategoryController(ISubCategoryBusiness business, ILogger<SubCategoryController> logger, INotyfService notyf)
         {
             _business = business;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.SubCategoryPermission.View}")]
@@ -36,6 +39,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
             return Json(new
@@ -54,11 +58,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-                TempData["SuccessMessage"] = "Sub category created successfully.";
+                _notyf.Success("Record created successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Sub category created failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
@@ -72,11 +76,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Update(request);
-                TempData["SuccessMessage"] = "Sub category updated successfully.";
+                _notyf.Success("Record updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Sub category update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
@@ -90,11 +94,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(mappingId);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Record deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 
@@ -120,7 +124,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "No Records found.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(SubCategoryController));
             }
 

@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Business.Contracts;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace IdentityApplication.Areas.Identity.Pages.Account
 {
@@ -31,6 +32,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserBusiness _business;
+        private readonly INotyfService _notyf;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -39,7 +41,8 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             IUnitOfWork unitOfWork,
-            IUserBusiness business)
+            IUserBusiness business,
+            INotyfService notyf)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -49,6 +52,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _unitOfWork = unitOfWork;
             _business = business;
+            _notyf = notyf;
         }
 
         /// <summary>
@@ -158,7 +162,7 @@ namespace IdentityApplication.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "User created successfully.";
+                        _notyf.Success("User created successfully.");
                         await OnGetAsync();
                         return Page();
                     }

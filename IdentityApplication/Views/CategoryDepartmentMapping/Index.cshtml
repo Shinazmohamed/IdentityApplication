@@ -3,19 +3,6 @@
 <div class="container">
     <h1>Category Mapping</h1>
     <br />
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     <form method="post" asp-controller="CategoryDepartmentMapping" asp-action="Create" id="categorydepartmentform">
         <div class="row">
             <div class="col-md-6">
@@ -88,12 +75,6 @@
             $('select').selectize({
                 sortField: 'text'
             });
-
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-
             $('#update').hide();
 
             var table = $('#categorydepartmentTable').DataTable({

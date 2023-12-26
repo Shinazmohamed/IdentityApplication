@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -10,11 +11,13 @@ namespace IdentityApplication.Controllers
     {
         private readonly IEntityBusiness _business;
         private readonly ILogger<EntityController> _logger;
+        private readonly INotyfService _notyf;
 
-        public EntityController(IEntityBusiness business, ILogger<EntityController> logger)
+        public EntityController(IEntityBusiness business, ILogger<EntityController> logger, INotyfService notyf)
         {
             _business = business;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.EntityPermission.View}")]
@@ -30,11 +33,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-                TempData["SuccessMessage"] = "Entity created successfully.";
+                _notyf.Success("Record created successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Entity creation failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EntityController));
             }
             return RedirectToAction("Index", "Permission");
@@ -47,11 +50,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Edit(request);
-                TempData["SuccessMessage"] = "Entity update successfully.";
+                _notyf.Success("Record updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Entity update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EntityController));
             }
             return RedirectToAction("Index", "Permission");
@@ -63,11 +66,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(deleteEntityId);
-                TempData["SuccessMessage"] = "Entity deleted successfully.";
+                _notyf.Success("Record deleted successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Entity delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EntityController));
             }
             return RedirectToAction("Index", "Permission");

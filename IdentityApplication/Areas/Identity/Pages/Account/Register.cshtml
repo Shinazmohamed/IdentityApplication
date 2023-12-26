@@ -1,19 +1,6 @@
 ﻿@page
 @model RegisterModel
 <div class="container">
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
     <div class="row">
         <div class="col-md-4">
             <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -42,16 +29,3 @@
         </div>
     </div>
 </div>
-@section Scripts {
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
-    <script type="text/javascript">
-        $(document).ready(function () {
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 2000);
-        });
-    </script>
-}

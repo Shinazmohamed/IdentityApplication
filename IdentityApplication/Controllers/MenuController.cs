@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@ namespace IdentityApplication.Controllers
     {
         private readonly IMenuBusiness _business;
         private readonly ILogger<MenuController> _logger;
-        public MenuController(IMenuBusiness business, ILogger<MenuController> logger)
+        private readonly INotyfService _notyf;
+        public MenuController(IMenuBusiness business, ILogger<MenuController> logger, INotyfService notyf)
         {
             _business = business;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [HttpPost]
@@ -28,6 +31,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
             return Json(new
@@ -46,11 +50,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 _business.Update(request);
-                TempData["SuccessMessage"] = "Menu updated successfully.";
+                _notyf.Success("Record updated successfully");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Menu creation failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
 
@@ -64,11 +68,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(Id);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Record deleted successfully");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(MenuController));
             }
 

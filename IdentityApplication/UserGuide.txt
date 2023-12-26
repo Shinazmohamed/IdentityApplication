@@ -38,3 +38,11 @@ Role - User
 
 https://www.youtube.com/watch?v=YFADgMqgis4&list=PLzHIrc5EQ2stnGlRsAhR8AS7kZCPevPLA&index=10
 https://www.youtube.com/watch?v=GbNhnksUS0k
+
+
+
+_notyf.Error("Some Error Message");
+_notyf.Warning("Some Error Message");
+_notyf.Information("Information Notification - closes in 4 seconds.", 4);
+_notyf.Success("Success Notification");
+_notyf.Success("Success Notification that closes in 10 Seconds.",3);

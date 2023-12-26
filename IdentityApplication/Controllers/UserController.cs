@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Areas.Identity.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.PermissionHelper;
@@ -20,8 +21,9 @@ namespace IdentityApplication.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly IUserBusiness _business;
         private readonly IConfiguration _configuration;
+        private readonly INotyfService _notyf;
         private readonly string _address;
-        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, ILogger<UserController> logger, IUserBusiness business, IConfiguration configuration)
+        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, ILogger<UserController> logger, IUserBusiness business, IConfiguration configuration, INotyfService notyf)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
@@ -29,6 +31,7 @@ namespace IdentityApplication.Controllers
             _business = business;
             _configuration = configuration;
             _address = _configuration.GetSection("AppSettings")["Address"];
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.View}")]
@@ -74,7 +77,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Error Occured! Please contact admin";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
@@ -88,11 +91,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.UpdateUser(request);
-                TempData["SuccessMessage"] = "User is updated successfull.";
+                _notyf.Success("Record updated successfully.");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "User is updated unsuccessfull";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
@@ -104,21 +107,29 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.UserPermission.ResetPassword}")]
         public async Task<IActionResult> ResetPassword(EditUserViewModel request)
         {
-            var defaultPassword = _configuration.GetSection("AppSettings")["DefaultPassword"];
-            if (string.IsNullOrEmpty(defaultPassword))
+            try
             {
-                TempData["ErrorMessage"] = "Operation failed. Please set the default password in app settings.";
-                return RedirectToAction("Edit", new { userId = request.User.Id });
-            }
+                var defaultPassword = _configuration.GetSection("AppSettings")["DefaultPassword"];
+                if (string.IsNullOrEmpty(defaultPassword))
+                {
+                    _notyf.Error("Operation failed. Please set the default password in app settings.");
+                    return RedirectToAction("Edit", new { userId = request.User.Id });
+                }
 
-            var result = await _business.ResetPassword(request, defaultPassword);
-            if (!result)
-            {
-                TempData["ErrorMessage"] = "Password reset is unsuccessfull";
+                var result = await _business.ResetPassword(request, defaultPassword);
+                if (!result)
+                {
+                    _notyf.Error("Password reset is unsuccessfull");
+                }
+                else
+                {
+                    _notyf.Success($"Operation Successful! Default Password set to {defaultPassword}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                TempData["SuccessMessage"] = $"Operation Successful! Default Password set to {defaultPassword}.";
+                _notyf.Error("Operation Failed. Please contact administrator");
+                _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
             return RedirectToAction("Edit", new { userId = request.User.Id });
@@ -138,8 +149,17 @@ namespace IdentityApplication.Controllers
 
         public async Task<IActionResult> Logout(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
+            try
+            {
+                await _signInManager.SignOutAsync();
+                _logger.LogInformation("User logged out.");
+            }
+            catch (Exception ex)
+            {
+                _notyf.Error("Operation Failed. Please contact administrator");
+                _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
+            }
+
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);

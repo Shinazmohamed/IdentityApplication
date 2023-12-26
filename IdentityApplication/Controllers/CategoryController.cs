@@ -1,4 +1,5 @@
-﻿using IdentityApplication.Business.Contracts;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +13,12 @@ namespace IdentityApplication.Controllers
     {
         private readonly ICategoryBusiness _business;
         private readonly ILogger<CategoryController> _logger;
-        public CategoryController(ICategoryBusiness business, ILogger<CategoryController> logger)
+        private readonly INotyfService _notyf;
+        public CategoryController(ICategoryBusiness business, ILogger<CategoryController> logger, INotyfService notyf)
         {
             _business = business;
             _logger = logger;
+            _notyf = notyf;
         }
 
         [Authorize(policy: $"{PermissionsModel.CategoryPermission.Create}")]
@@ -46,7 +49,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "No Records found.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
             return Json(response);
@@ -63,6 +66,7 @@ namespace IdentityApplication.Controllers
             }
             catch (Exception ex)
             {
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
             return Json(new
@@ -81,11 +85,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Create(request);
-                TempData["SuccessMessage"] = "Category created successfully.";
+                _notyf.Success("Category created successfull");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Category created failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
 
@@ -99,11 +103,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Update(request);
-                TempData["SuccessMessage"] = "Category updated successfully.";
+                _notyf.Success("Category updated successfull");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Category update failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
 
@@ -117,11 +121,11 @@ namespace IdentityApplication.Controllers
             try
             {
                 await _business.Delete(mappingId);
-                TempData["SuccessMessage"] = "Record deleted successfully.";
+                _notyf.Success("Category deleted successfully");
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Record delete failed.";
+                _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(CategoryController));
             }
 

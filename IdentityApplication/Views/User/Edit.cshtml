@@ -4,20 +4,6 @@
 <div class="container">
 
     <h2>Update User</h2>
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success mt-3" id="successMessage">
-            @TempData["SuccessMessage"]
-        </div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger mt-3" id="errorMessage">
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     <div class="col-md-7 col-lg-8">
         @using (Html.BeginForm("OnPost", "User", FormMethod.Post, new { id = "userForm" }))
         {
@@ -69,12 +55,5 @@
             form.action = '/User/ResetPassword';
             form.submit();
         }
-
-        $(document).ready(function () {
-            setTimeout(function () {
-                $("#successMessage").fadeOut("slow");
-                $("#errorMessage").fadeOut("slow");
-            }, 3000);
-        });
     </script>
 }

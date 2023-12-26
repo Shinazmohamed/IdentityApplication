@@ -1,16 +1,16 @@
-﻿using IdentityApplication.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using IdentityApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace IdentityApplication.Controllers
 {
-    [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        public HomeController()
+        private readonly INotyfService _notyf;
+        public HomeController(INotyfService notyf)
         {
-
+            _notyf = notyf;
         }
 
         public IActionResult Index()
