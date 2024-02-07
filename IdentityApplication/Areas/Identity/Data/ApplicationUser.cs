@@ -5,7 +5,7 @@ namespace IdentityApplication.Areas.Identity.Data;
 
 public class ApplicationUser : IdentityUser
 {
-    public Guid LocationId { get; set; }
+    public Guid? LocationId { get; set; }
     public Location Location { get; set; }
 }
 
