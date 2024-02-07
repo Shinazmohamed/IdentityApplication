@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using NuGet.Configuration;
 
 #nullable disable
 

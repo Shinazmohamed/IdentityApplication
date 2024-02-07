@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240207133132_removeschema")]
-    partial class removeschema
+    [Migration("20240207134053_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
