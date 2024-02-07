@@ -36,7 +36,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         base.OnModelCreating(builder);
 
         #region Table Definitions
-        builder.HasDefaultSchema("Identity");
         builder.Entity<ApplicationUser>(entity =>
         {
             entity.ToTable(name: "User");
