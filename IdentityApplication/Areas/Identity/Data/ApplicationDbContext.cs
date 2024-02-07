@@ -3,6 +3,7 @@ using IdentityApplication.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using System.Security.Claims;
 
 namespace IdentityApplication.Areas.Identity.Data;
@@ -36,10 +37,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         base.OnModelCreating(builder);
 
         #region Table Definitions
-        builder.Entity<ApplicationUser>(entity =>
-        {
-            entity.ToTable(name: "User");
-        });
+        builder.Entity<ApplicationUser>()
+            .ToTable(name: "User")
+            .HasOne(u => u.Location)
+            .WithMany()
+            .HasForeignKey(u => u.LocationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Entity<IdentityRole>(entity =>
         {
             entity.ToTable(name: "Role");
