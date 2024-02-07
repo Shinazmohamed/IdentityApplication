@@ -60,53 +60,53 @@ namespace IdentityApplication.Migrations
         private void SeedLocations(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Location] VALUES
+                INSERT INTO [dbo].[Location] VALUES
                 ('{LocationId}', 'HQ');");
         }
         private void SeedRolesSQL(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql($@"INSERT INTO [identity].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
+            migrationBuilder.Sql($@"INSERT INTO [dbo].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
                 VALUES ('{AdminRoleId}', 'Administrator', 'ADMINISTRATOR', null);");
 
-            migrationBuilder.Sql($@"INSERT INTO [identity].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
+            migrationBuilder.Sql($@"INSERT INTO [dbo].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
                 VALUES ('{UserRoleId}', 'User', 'USER', null);");
 
-            migrationBuilder.Sql($@"INSERT INTO [identity].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
+            migrationBuilder.Sql($@"INSERT INTO [dbo].[Role] ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
                 VALUES ('{SuperDevRoleId}', 'SuperDeveloper', 'SUPERDEVELOPER', null);");
         }
         private void SeedUser(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
+                INSERT INTO [dbo].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
                 VALUES ('{AdminId}', 'admin@test.com', '{LocationId}', 'ADMIN@TEST.COM', 'admin@test.com', 'ADMIN@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '9337b27a-86df-425c-a68b-10e97e15d4ae', NULL, 0, 0, NULL, 1, 0)");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
+                INSERT INTO [dbo].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
                 VALUES ('{UserId}', 'user@test.com', '{LocationId}', 'USER@TEST.COM', 'user@test.com', 'USER@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '751920ce-2459-4f57-95de-2bf30c1205f5', NULL, 0, 0, NULL, 1, 0)");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
+                INSERT INTO [dbo].[User] ([Id], [UserName], [LocationId], [NormalizedUserName], [Email], [NormalizedEmail], [EmailConfirmed], [PasswordHash], [SecurityStamp], [ConcurrencyStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEnd], [LockoutEnabled], [AccessFailedCount]) 
                 VALUES ('{SuperDevId}', 'superdev@test.com', '{LocationId}', 'SUPERDEV@TEST.COM', 'superdev@test.com', 'SUPERDEV@TEST.COM', 0, 'AQAAAAIAAYagAAAAEAIoVtgbc8xCgaF/0Uor35PW8MmYnEIjPJLPBKQlW/1Q0YZGQnsGru3FZrws9lv9Bg==', 'YUPAFWNGZI2UC5FOITC7PX5J7XZTAZAA', '751920ce-2459-4f57-95de-2bf30c1205f5', NULL, 0, 0, NULL, 0, 0)");
 
         }
         private void SeedUserRoles(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[UserRoles] ([UserId], [RoleId])
+                INSERT INTO [dbo].[UserRoles] ([UserId], [RoleId])
                 VALUES ('{UserId}', '{UserRoleId}');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[UserRoles] ([UserId], [RoleId])
+                INSERT INTO [dbo].[UserRoles] ([UserId], [RoleId])
                 VALUES ('{AdminId}', '{AdminRoleId}');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[UserRoles] ([UserId], [RoleId])
+                INSERT INTO [dbo].[UserRoles] ([UserId], [RoleId])
                 VALUES ('{SuperDevId}', '{SuperDevRoleId}');");
         }
         private void SeedMenu(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Menu] (MenuId, DisplayName, sort) VALUES 
+                INSERT INTO [dbo].[Menu] (MenuId, DisplayName, sort) VALUES 
                 ('{employeeMenu}', 'Employee', 1),  
                 ('{userMenu}', 'User', 2),
                 ('{departmentMenu}', 'Department', 3),
@@ -121,7 +121,7 @@ namespace IdentityApplication.Migrations
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[SubMenu] (SubMenuId, DisplayName, Controller, Method, MenuId) VALUES 
+                INSERT INTO [dbo].[SubMenu] (SubMenuId, DisplayName, Controller, Method, MenuId) VALUES 
                     ('{createEmployeeSubMenu}', 'Create Employee', 'Employee', 'Create', '{employeeMenu}'),
                     ('{listEmployeeSubMenu}', 'List Employee', 'Employee', 'List', '{employeeMenu}'),
                     (NEWID(), 'Register', 'User', 'Register', '{userMenu}'),
@@ -141,14 +141,14 @@ namespace IdentityApplication.Migrations
         private void SeedSubMenuRole(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[SubMenuRoles] (SubMenuId, Id) VALUES 
+                INSERT INTO [dbo].[SubMenuRoles] (SubMenuId, Id) VALUES 
                     ('{createEmployeeSubMenu}','{UserRoleId}'),
                     ('{listEmployeeSubMenu}','{UserRoleId}');");
         }
         private void SeedEntities(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Entity] ([EntityId], [Name]) VALUES 
+                INSERT INTO [dbo].[Entity] ([EntityId], [Name]) VALUES 
                 ('{employeePermission}', 'Employee'),
                 ('{entityPermission}', 'Entity'),
                 ('{permissionPermission}', 'Permission'),
@@ -164,56 +164,56 @@ namespace IdentityApplication.Migrations
         private void SeedEntityPermissions(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{employeePermission}', NEWID(), 'Permissions.Employee.Create'),
                 ('{employeePermission}', NEWID(), 'Permissions.Employee.View'),
                 ('{employeePermission}', NEWID(), 'Permissions.Employee.Edit'),
                 ('{employeePermission}', NEWID(), 'Permissions.Employee.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{entityPermission}', NEWID(), 'Permissions.Entity.Create'),
                 ('{entityPermission}', NEWID(), 'Permissions.Entity.View'),
                 ('{entityPermission}', NEWID(), 'Permissions.Entity.Edit'),
                 ('{entityPermission}', NEWID(), 'Permissions.Entity.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{permissionPermission}', NEWID(), 'Permissions.Permission.Create'),
                 ('{permissionPermission}', NEWID(), 'Permissions.Permission.View'),
                 ('{permissionPermission}', NEWID(), 'Permissions.Permission.Edit'),
                 ('{permissionPermission}', NEWID(), 'Permissions.Permission.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{categoryPermission}', NEWID(), 'Permissions.Category.Create'),
                 ('{categoryPermission}', NEWID(), 'Permissions.Category.View'),
                 ('{categoryPermission}', NEWID(), 'Permissions.Category.Edit'),
                 ('{categoryPermission}', NEWID(), 'Permissions.Category.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{departmentPermission}', NEWID(), 'Permissions.Department.Create'),
                 ('{departmentPermission}', NEWID(), 'Permissions.Department.View'),
                 ('{departmentPermission}', NEWID(), 'Permissions.Department.Edit'),
                 ('{departmentPermission}', NEWID(), 'Permissions.Department.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{rolePermission}', NEWID(), 'Permissions.Role.Create'),
                 ('{rolePermission}', NEWID(), 'Permissions.Role.View'),
                 ('{rolePermission}', NEWID(), 'Permissions.Role.Edit'),
                 ('{rolePermission}', NEWID(), 'Permissions.Role.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.Create'),
                 ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.View'),
                 ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.Edit'),
                 ('{subcategoryPermission}', NEWID(), 'Permissions.SubCategory.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{userPermission}', NEWID(), 'Permissions.User.Create'),
                 ('{userPermission}', NEWID(), 'Permissions.User.View'),
                 ('{userPermission}', NEWID(), 'Permissions.User.Edit'),
@@ -223,18 +223,18 @@ namespace IdentityApplication.Migrations
                 ('{userPermission}', NEWID(), 'Permissions.User.Register');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{auditPermission}', NEWID(), 'Permissions.Audit.View');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.Create'),
                 ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.View'),
                 ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.Edit'),
                 ('{subMenuPermission}', NEWID(), 'Permissions.SubMenu.Delete');");
 
             migrationBuilder.Sql($@"
-                INSERT INTO [identity].[Permission] ([EntityId], [Id], [value]) VALUES 
+                INSERT INTO [dbo].[Permission] ([EntityId], [Id], [value]) VALUES 
                 ('{menuPermission}', NEWID(), 'Permissions.Menu.Create'),
                 ('{menuPermission}', NEWID(), 'Permissions.Menu.View'),
                 ('{menuPermission}', NEWID(), 'Permissions.Menu.Edit'),
