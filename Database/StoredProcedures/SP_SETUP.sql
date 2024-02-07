@@ -3,9 +3,11 @@ CREATE PROCEDURE INSERT_DISTINCT_RECORDS
 AS
 BEGIN
 	
-	DELETE FROM [Identity].Category
-	DELETE FROM [Identity].SubCategory
-	DELETE FROM [Identity].Department
+	
+	DELETE FROM [Identity].[Location]
+	DELETE FROM [Identity].[Category]
+	DELETE FROM [Identity].[SubCategory]
+	DELETE FROM [Identity].[Department]
 
 	CREATE TABLE #DistinctDepartments (DepartmentName NVARCHAR(255));
 	INSERT INTO #DistinctDepartments (DepartmentName)
