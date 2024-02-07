@@ -107,15 +107,17 @@ namespace IdentityApplication.Core.Repositories
                     {
                         existingEmployee.LocationName = entity.LocationName;
                         existingEmployee.DepartmentName = entity.DepartmentName;
-                        existingEmployee.CategoryName = entity.CategoryName;
-                        existingEmployee.SubCategoryName = entity.SubCategoryName;
+                        if (!string.IsNullOrEmpty(entity.CategoryName))
+                            existingEmployee.CategoryName = entity.CategoryName;
+                        if (!string.IsNullOrEmpty(entity.SubCategoryName))
+                            existingEmployee.SubCategoryName = entity.SubCategoryName;
                         existingEmployee.E1 = entity.E1;
                         existingEmployee.E2 = entity.E2;
                         existingEmployee.C = entity.C;
                         existingEmployee.M1 = entity.M1;
                         existingEmployee.M2 = entity.M2;
 
-                        _context.SaveChanges();                        
+                        _context.SaveChanges();
                     }
 
                     transaction.Commit();

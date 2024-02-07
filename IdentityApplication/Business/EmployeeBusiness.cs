@@ -30,8 +30,8 @@ namespace IdentityApplication.Business
 
                 var _entity = _mapper.Map<Employee>(request);
                 if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = null;
-                else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = 2;
-                else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = 1;
+                else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = "2";
+                else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = "1";
 
                 _entity.LocationName = selectedLocation.LocationName;
                 _entity.DepartmentName = selectedDepartment.DepartmentName;
@@ -96,8 +96,10 @@ namespace IdentityApplication.Business
                 {
                     _entity.LocationName = _unitOfWork.Location.GetLocationById(Guid.Parse(request.SelectedLocation))?.LocationName;
                     _entity.DepartmentName = _unitOfWork.Department.GetDepartmentById(Guid.Parse(request.SelectedDepartment))?.DepartmentName;
-                    _entity.CategoryName = _unitOfWork.Category.GetCategoryById(Guid.Parse(request.SelectedCategory))?.CategoryName;
-                    _entity.SubCategoryName = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(request.SelectedSubCategory))?.SubCategoryName;
+                    if (!string.IsNullOrEmpty(request.SelectedCategory))
+                        _entity.CategoryName = _unitOfWork.Category.GetCategoryById(Guid.Parse(request.SelectedCategory))?.CategoryName;
+                    if (!string.IsNullOrEmpty(request.SelectedSubCategory))
+                        _entity.SubCategoryName = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(request.SelectedSubCategory))?.SubCategoryName;
                 }
                 else
                 {
@@ -108,9 +110,9 @@ namespace IdentityApplication.Business
                     _entity.SubCategoryName = current.SubCategoryName;
                 }
 
-                if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = 0;
-                else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = 2;
-                else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = 1;
+                if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = "0";
+                else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = "2";
+                else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = "1";
 
                 _unitOfWork.Employee.Update(_entity);
             }
