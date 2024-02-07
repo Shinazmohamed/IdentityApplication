@@ -4,32 +4,32 @@ AS
 BEGIN
 	
 	
-	DELETE FROM [Identity].[Location]
-	DELETE FROM [Identity].[Category]
-	DELETE FROM [Identity].[SubCategory]
-	DELETE FROM [Identity].[Department]
+	DELETE FROM [dbo].[Location]
+	DELETE FROM [dbo].[Category]
+	DELETE FROM [dbo].[SubCategory]
+	DELETE FROM [dbo].[Department]
 
 	CREATE TABLE #DistinctDepartments (DepartmentName NVARCHAR(255));
 	INSERT INTO #DistinctDepartments (DepartmentName)
     SELECT DISTINCT DepartmentName
-    FROM [Identity].SP_Table
+    FROM [dbo].SP_Table
     WHERE DepartmentName IS NOT NULL;
 
-    -- Insert into [Identity].Department table
-	INSERT INTO [Identity].[Department] (DepartmentId, DepartmentName)
+    -- Insert into [dbo].Department table
+	INSERT INTO [dbo].[Department] (DepartmentId, DepartmentName)
 	SELECT NEWID(), DepartmentName
 	FROM #DistinctDepartments
     
-    -- Insert into [Identity].Location table
+    -- Insert into [dbo].Location table
     CREATE TABLE #DistinctLocations (LocationName NVARCHAR(255));
     INSERT INTO #DistinctLocations (LocationName)
     SELECT DISTINCT LocationName
-    FROM [Identity].SP_Table
+    FROM [dbo].SP_Table
     WHERE LocationName IS NOT NULL;
 
 
-	-- Insert into [Identity].[Location] table
-	INSERT INTO [Identity].[Location] (LocationId, LocationName)
+	-- Insert into [dbo].[Location] table
+	INSERT INTO [dbo].[Location] (LocationId, LocationName)
 	SELECT NEWID(), LocationName
 	FROM #DistinctLocations
 
@@ -37,11 +37,11 @@ BEGIN
 	CREATE TABLE #DistinctCategories (CategoryName NVARCHAR(255));
     INSERT INTO #DistinctCategories (CategoryName)
     SELECT DISTINCT CategoryName
-    FROM [Identity].SP_Table S
+    FROM [dbo].SP_Table S
     WHERE S.CategoryName IS NOT NULL;
 
-	-- Insert into [Identity].[Category] table
-	INSERT INTO [Identity].[Category] (CategoryId, CategoryName)
+	-- Insert into [dbo].[Category] table
+	INSERT INTO [dbo].[Category] (CategoryId, CategoryName)
 	SELECT NEWID(), CategoryName
 	FROM #DistinctCategories
 
@@ -49,11 +49,11 @@ BEGIN
 	CREATE TABLE #DistinctSubCategories (SubCategoryName NVARCHAR(255));
     INSERT INTO #DistinctSubCategories (SubCategoryName)
     SELECT DISTINCT SubCategoryName
-    FROM [Identity].SP_Table
+    FROM [dbo].SP_Table
     WHERE SubCategoryName IS NOT NULL;
 
-	-- Insert into [Identity].[SubCategory] table
-	INSERT INTO [Identity].[SubCategory] (SubCategoryId, SubCategoryName)
+	-- Insert into [dbo].[SubCategory] table
+	INSERT INTO [dbo].[SubCategory] (SubCategoryId, SubCategoryName)
 	SELECT NEWID(), SubCategoryName
 	FROM #DistinctSubCategories
 
@@ -64,7 +64,7 @@ BEGIN
 	
 	-- Declare the cursor
 	DECLARE update_mapping_cursor CURSOR FOR
-	    SELECT CategoryName, SubCategoryName, DepartmentName FROM [Identity].SP_Table
+	    SELECT CategoryName, SubCategoryName, DepartmentName FROM [dbo].SP_Table
 	
 	-- Open the cursor
 	OPEN update_mapping_cursor;
@@ -77,20 +77,20 @@ BEGIN
 			-- UPDATE DEPARTMENT IN CATEGORIES TABLE
 			DECLARE @DepartmentId VARCHAR(100);
 			SELECT @DepartmentId = DepartmentId 
-			FROM [Identity].Department
+			FROM [dbo].Department
 			WHERE DepartmentName = @DepartmentName
 	
-			UPDATE [Identity].Category SET DepartmentId = @DepartmentId
+			UPDATE [dbo].Category SET DepartmentId = @DepartmentId
 			WHERE CategoryName = @CategoryName
 	
 	
 			-- UPDATE CATEGORY in SUB CATEGORY TABLE
 			DECLARE @CategoryId VARCHAR(100);
 			SELECT @CategoryId = CategoryId 
-			FROM [Identity].Category
+			FROM [dbo].Category
 			WHERE CategoryName = @CategoryName
 	
-			UPDATE [Identity].SubCategory SET CategoryId = @CategoryId
+			UPDATE [dbo].SubCategory SET CategoryId = @CategoryId
 			WHERE SubCategoryName = @SubCategoryName
 	
 	
