@@ -29,8 +29,8 @@
 
     .scrollable-container {
         padding: 0 10px;
-        overflow-x: auto; 
-        overflow-y: auto; 
+        overflow-x: auto;
+        overflow-y: auto;
         max-height: 500px;
     }
 
@@ -220,7 +220,10 @@
                         };
                         return JSON.stringify(customFilter);
                     },
-                    dataSrc: 'data'
+                    dataSrc: 'data',
+                    error: function (xhr, error, thrown) {
+                        alert("DataTables error: " + error + "\n" + thrown);
+                    }
                 },
                 columns: [
                     { data: 'id', visible: false },
@@ -236,7 +239,7 @@
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            var actionHtml = '<div class="btn-group btn-group-sm">' + 
+                            var actionHtml = '<div class="btn-group btn-group-sm">' +
                                 '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
                                 '<div class="dropdown-menu dropdown-menu-sm shadow animated--grow-in">';
                             if (hasEditPermission) {
