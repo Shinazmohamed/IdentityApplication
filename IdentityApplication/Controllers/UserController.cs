@@ -5,6 +5,7 @@ using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.PermissionHelper;
 using IdentityApplication.Core.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,7 +24,9 @@ namespace IdentityApplication.Controllers
         private readonly IConfiguration _configuration;
         private readonly INotyfService _notyf;
         private readonly string _address;
-        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, ILogger<UserController> logger, IUserBusiness business, IConfiguration configuration, INotyfService notyf)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(IUnitOfWork unitOfWork, SignInManager<ApplicationUser> signInManager, ILogger<UserController> logger, IUserBusiness business, IConfiguration configuration, INotyfService notyf,
+            IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _signInManager = signInManager;
@@ -32,6 +35,7 @@ namespace IdentityApplication.Controllers
             _configuration = configuration;
             _address = _configuration.GetSection("AppSettings")["Address"];
             _notyf = notyf;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.View}")]
@@ -138,13 +142,17 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.UserPermission.Profile}")]
         public IActionResult Profile()
         {
-            return Redirect(_address + RedirectionPaths.Profile);
+            string baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/";
+            string redirectUrl = baseUrl + RedirectionPaths.Profile;
+            return Redirect(redirectUrl);
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.Register}")]
         public IActionResult Register()
-        {        
-            return Redirect(_address + RedirectionPaths.UserRegisteration);
+        {
+            string baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/";
+            string redirectUrl = baseUrl + RedirectionPaths.UserRegisteration;
+            return Redirect(redirectUrl);
         }
 
         public async Task<IActionResult> Logout(string returnUrl = null)
@@ -166,7 +174,9 @@ namespace IdentityApplication.Controllers
             }
             else
             {
-                return Redirect(_address + RedirectionPaths.Logout);
+                string baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/";
+                string redirectUrl = baseUrl + RedirectionPaths.Logout;
+                return Redirect(redirectUrl);
             }
         }
 
