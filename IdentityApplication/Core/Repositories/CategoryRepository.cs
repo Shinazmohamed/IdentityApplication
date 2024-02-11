@@ -73,7 +73,10 @@ namespace IdentityApplication.Core.Repositories
         {
             try
             {
-                return _context.Category.Where(l => l.DepartmentId == Id).ToList();
+                return _context.Category
+                    .Where(c => c.DepartmentCategories
+                        .Any(cd => cd.CategoryId == c.CategoryId && cd.DepartmentId == Id))
+                    .ToList();
             }
             catch (Exception e)
             {

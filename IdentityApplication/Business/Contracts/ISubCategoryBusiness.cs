@@ -4,7 +4,7 @@ namespace IdentityApplication.Business.Contracts
 {
     public interface ISubCategoryBusiness
     {
-        Task Create(CreateSubCategoryRequest request);
+        void Create(CreateSubCategoryRequest request);
         Task Update(CreateSubCategoryRequest request);
         Task<PaginationResponse<ListSubCategoryModel>> GetAllWithFilters(PaginationFilter filter);
         Task Delete(string id);

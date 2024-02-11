@@ -2,13 +2,13 @@
 
 namespace IdentityApplication.Core.Entities
 {
-    public class CategorySubCategory
+    public class DepartmentCategory
     {
         [Key]
-        public Guid CategorySubCategoryId { get; set; }
+        public Guid DepartmentCategoryId { get; set; }
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
-        public Guid SubCategoryId { get; set; }
-        public SubCategory SubCategory { get; set; }
+        public Guid DepartmentId { get; set; }
+        public Department Department { get; set; }
     }
 }

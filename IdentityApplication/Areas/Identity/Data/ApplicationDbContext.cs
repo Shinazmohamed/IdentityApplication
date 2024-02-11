@@ -21,6 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Audit> AuditLogs { get; set; }
     public DbSet<Permission> Permission { get; set; }
     public DbSet<Entity> Entity { get; set; }
+    public DbSet<DepartmentCategory> DepartmentCategories { get; set; }
+    public DbSet<CategorySubCategory> CategorySubCategories { get; set; }
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -77,11 +79,33 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         #endregion
 
         #region Relationships
-        builder.Entity<Category>()
-       .HasMany(c => c.SubCategories)
-       .WithOne(sc => sc.Category)
-       .HasForeignKey(sc => sc.CategoryId)
-       .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<DepartmentCategory>()
+              .HasKey(bc => new { bc.DepartmentId, bc.CategoryId });
+
+        builder.Entity<DepartmentCategory>()
+            .HasOne(bc => bc.Department)
+            .WithMany(b => b.DepartmentCategories)
+            .HasForeignKey(bc => bc.DepartmentId);
+
+        builder.Entity<DepartmentCategory>()
+            .HasOne(bc => bc.Category)
+            .WithMany(c => c.DepartmentCategories)
+            .HasForeignKey(bc => bc.CategoryId);
+
+
+        builder.Entity<CategorySubCategory>()
+      .HasKey(bc => new { bc.CategoryId, bc.SubCategoryId });
+
+        builder.Entity<CategorySubCategory>()
+            .HasOne(bc => bc.Category)
+            .WithMany(b => b.CategorySubCategories)
+            .HasForeignKey(bc => bc.CategoryId);
+
+        builder.Entity<CategorySubCategory>()
+            .HasOne(bc => bc.SubCategory)
+            .WithMany(c => c.CategorySubCategories)
+            .HasForeignKey(bc => bc.SubCategoryId);
+
 
         builder.Entity<Menu>()
                 .HasMany(c => c.SubMenus)

@@ -6,6 +6,7 @@
 
     <form method="post" asp-controller="CategorySubCategoryMapping" asp-action="Create" id="subcategoryform">
         <div class="row">
+            <input type="hidden" asp-for="CategorySubCategoryId" id="CategorySubCategoryId" name="CategorySubCategoryId" />
             <div class="col-md-6">
                 <label for="categorySearch">Category:</label>
                 @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "All", new { id = "categorySearch" })
@@ -33,11 +34,12 @@
     <table id="subcategoryTable" class="table table-striped table-bordered">
         <thead>
             <tr>
+                <th>Category SubCategory Id</th>
                 <th>Category Id</th>
                 <th>Sub Category Id</th>
                 <th>Category</th>
                 <th>Sub Category</th>
-                <th>Handle</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -100,15 +102,16 @@
                     dataSrc: 'data'
                 },
                 columns: [
-                    { data: 'categoryId', visible: false },
-                    { data: 'subCategoryId', visible: false },
+                    { data: 'categorySubCategoryId', visible: false},
+                    { data: 'categoryId', visible: false},
+                    { data: 'subCategoryId', visible: false},
                     { data: 'selectedCategory' },
                     { data: 'selectedSubCategory' },
                     {
                         data: 'subCategoryId',
                         render: function (data, type, row) {
-                            return '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ' +
-                                '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>';
+                            return '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>';
+                            //'<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ' +
                         }
                     }
                 ]
@@ -127,6 +130,7 @@
                 $('#SelectedSubCategoryId').val(rowData.subCategoryId);
                 $('#categorySearch')[0].selectize.setValue(rowData.categoryId);
                 $('#subcategorySearch')[0].selectize.setValue(rowData.subCategoryId);
+                $('#CategorySubCategoryId').val(rowData.categorySubCategoryId);
 
                 var subcategorySelectize = $('#subcategorySearch')[0].selectize;
                 subcategorySelectize.disable();
@@ -135,7 +139,7 @@
             $('#subcategoryTable').on('click', '.btn-delete', function () {
                 var rowData = table.row($(this).parents('tr')).data();
 
-                $('#mappingId').val(rowData.subCategoryId);
+                $('#mappingId').val(rowData.categorySubCategoryId);
                 $('#deleteConfirmationModal').modal('show');
             });
 
@@ -150,14 +154,12 @@
                 subcategorySelectize.enable();
                 table.draw();
             });
-
-            function updateRecord() {
-                var form = document.getElementById('subcategoryform');
-                form.action = '/CategorySubCategoryMapping/Update';
-                form.submit();
-            }
         });
 
-
+        function updateRecord() {
+            var form = document.getElementById('subcategoryform');
+            form.action = '/CategorySubCategoryMapping/Update';
+            form.submit();
+        }
     </script>
 }

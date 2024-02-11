@@ -23,7 +23,7 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 
             CreateMap<CreateCategorySubCategoryRequest, SubCategory>()
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory))
+                //.ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory))
                 .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SelectedSubCategory));
 
             CreateMap<CreateSubCategoryRequest, SubCategory>()
@@ -72,14 +72,13 @@ namespace IdentityApplication.Mapping
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DepartmentId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.DepartmentName));
 
-            CreateMap<CreateCategoryDepartmentMappingViewModel, Category>()
-                .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.SelectedDepartment))
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory));
+            CreateMap<CreateCategoryDepartmentMappingViewModel, DepartmentCategory>()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory))
+                .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.SelectedDepartment));
 
-            CreateMap<CreateCategoryDepartmentMappingViewModel, Category>()
-                .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.SelectedDepartment))
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory));
-
+            CreateMap<CreateCategorySubCategoryRequest, CategorySubCategory>()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategory))
+                .ForMember(dest => dest.SubCategoryId, opt => opt.MapFrom(src => src.SelectedSubCategory));
 
             CreateMap<SubCategory, ListSubCategoryModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SubCategoryId))

@@ -53,11 +53,11 @@ namespace IdentityApplication.Controllers
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.SubCategoryPermission.Create}")]
-        public async Task<IActionResult> Create(CreateSubCategoryRequest request)
+        public IActionResult Create(CreateSubCategoryRequest request)
         {
             try
             {
-                await _business.Create(request);
+                _business.Create(request);
                 _notyf.Success("Record created successfully.");
             }
             catch (Exception ex)

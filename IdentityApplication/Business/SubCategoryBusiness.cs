@@ -20,7 +20,7 @@ namespace IdentityApplication.Business
             _logger = logger;
         }
 
-        public async Task Create(CreateSubCategoryRequest request)
+        public void Create(CreateSubCategoryRequest request)
         {
             try
             {

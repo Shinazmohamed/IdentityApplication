@@ -22,8 +22,8 @@ namespace IdentityApplication.Business
         {
             try
             {
-                var entity = _mapper.Map<SubCategory>(request);
-                _unitOfWork.CategorySubCategory.Update(entity);
+                var entity = _mapper.Map<CategorySubCategory>(request);
+                _unitOfWork.CategorySubCategory.Create(entity);
             }
             catch (Exception ex)
             {
@@ -35,8 +35,9 @@ namespace IdentityApplication.Business
         {
             try
             {
-                var entity = new SubCategory()
+                var entity = new CategorySubCategory()
                 {
+                    CategorySubCategoryId = Guid.Parse(request.CategorySubCategoryId),
                     SubCategoryId = Guid.Parse(request.SelectedSubCategoryId),
                     CategoryId = Guid.Parse(request.SelectedCategory)
                 };
@@ -52,12 +53,7 @@ namespace IdentityApplication.Business
         {
             try
             {
-                var entity = new SubCategory()
-                {
-                    SubCategoryId = Guid.Parse(subCategoryId),
-                    CategoryId = null
-                };
-                _unitOfWork.CategorySubCategory.Update(entity);
+                await _unitOfWork.CategorySubCategory.Delete(Guid.Parse(subCategoryId));
             }
             catch (Exception ex)
             {

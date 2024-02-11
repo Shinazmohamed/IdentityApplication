@@ -15,7 +15,8 @@ namespace IdentityApplication.Core.Repositories
             _context = context;
             _logger = logger;
         }
-        public void Update(SubCategory entity)
+
+        public void Create(CategorySubCategory entity)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -24,18 +25,18 @@ namespace IdentityApplication.Core.Repositories
                     if (entity == null)
                         throw new ArgumentNullException(nameof(entity));
 
-                    var existingMapping = _context.SubCategory
-                        .FirstOrDefault(e => e.SubCategoryId == entity.SubCategoryId);
+                    var existingMapping = _context.CategorySubCategories
+                        .FirstOrDefault(e => e.CategoryId == entity.CategoryId && e.SubCategoryId == entity.SubCategoryId);
 
-                    if (existingMapping == null)
+                    if (existingMapping != null)
                     {
                         throw new ArgumentNullException(nameof(entity));
                     }
 
-                    existingMapping.CategoryId = entity.CategoryId;
+                    entity.CategorySubCategoryId = Guid.NewGuid();
+                    _context.CategorySubCategories.Add(entity);
                     _context.SaveChanges();
 
-                    // If everything succeeds, commit the transaction
                     transaction.Commit();
                 }
                 catch (Exception e)
@@ -46,13 +47,47 @@ namespace IdentityApplication.Core.Repositories
                 }
             }
         }
+
+        public void Update(CategorySubCategory entity)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (entity == null)
+                        throw new ArgumentNullException(nameof(entity));
+
+                    var existingMapping = _context.CategorySubCategories
+                        .FirstOrDefault( e => e.CategorySubCategoryId == entity.CategorySubCategoryId);
+
+                    if (existingMapping == null)
+                    {
+                        throw new ArgumentNullException(nameof(entity));
+                    }
+                    existingMapping.CategoryId = entity.CategoryId;
+                    existingMapping.SubCategoryId = entity.SubCategoryId;
+
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                    throw;
+                }
+            }
+        }
+
         public async Task<PaginationResponse<ListCategorySubCategoryModel>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try
             {
-                var query = _context.SubCategory
+                var query = _context.CategorySubCategories
                     .Include(cm => cm.Category)
-                    .OrderBy(e => e.SubCategoryId)
+                    .Include(cm => cm.SubCategory)
+                    .OrderBy(e => e.CategoryId)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filter.category))
@@ -66,15 +101,19 @@ namespace IdentityApplication.Core.Repositories
                 }
 
                 var totalCount = await query.CountAsync();
-                var filteredEntities = await query.Where(e => e.CategoryId != null).Skip(filter.start).Take(filter.length).ToListAsync();
+
+                var filteredEntities = await query
+                    .Skip(filter.start)
+                    .Take(filter.length)
+                    .ToListAsync();
 
                 var resultViewModel = filteredEntities.Select(entity => new ListCategorySubCategoryModel
                 {
+                    CategorySubCategoryId = entity.CategorySubCategoryId,
                     CategoryId = entity.CategoryId,
                     SelectedCategory = entity.Category.CategoryName,
                     SubCategoryId = entity.SubCategoryId,
-                    SelectedSubCategory = entity.SubCategoryName
-                    // Add other properties as needed
+                    SelectedSubCategory = entity.SubCategory.SubCategoryName,
                 }).ToList();
 
                 return new PaginationResponse<ListCategorySubCategoryModel>(
@@ -86,7 +125,23 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(CategorySubCategoryRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(CategoryDepartmentMappingRepository));
+                throw;
+            }
+        }
+
+        public async Task Delete(Guid id)
+        {
+            try
+            {
+                var entity = await _context.CategorySubCategories.FirstOrDefaultAsync(e => e.CategorySubCategoryId == id);
+                _context.CategorySubCategories.Remove(entity);
+                _context.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Repo} All function error", typeof(CategoryDepartmentMappingRepository));
                 throw;
             }
         }

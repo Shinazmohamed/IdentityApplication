@@ -14,5 +14,6 @@ namespace IdentityApplication.Core.ViewModel
         public string SelectedCategory { get; set; }
         public List<SelectListItem> Categories { get; set; }
         public string SelectedCategoryId { get; set; }
+        public string DepartmentCategoryId { get; set; }
     }
 }

@@ -128,7 +128,10 @@ namespace IdentityApplication.Core.Repositories
 
             try
             {
-                response = _context.SubCategory.Where(l => l.CategoryId == Id).ToList();
+                return _context.SubCategory
+                    .Where(c => c.CategorySubCategories
+                        .Any(cd => cd.SubCategoryId == c.SubCategoryId && cd.CategoryId == Id))
+                    .ToList();
             }
             catch (Exception e)
             {

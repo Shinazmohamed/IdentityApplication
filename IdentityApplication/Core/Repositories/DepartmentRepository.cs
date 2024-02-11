@@ -61,7 +61,10 @@ namespace IdentityApplication.Core.Repositories
             var response = new Department();
             try
             {
-                response = _context.Department.Include(e => e.Categories).FirstOrDefault(l => l.DepartmentId == Id);
+
+                //response = _context.Department.Include(e => e.Categories).FirstOrDefault(l => l.DepartmentId == Id);
+
+                response = _context.Department.FirstOrDefault(l => l.DepartmentId == Id);
             }
             catch (Exception e)
             {

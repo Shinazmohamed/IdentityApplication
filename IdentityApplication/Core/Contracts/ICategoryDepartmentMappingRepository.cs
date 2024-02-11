@@ -5,7 +5,9 @@ namespace IdentityApplication.Core.Contracts
 {
     public interface ICategoryDepartmentMappingRepository
     {
-        void Update(Category entity);
+        void Update(DepartmentCategory entity);
         Task<PaginationResponse<ListCategoryDepartmentMappingViewModel>> GetEntitiesWithFilters(PaginationFilter filter);
+        void Delete(Guid id);
+        void Create(DepartmentCategory entity);
     }
 }

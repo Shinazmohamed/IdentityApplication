@@ -32,6 +32,18 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.CategoryId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Department",
                 columns: table => new
                 {
@@ -105,7 +117,7 @@ namespace IdentityApplication.Migrations
                     SubCategoryName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     E1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     E2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    C = table.Column<double>(type: "float", nullable: true),
+                    C = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     M1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     M2 = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -115,21 +127,40 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "SubCategory",
                 columns: table => new
                 {
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.CategoryId);
+                    table.PrimaryKey("PK_SubCategory", x => x.SubCategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DepartmentCategories",
+                columns: table => new
+                {
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DepartmentCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DepartmentCategories", x => new { x.DepartmentId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_Category_Department_DepartmentId",
+                        name: "FK_DepartmentCategories_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DepartmentCategories_Department_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Department",
-                        principalColumn: "DepartmentId");
+                        principalColumn: "DepartmentId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,21 +257,27 @@ namespace IdentityApplication.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SubCategory",
+                name: "CategorySubCategories",
                 columns: table => new
                 {
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SubCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CategorySubCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SubCategory", x => x.SubCategoryId);
+                    table.PrimaryKey("PK_CategorySubCategories", x => new { x.CategoryId, x.SubCategoryId });
                     table.ForeignKey(
-                        name: "FK_SubCategory_Category_CategoryId",
+                        name: "FK_CategorySubCategories_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Category",
                         principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategorySubCategories_SubCategory_SubCategoryId",
+                        column: x => x.SubCategoryId,
+                        principalTable: "SubCategory",
+                        principalColumn: "SubCategoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -352,9 +389,14 @@ namespace IdentityApplication.Migrations
                 column: "DateTime");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_DepartmentId",
-                table: "Category",
-                column: "DepartmentId");
+                name: "IX_CategorySubCategories_SubCategoryId",
+                table: "CategorySubCategories",
+                column: "SubCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DepartmentCategories_CategoryId",
+                table: "DepartmentCategories",
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permission_EntityId",
@@ -377,11 +419,6 @@ namespace IdentityApplication.Migrations
                 name: "IX_SP_Table_LocationName_CategoryName_SubCategoryName_DepartmentName",
                 table: "SP_Table",
                 columns: new[] { "LocationName", "CategoryName", "SubCategoryName", "DepartmentName" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SubCategory_CategoryId",
-                table: "SubCategory",
-                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubMenu_MenuId",
@@ -428,6 +465,12 @@ namespace IdentityApplication.Migrations
                 name: "AuditLogs");
 
             migrationBuilder.DropTable(
+                name: "CategorySubCategories");
+
+            migrationBuilder.DropTable(
+                name: "DepartmentCategories");
+
+            migrationBuilder.DropTable(
                 name: "Permission");
 
             migrationBuilder.DropTable(
@@ -435,9 +478,6 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.DropTable(
                 name: "SP_Table");
-
-            migrationBuilder.DropTable(
-                name: "SubCategory");
 
             migrationBuilder.DropTable(
                 name: "SubMenuRoles");
@@ -455,10 +495,16 @@ namespace IdentityApplication.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Entity");
+                name: "SubCategory");
 
             migrationBuilder.DropTable(
                 name: "Category");
+
+            migrationBuilder.DropTable(
+                name: "Department");
+
+            migrationBuilder.DropTable(
+                name: "Entity");
 
             migrationBuilder.DropTable(
                 name: "SubMenu");
@@ -468,9 +514,6 @@ namespace IdentityApplication.Migrations
 
             migrationBuilder.DropTable(
                 name: "User");
-
-            migrationBuilder.DropTable(
-                name: "Department");
 
             migrationBuilder.DropTable(
                 name: "Menu");

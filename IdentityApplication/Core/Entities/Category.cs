@@ -4,8 +4,7 @@
     {
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }
-        public Guid? DepartmentId { get; set; }
-        public Department Department { get; set; }
-        public List<SubCategory> SubCategories { get; set; }
+        public List<DepartmentCategory> DepartmentCategories { get; set; }
+        public List<CategorySubCategory> CategorySubCategories { get; set; }
     }
 }

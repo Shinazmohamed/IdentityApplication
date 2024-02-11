@@ -23,8 +23,8 @@ namespace IdentityApplication.Business
         {
             try
             {
-                var entity = _mapper.Map<Category>(request);
-                _unitOfWork.CategoryDepartmentMapping.Update(entity);
+                var entity = _mapper.Map<DepartmentCategory>(request);
+                _unitOfWork.CategoryDepartmentMapping.Create(entity);
             }
             catch (Exception ex)
             {
@@ -36,10 +36,10 @@ namespace IdentityApplication.Business
         {
             try
             {
-                var entity = new Category()
+                var entity = new DepartmentCategory()
                 {
                     CategoryId = Guid.Parse(request.SelectedCategoryId),
-                    DepartmentId = (string.IsNullOrWhiteSpace(request.SelectedDepartment)) ? null : Guid.Parse(request.SelectedDepartment)
+                    DepartmentId = Guid.Parse(request.SelectedDepartment)
                 };
                 _unitOfWork.CategoryDepartmentMapping.Update(entity);
             }
@@ -53,12 +53,7 @@ namespace IdentityApplication.Business
         {
             try
             {
-                var entity = new Category()
-                {
-                    CategoryId = Guid.Parse(categoryId),
-                    DepartmentId = null
-                };
-                _unitOfWork.CategoryDepartmentMapping.Update(entity);
+                _unitOfWork.CategoryDepartmentMapping.Delete(Guid.Parse(categoryId));
             }
             catch (Exception ex)
             {
