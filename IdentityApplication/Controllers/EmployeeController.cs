@@ -231,11 +231,12 @@ namespace IdentityApplication.Controllers
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.EmployeePermission.Edit}")]
-        public async Task<IActionResult> Edit(InsertEmployeeRequest request)
+        public async Task<IActionResult> Edit([FromBody] InsertEmployeeRequest request)
         {
+            var response = new InsertEmployeeRequest();
             try
             {
-                await _business.Update(request, isAdminOrSuperDev());
+                response = await _business.Update(request, isAdminOrSuperDev());
 
                 _notyf.Success("Record updated successfully.");
             }
@@ -243,8 +244,9 @@ namespace IdentityApplication.Controllers
             {
                 _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
+                return BadRequest(ex);
             }
-            return RedirectToAction("List");
+            return Ok(response);
         }
 
         [HttpPost]

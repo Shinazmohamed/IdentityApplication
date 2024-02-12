@@ -35,36 +35,37 @@ namespace IdentityApplication.Core.Repositories
                 }
             }
         }
-
         public async Task<PaginationResponse<Employee>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try
             {
-                var query = _context.Employee.OrderBy(e => e.Id).AsQueryable(); // Use the DbSet from your context
+                var query = _context.Employee.AsNoTracking(); 
 
+                // Apply filters
                 if (!string.IsNullOrEmpty(filter.location))
-                {
                     query = query.Where(e => e.LocationName == filter.location);
-                }
 
                 if (!string.IsNullOrEmpty(filter.department))
-                {
                     query = query.Where(e => e.DepartmentName == filter.department);
-                }
 
                 if (!string.IsNullOrEmpty(filter.category))
-                {
                     query = query.Where(e => e.CategoryName == filter.category);
-                }
 
                 if (!string.IsNullOrEmpty(filter.subcategory))
-                {
                     query = query.Where(e => e.SubCategoryName == filter.subcategory);
-                }
 
-                // Perform the count and pagination
+                // Total count
                 var totalCount = await query.CountAsync();
-                var filteredEntities = await query.Skip(filter.start).Take(filter.length).ToListAsync();
+
+                // Order and pagination
+                query = query.OrderBy(e => e.LocationName)
+                             .ThenBy(e => e.DepartmentName)
+                             .ThenBy(e => e.CategoryName)
+                             .ThenBy(e => e.SubCategoryName)
+                             .Skip(filter.start)
+                             .Take(filter.length);
+
+                var filteredEntities = await query.ToListAsync();
 
                 return new PaginationResponse<Employee>(
                     filteredEntities,
@@ -80,6 +81,7 @@ namespace IdentityApplication.Core.Repositories
             }
         }
 
+
         public async Task<Employee> Get(object id)
         {
             try
@@ -93,8 +95,9 @@ namespace IdentityApplication.Core.Repositories
             }
         }
 
-        public void Update(Employee entity)
+        public async Task<Employee> Update(Employee entity)
         {
+            var response = new Employee();
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
@@ -102,22 +105,22 @@ namespace IdentityApplication.Core.Repositories
                     if (entity == null)
                         throw new ArgumentNullException(nameof(entity));
 
-                    var existingEmployee = _context.Employee.Find(entity.Id);
-                    if (existingEmployee != null)
+                    response = await _context.Employee.FindAsync(entity.Id);
+                    if (response != null)
                     {
-                        existingEmployee.LocationName = entity.LocationName;
-                        existingEmployee.DepartmentName = entity.DepartmentName;
+                        response.LocationName = entity.LocationName;
+                        response.DepartmentName = entity.DepartmentName;
                         if (!string.IsNullOrEmpty(entity.CategoryName))
-                            existingEmployee.CategoryName = entity.CategoryName;
+                            response.CategoryName = entity.CategoryName;
                         if (!string.IsNullOrEmpty(entity.SubCategoryName))
-                            existingEmployee.SubCategoryName = entity.SubCategoryName;
-                        existingEmployee.E1 = entity.E1;
-                        existingEmployee.E2 = entity.E2;
-                        existingEmployee.C = entity.C;
-                        existingEmployee.M1 = entity.M1;
-                        existingEmployee.M2 = entity.M2;
+                            response.SubCategoryName = entity.SubCategoryName;
+                        response.E1 = entity.E1;
+                        response.E2 = entity.E2;
+                        response.C = entity.C;
+                        response.M1 = entity.M1;
+                        response.M2 = entity.M2;
 
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync();
                     }
 
                     transaction.Commit();
@@ -129,6 +132,7 @@ namespace IdentityApplication.Core.Repositories
                     throw;
                 }
             }
+            return response;
         }
 
         public async Task Delete(object id)

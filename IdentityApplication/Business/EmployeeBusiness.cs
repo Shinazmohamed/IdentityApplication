@@ -86,8 +86,9 @@ namespace IdentityApplication.Business
             return response;
         }
 
-        public async Task Update(InsertEmployeeRequest request, bool isAdmin)
+        public async Task<InsertEmployeeRequest> Update(InsertEmployeeRequest request, bool isAdmin)
         {
+            var response = new InsertEmployeeRequest();
             try
             {
                 var _entity = _mapper.Map<Employee>(request);
@@ -114,12 +115,14 @@ namespace IdentityApplication.Business
                 else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = "2";
                 else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = "1";
 
-                _unitOfWork.Employee.Update(_entity);
+                _entity = await _unitOfWork.Employee.Update(_entity);
+                response = _mapper.Map<InsertEmployeeRequest>(_entity);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "{Business} All function error", typeof(EmployeeBusiness));
             }
+            return response;
         }
 
         public async Task Delete(string id)

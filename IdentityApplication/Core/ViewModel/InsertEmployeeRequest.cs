@@ -20,9 +20,13 @@ namespace IdentityApplication.Core.ViewModel
         [Display(Name = "M2")]
         public string? M2 { get; set; }
 
+        [Display(Name = "C")]
+        public string? C { get; set; }
+
         [Required]
         [Display(Name = "Location")]
         public string SelectedLocation { get; set; }
+        public string LocationName { get; set; }
 
         public List<SelectListItem> Locations { get; set; } = new List<SelectListItem>();
 
@@ -30,17 +34,20 @@ namespace IdentityApplication.Core.ViewModel
         [Display(Name = "Department")]
         public string SelectedDepartment { get; set; }
 
+        public string DepartmentName { get; set; }
         public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
 
         [Required]
         [Display(Name = "Category")]
         public string SelectedCategory { get; set; }
+        public string CategoryName { get; set; }
 
         public List<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
 
         [Required]
         [Display(Name = "Sub Category")]
         public string SelectedSubCategory { get; set; }
+        public string SubCategoryName { get; set; }
 
         public List<SelectListItem> SubCategories { get; set; } = new List<SelectListItem>();
     }

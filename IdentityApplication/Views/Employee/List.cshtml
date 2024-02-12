@@ -177,7 +177,7 @@
                             <input asp-for="M2" class="form-control" maxlength="6" />
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" id="editBtn" name="editBtn" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>
@@ -194,7 +194,10 @@
         var hasDeletePermission = @Html.Raw(Model.Delete.ToString().ToLower());
         var hasEditPermission = @Html.Raw(Model.Edit.ToString().ToLower());
 
+
         $(document).ready(function () {
+            var current_row;
+
             $('select').selectize({
                 sortField: 'text'
             });
@@ -269,6 +272,7 @@
 
             $('#employeeTable').on('click', '.btn-edit', function () {
                 var id = $(this).data('id');
+                current_row = table.row($(this).closest('tr'));
 
                 $.ajax({
                     url: '/employee/Edit?id=' + id,
@@ -380,6 +384,48 @@
                 $('#' + ddlName)[0].selectize.clear();
                 $('#' + ddlName)[0].selectize.clearOptions();
             }
+
+
+            $('#editBtn').click(function (e) {
+                e.preventDefault();
+
+                var formData = {
+                    EmployeeId: $('#EmployeeId').val(),
+                    SelectedLocation: $('#SelectedLocation').val(),
+                    SelectedDepartment: $('#department').val(),
+                    SelectedCategory: $('#category').val(),
+                    SelectedSubCategory: $('#subcategory').val(),
+                    E1: $('#E1').val(),
+                    E2: $('#E2').val(),
+                    M1: $('#M1').val(),
+                    M2: $('#M2').val()
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Employee/Edit",
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        var row = table.row(current_row);
+                        row.data({
+                            id: response.employeeId,
+                            locationName: response.locationName,
+                            departmentName: response.departmentName,
+                            categoryName: response.categoryName,
+                            subCategoryName: response.subCategoryName,
+                            e1: response.e1,
+                            e2: response.e2,
+                            c:  response.c,
+                            m1: response.m1,
+                            m2: response.m2
+                        });
+
+                        $('#employeeModal').modal('hide');
+                    }
+                });
+            });
+
         });
 
 

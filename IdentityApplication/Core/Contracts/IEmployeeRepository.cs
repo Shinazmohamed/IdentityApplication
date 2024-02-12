@@ -8,7 +8,7 @@ namespace IdentityApplication.Core.Contracts
         void Create(Employee employee);
         Task<PaginationResponse<Employee>> GetEntitiesWithFilters(PaginationFilter filter);
         Task<Employee> Get(object id);
-        void Update(Employee entity);
+        Task<Employee> Update(Employee entity);
         Task Delete(object id);
     }
 }
