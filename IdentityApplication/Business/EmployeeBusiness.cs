@@ -86,9 +86,9 @@ namespace IdentityApplication.Business
             return response;
         }
 
-        public async Task<InsertEmployeeRequest> Update(InsertEmployeeRequest request, bool isAdmin)
+        public async Task<ListEmployeeRequest> Update(ListEmployeeRequest request, bool isAdmin)
         {
-            var response = new InsertEmployeeRequest();
+            var response = new ListEmployeeRequest();
             try
             {
                 var _entity = _mapper.Map<Employee>(request);
@@ -116,7 +116,7 @@ namespace IdentityApplication.Business
                 else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = "1";
 
                 _entity = await _unitOfWork.Employee.Update(_entity);
-                response = _mapper.Map<InsertEmployeeRequest>(_entity);
+                response = _mapper.Map<ListEmployeeRequest>(_entity);
             }
             catch (Exception ex)
             {

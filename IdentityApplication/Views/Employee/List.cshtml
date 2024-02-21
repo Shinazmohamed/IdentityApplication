@@ -1,6 +1,6 @@
 ﻿@using IdentityApplication.Core;
 @using IdentityApplication.Core.PermissionHelper
-@model IdentityApplication.Core.ViewModel.InsertEmployeeRequest
+@model IdentityApplication.Core.ViewModel.ListEmployeeRequest
 <style>
     .collapsible {
         background-color: white;
@@ -118,7 +118,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Delete</button>
+                        <button type="button" id="deleteBtn" name="deleteBtn" class="btn btn-primary">Delete</button>
                     </div>
                 </form>
             </div>
@@ -298,6 +298,8 @@
 
             $('#employeeTable').on('click', '.btn-delete', function () {
                 var id = $(this).data('id');
+                current_row = table.row($(this).closest('tr'));
+
                 $('#Id').val(id);
                 $('#deleteConfirmationModal').modal('show');
             });
@@ -388,7 +390,6 @@
 
             $('#editBtn').click(function (e) {
                 e.preventDefault();
-
                 var formData = {
                     EmployeeId: $('#EmployeeId').val(),
                     SelectedLocation: $('#SelectedLocation').val(),
@@ -400,6 +401,23 @@
                     M1: $('#M1').val(),
                     M2: $('#M2').val()
                 };
+
+                if ((formData.E1.length > 0 && formData.E1.length !== 6) || 
+                    (formData.E2.length > 0 && formData.E2.length !== 6) || 
+                    (formData.M1.length > 0 && formData.M1.length !== 6) ||
+                    (formData.M2.length > 0 && formData.M2.length !== 6)) {
+                    notyf.error({
+                        message: 'Validation failed.The employee code must be a minimum of six digits long.',
+                        duration: 2000,
+                        position: {
+                            x: 'right',
+                            y: 'top',
+                        },
+                        dismissible: true,
+                    });
+                    e.preventDefault();
+                    return;
+                }
 
                 $.ajax({
                     type: "POST",
@@ -416,12 +434,26 @@
                             subCategoryName: response.subCategoryName,
                             e1: response.e1,
                             e2: response.e2,
-                            c:  response.c,
+                            c: response.c,
                             m1: response.m1,
                             m2: response.m2
                         });
 
                         $('#employeeModal').modal('hide');
+                    }
+                });
+            });
+
+            $('#deleteBtn').click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "DELETE",
+                    url: "/Employee/Delete?Id=" + $('#Id').val(),
+                    contentType: "application/json",
+                    success: function (response) {
+                        current_row.remove().draw();
+                        $('#deleteConfirmationModal').modal('hide');
                     }
                 });
             });

@@ -1,5 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using AutoMapper;
+using Azure;
 using IdentityApplication.Areas.Identity.Data;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core;
@@ -122,7 +123,7 @@ namespace IdentityApplication.Controllers
         [Authorize(policy: $"{PermissionsModel.EmployeePermission.View}")]
         public async Task<IActionResult> List()
         {
-            var response = new InsertEmployeeRequest();
+            var response = new ListEmployeeRequest();
 
             try
             {
@@ -201,11 +202,11 @@ namespace IdentityApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var response = new InsertEmployeeRequest();
+            var response = new ListEmployeeRequest();
             try
             {
                 var entity = await _business.GetById(id);
-                response = _mapper.Map<InsertEmployeeRequest>(entity);
+                response = _mapper.Map<ListEmployeeRequest>(entity);
 
                 var category = _unitOfWork.Category.GetCategoryByName(entity.CategoryName);
                 var subCategory = _unitOfWork.SubCategory.GetSubCategoryByName(entity.SubCategoryName);
@@ -231,9 +232,9 @@ namespace IdentityApplication.Controllers
 
         [HttpPost]
         [Authorize(policy: $"{PermissionsModel.EmployeePermission.Edit}")]
-        public async Task<IActionResult> Edit([FromBody] InsertEmployeeRequest request)
+        public async Task<IActionResult> Edit([FromBody] ListEmployeeRequest request)
         {
-            var response = new InsertEmployeeRequest();
+            var response = new ListEmployeeRequest();
             try
             {
                 response = await _business.Update(request, isAdminOrSuperDev());
@@ -249,7 +250,7 @@ namespace IdentityApplication.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Authorize(policy: $"{PermissionsModel.EmployeePermission.Delete}")]
         public async Task<IActionResult> Delete(string Id)
         {
@@ -262,8 +263,9 @@ namespace IdentityApplication.Controllers
             {
                 _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(EmployeeController));
+                return BadRequest(ex);
             }
-            return RedirectToAction("List");
+            return Ok();
         }
 
         public bool isAdminOrSuperDev()

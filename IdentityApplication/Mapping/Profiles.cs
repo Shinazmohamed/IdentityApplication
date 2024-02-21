@@ -15,6 +15,12 @@ namespace IdentityApplication.Mapping
             CreateMap<InsertEmployeeRequest, Employee>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.EmployeeId));
 
+            CreateMap<Employee, ListEmployeeRequest>()
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id));
+
+            CreateMap<ListEmployeeRequest, Employee>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.EmployeeId));
+
             CreateMap<Employee, ViewEmployeeModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
