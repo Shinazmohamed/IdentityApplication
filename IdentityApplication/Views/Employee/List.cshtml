@@ -1,57 +1,10 @@
 ﻿@using IdentityApplication.Core;
 @using IdentityApplication.Core.PermissionHelper
 @model IdentityApplication.Core.ViewModel.ListEmployeeRequest
-<style>
-    .collapsible {
-        background-color: white;
-        cursor: pointer;
-        text-align: right;
-        border: none;
-        outline: none;
-        font-size: 15px;
-        padding-bottom: 15px;
-    }
 
-    .content {
-        padding: 0 10px;
-        display: block;
-        overflow: hidden;
-        border: thin;
-    }
-
-    .search_filters {
-        display: block;
-        height: 0;
-        overflow: hidden;
-        transition: height 0.3s;
-    }
-
-
-    .scrollable-container {
-        padding: 0 10px;
-        overflow-x: auto;
-        overflow-y: auto;
-        max-height: 500px;
-    }
-
-    #employeeTable {
-        width: 100%;
-        table-layout: auto;
-    }
-
-    .container {
-        font-size: 14px;
-    }
-</style>
 <div class="container">
     <h4>Employee Management</h4>
     <br />
-
-    <button class="collapsible" onclick="toggleFilters()">
-        <i class="fas fa-chevron-down"></i>
-    </button>
-    <span style="text-align:left; font-size:18px;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; padding-bottom:100px;">Search Filters</span>
-
     <div class="content">
         <div class="search_filters">
             <div class="row">
@@ -452,26 +405,15 @@
                     url: "/Employee/Delete?Id=" + $('#Id').val(),
                     contentType: "application/json",
                     success: function (response) {
-                        current_row.remove().draw();
+
+                        var row = table.row(current_row);
+                        row.remove().draw(false);
+
                         $('#deleteConfirmationModal').modal('hide');
                     }
                 });
             });
 
         });
-
-
-        function toggleFilters() {
-            var filters = document.querySelector('.search_filters');
-            var button = document.querySelector('.collapsible');
-
-            if (filters.style.height === '0px' || filters.style.height === '') {
-                filters.style.height = 'auto';
-                button.innerHTML = '<i class="fas fa-chevron-up"></i>';
-            } else {
-                filters.style.height = '0px';
-                button.innerHTML = '<i class="fas fa-chevron-down"></i>';
-            }
-        }
     </script>
 }
