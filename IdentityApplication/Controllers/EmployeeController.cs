@@ -200,12 +200,12 @@ namespace IdentityApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string id, string month)
         {
             var response = new ListEmployeeRequest();
             try
             {
-                var entity = await _business.GetById(id);
+                var entity = await _business.GetById(id, month);
                 response = _mapper.Map<ListEmployeeRequest>(entity);
 
                 var category = _unitOfWork.Category.GetCategoryByName(entity.CategoryName);
@@ -252,11 +252,11 @@ namespace IdentityApplication.Controllers
 
         [HttpDelete]
         [Authorize(policy: $"{PermissionsModel.EmployeePermission.Delete}")]
-        public async Task<IActionResult> Delete(string Id)
+        public async Task<IActionResult> Delete(string Id, string month)
         {
             try
             {
-                await _business.Delete(Id);
+                await _business.Delete(Id, month);
                 _notyf.Success("Record deleted successfully.");
             }
             catch (Exception ex)

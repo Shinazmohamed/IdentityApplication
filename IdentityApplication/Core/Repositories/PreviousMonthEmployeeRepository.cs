@@ -6,40 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApplication.Core.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class PreviousMonthEmployeeRepository : IPreviousMonthEmployeeRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<EmployeeRepository> _logger;
-        public EmployeeRepository(ApplicationDbContext context, ILogger<EmployeeRepository> logger)
+        private readonly ILogger<PreviousMonthEmployeeRepository> _logger;
+        public PreviousMonthEmployeeRepository(ApplicationDbContext context, ILogger<PreviousMonthEmployeeRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
-
-        public void Create(Employee employee)
-        {
-            using (var transaction = _context.Database.BeginTransaction())
-            {
-                try
-                {
-                    _context.Employee.Add(employee);
-                    _context.SaveChanges();
-
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                    _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
-                    throw;
-                }
-            }
-        }
-        public async Task<PaginationResponse<Employee>> GetEntitiesWithFilters(PaginationFilter filter)
+        public async Task<PaginationResponse<PreviousMonthEmployee>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try
             {
-                var query = _context.Employee.AsNoTracking().AsQueryable();
+                var query = _context.PreviousMonthEmployees.AsNoTracking().AsQueryable();
 
                 // Apply filters
                 if (!string.IsNullOrEmpty(filter.location))
@@ -68,7 +48,7 @@ namespace IdentityApplication.Core.Repositories
 
                 filteredEntities = await query.ToListAsync();
 
-                return new PaginationResponse<Employee>(
+                return new PaginationResponse<PreviousMonthEmployee>(
                     filteredEntities,
                     totalCount,
                     filter.draw,
@@ -77,26 +57,28 @@ namespace IdentityApplication.Core.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(PreviousMonthEmployeeRepository));
                 throw;
             }
         }
 
-        public async Task<Employee> Get(object id)
+
+        public async Task<PreviousMonthEmployee> Get(object id)
         {
             try
             {
-                return await _context.Employee.FindAsync(id);
+                return await _context.PreviousMonthEmployees.FindAsync(id);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(PreviousMonthEmployeeRepository));
                 throw;
             }
         }
-        public async Task<Employee> Update(Employee entity)
+
+        public async Task<PreviousMonthEmployee> Update(Employee entity)
         {
-            var response = new Employee();
+            var response = new PreviousMonthEmployee();
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
@@ -104,7 +86,7 @@ namespace IdentityApplication.Core.Repositories
                     if (entity == null)
                         throw new ArgumentNullException(nameof(entity));
 
-                    response = await _context.Employee.FindAsync(entity.Id);
+                    response = await _context.PreviousMonthEmployees.FindAsync(entity.Id);
                     if (response != null)
                     {
                         response.LocationName = entity.LocationName;
@@ -127,24 +109,45 @@ namespace IdentityApplication.Core.Repositories
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                    _logger.LogError(e, "{Repo} All function error", typeof(PreviousMonthEmployeeRepository));
                     throw;
                 }
             }
             return response;
         }
+
         public async Task Delete(object id)
         {
             try
             {
-                var entity = await _context.Employee.FindAsync(id);
-                _context.Employee.Remove(entity);
+                var entity = await _context.PreviousMonthEmployees.FindAsync(id);
+                _context.PreviousMonthEmployees.Remove(entity);
                 _context.SaveChanges();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "{Repo} All function error", typeof(EmployeeRepository));
+                _logger.LogError(e, "{Repo} All function error", typeof(PreviousMonthEmployeeRepository));
                 throw;
+            }
+        }
+
+        public void Create(PreviousMonthEmployee employee)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.PreviousMonthEmployees.Add(employee);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    _logger.LogError(e, "{Repo} All function error", typeof(PreviousMonthEmployeeRepository));
+                    throw;
+                }
             }
         }
     }

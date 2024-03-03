@@ -3,7 +3,7 @@
 <div class="container">
     <h4>Create New Tag Employee</h4>
     <br />
-    <form method="post" asp-controller="Employee" asp-action="CreateEmployee">
+    <form method="post" asp-controller="Employee" asp-action="CreateEmployee" id="CreateTagEmployee">
 
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -52,8 +52,17 @@
                 <input asp-for="M2" class="form-control" maxlength="6" />
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Month">Month</label>
+                <select asp-for="Month" class="form-select">
+                    <option value="Current">Current</option>
+                    <option value="Previous">Previous</option>
+                </select>
+            </div>
+        </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" onclick="submitForm()" class="btn btn-primary">Submit</button>
     </form>
 </div>
 @section Scripts {
@@ -100,5 +109,36 @@
                 });
             });
         });
+
+        function submitForm() {
+            // Get the form element
+            var form = document.getElementById("CreateTagEmployee");
+
+            var formData = {
+                E1: $('#E1').val(),
+                E2: $('#E2').val(),
+                M1: $('#M1').val(),
+                M2: $('#M2').val()
+            };
+
+            if ((formData.E1.length > 0 && formData.E1.length !== 6) ||
+                (formData.E2.length > 0 && formData.E2.length !== 6) ||
+                (formData.M1.length > 0 && formData.M1.length !== 6) ||
+                (formData.M2.length > 0 && formData.M2.length !== 6)) {
+                notyf.error({
+                    message: 'Validation failed.The employee code must be a minimum of six digits long.',
+                    duration: 2000,
+                    position: {
+                        x: 'right',
+                        y: 'top',
+                    },
+                    dismissible: true,
+                });
+                return;
+            }
+
+            // Submit the form
+            form.submit();
+        }
     </script>
 }

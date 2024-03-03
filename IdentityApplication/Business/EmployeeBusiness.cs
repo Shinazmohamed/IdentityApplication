@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace IdentityApplication.Business
 {
@@ -28,16 +31,27 @@ namespace IdentityApplication.Business
                 var selectedCategory = _unitOfWork.Category.GetCategoryById(Guid.Parse(request.SelectedCategory));
                 var selectedSubCategory = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(request.SelectedSubCategory));
 
-                var _entity = _mapper.Map<Employee>(request);
-                if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) _entity.C = null;
-                else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = "2";
-                else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = "1";
+                if (string.IsNullOrEmpty(request.E1) && string.IsNullOrEmpty(request.E2)) request.C = null;
+                else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) request.C = "2";
+                else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) request.C = "1";
 
-                _entity.LocationName = selectedLocation.LocationName;
-                _entity.DepartmentName = selectedDepartment.DepartmentName;
-                _entity.CategoryName = selectedCategory.CategoryName;
-                _entity.SubCategoryName = selectedSubCategory.SubCategoryName;
-                _unitOfWork.Employee.Create(_entity);
+                request.LocationName = selectedLocation.LocationName;
+                request.DepartmentName = selectedDepartment.DepartmentName;
+                request.CategoryName = selectedCategory.CategoryName;
+                request.SubCategoryName = selectedSubCategory.SubCategoryName;
+
+                switch (request.Month)
+                {
+                    case "Previous":
+                        var _previous = _mapper.Map<PreviousMonthEmployee>(request);
+                        _unitOfWork.PreviousMonthEmployee.Create(_previous);
+                        break;
+                    default:
+                        var _current = _mapper.Map<Employee>(request);
+                        _unitOfWork.Employee.Create(_current);
+                        break;
+
+                }
             }
             catch (Exception ex)
             {
@@ -63,7 +77,17 @@ namespace IdentityApplication.Business
                 if (!string.IsNullOrEmpty(filter.subcategory))
                     filter.subcategory = _unitOfWork.SubCategory.GetSubCategoryById(Guid.Parse(filter.subcategory))?.SubCategoryName;
 
-                response = await _unitOfWork.Employee.GetEntitiesWithFilters(filter);
+                switch (filter.Month)
+                {
+                    case "Previous":
+                        var result = await _unitOfWork.PreviousMonthEmployee.GetEntitiesWithFilters(filter);
+                        response = _mapper.Map<PaginationResponse<Employee>>(result);
+                        break;
+                    default:
+                        response = await _unitOfWork.Employee.GetEntitiesWithFilters(filter);
+                        break;
+
+                }
             }
             catch (Exception ex)
             {
@@ -72,12 +96,22 @@ namespace IdentityApplication.Business
             return response;
         }
 
-        public async Task<Employee?> GetById(string id)
+        public async Task<Employee?> GetById(string id, string month)
         {
             var response = new Employee();
             try
             {
-                response = await _unitOfWork.Employee.Get(Guid.Parse(id));
+                switch (month)
+                {
+                    case "Previous":
+                        var result = await _unitOfWork.PreviousMonthEmployee.Get(Guid.Parse(id));
+                        response = _mapper.Map<Employee>(result);
+                        break;
+                    default:
+                        response = await _unitOfWork.Employee.Get(Guid.Parse(id));
+                        break;
+
+                }                
             }
             catch (Exception ex)
             {
@@ -115,7 +149,18 @@ namespace IdentityApplication.Business
                 else if (!string.IsNullOrEmpty(request.E1) && !string.IsNullOrEmpty(request.E2)) _entity.C = "2";
                 else if (!string.IsNullOrEmpty(request.E1) || !string.IsNullOrEmpty(request.E2)) _entity.C = "1";
 
-                _entity = await _unitOfWork.Employee.Update(_entity);
+                switch (request.Month)
+                {
+                    case "Previous":
+                        var result = await _unitOfWork.PreviousMonthEmployee.Update(_entity);
+                        _entity = _mapper.Map<Employee>(result);
+                        break;
+                    default:
+                        _entity = await _unitOfWork.Employee.Update(_entity);
+                        break;
+
+                }
+
                 response = _mapper.Map<ListEmployeeRequest>(_entity);
             }
             catch (Exception ex)
@@ -125,11 +170,19 @@ namespace IdentityApplication.Business
             return response;
         }
 
-        public async Task Delete(string id)
+        public async Task Delete(string id, string month)
         {
             try
             {
-                await _unitOfWork.Employee.Delete(Guid.Parse(id));
+                switch (month)
+                {
+                    case "Previous":
+                        await _unitOfWork.PreviousMonthEmployee.Delete(Guid.Parse(id));
+                        break;
+                    default:
+                        await _unitOfWork.Employee.Delete(Guid.Parse(id));
+                        break;
+                }                
             }
             catch (Exception ex)
             {

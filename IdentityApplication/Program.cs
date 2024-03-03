@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, sqlServerOptions => sqlServerOptions.CommandTimeout(300)));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
@@ -119,4 +119,6 @@ void AddScoped()
 
     builder.Services.AddScoped<IRoleBusiness, RoleBusiness>();
     builder.Services.AddScoped<IUserBusiness, UserBusiness>();
+
+    builder.Services.AddScoped<IPreviousMonthEmployeeRepository, PreviousMonthEmployeeRepository>();
 }

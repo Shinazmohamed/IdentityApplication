@@ -50,6 +50,8 @@ namespace IdentityApplication.Core.ViewModel
         public string SubCategoryName { get; set; }
 
         public List<SelectListItem> SubCategories { get; set; } = new List<SelectListItem>();
+
+        public string Month { get; set; }
     }
 
 }

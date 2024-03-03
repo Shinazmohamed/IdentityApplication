@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Entity> Entity { get; set; }
     public DbSet<DepartmentCategory> DepartmentCategories { get; set; }
     public DbSet<CategorySubCategory> CategorySubCategories { get; set; }
+    public DbSet<PreviousMonthEmployee> PreviousMonthEmployees { get; set; }
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -71,10 +72,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.ToTable("UserTokens");
         });
 
-        string employeeTableName = _configuration.GetSection("AppSettings")["TagEmployeeTableName"];
-        if (!string.IsNullOrEmpty(employeeTableName))
+        string currentMonth = _configuration["AppSettings:CurrentMonth"];
+        if (!string.IsNullOrEmpty(currentMonth))
         {
-            builder.Entity<Employee>().ToTable(employeeTableName);
+            builder.Entity<Employee>().ToTable(currentMonth);
+        }
+
+        string previousMonth = _configuration["AppSettings:PreviousMonth"];
+        if (!string.IsNullOrEmpty(previousMonth))
+        {
+            builder.Entity<PreviousMonthEmployee>().ToTable(previousMonth);
         }
         #endregion
 

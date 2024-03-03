@@ -101,6 +101,14 @@ namespace IdentityApplication.Mapping
             CreateMap<ManagePermission, Entity>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Entity));
 
+            CreateMap<Employee, PreviousMonthEmployee>();
+            CreateMap<PaginationResponse<Employee>, PaginationResponse<PreviousMonthEmployee>>();
+
+            CreateMap<PreviousMonthEmployee, Employee>();
+            CreateMap<PaginationResponse<PreviousMonthEmployee>, PaginationResponse<Employee>>();
+
+            CreateMap<InsertEmployeeRequest, PreviousMonthEmployee>();
+
         }
 
     }

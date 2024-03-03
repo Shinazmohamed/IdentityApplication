@@ -11,5 +11,6 @@
         public string subcategory { get; set; }
         public string entity { get; set; }
         public string roleId { get; set; }
+        public string Month { get; set; }
     }
 }
