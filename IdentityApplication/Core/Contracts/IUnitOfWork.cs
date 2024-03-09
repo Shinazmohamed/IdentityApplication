@@ -17,5 +17,6 @@
         IPermissionRepository Permission { get; }
         IEntityRepository Entity { get; }
         IPreviousMonthEmployeeRepository PreviousMonthEmployee { get; }
+        IStaffRepository Staff { get; }
     }
 }

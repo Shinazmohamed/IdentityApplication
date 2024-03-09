@@ -109,6 +109,10 @@ namespace IdentityApplication.Mapping
 
             CreateMap<InsertEmployeeRequest, PreviousMonthEmployee>();
 
+            CreateMap<CreateStaffRequest, Staff>();
+            CreateMap<Staff, ViewStaffResponse>();
+
+
         }
 
     }

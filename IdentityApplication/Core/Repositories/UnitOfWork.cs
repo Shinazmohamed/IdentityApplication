@@ -19,9 +19,10 @@ namespace IdentityApplication.Core.Repositories
         public IPermissionRepository Permission { get; }
         public IEntityRepository Entity { get; }
         public IPreviousMonthEmployeeRepository PreviousMonthEmployee { get; }
+        public IStaffRepository Staff { get; }
         public UnitOfWork(IUserRepository user, IRoleRepository role, ILocationRepository location, IEmployeeRepository employee, IDepartmentRepository department,
             ICategoryRepository category, ICategorySubCategoryRepository categorySubCategory, ISubCategoryRepository subCategory, IMenuRepository menu, ISubMenuRepository subMenu,
-            IAuditRepository audit, ICategoryDepartmentMappingRepository categoryDepartmentMapping, IPermissionRepository permission, IEntityRepository entity, IPreviousMonthEmployeeRepository previousMonthEmployee)
+            IAuditRepository audit, ICategoryDepartmentMappingRepository categoryDepartmentMapping, IPermissionRepository permission, IEntityRepository entity, IPreviousMonthEmployeeRepository previousMonthEmployee, IStaffRepository staff)
         {
             User = user;
             Role = role;
@@ -38,6 +39,7 @@ namespace IdentityApplication.Core.Repositories
             Permission = permission;
             Entity = entity;
             PreviousMonthEmployee = previousMonthEmployee;
+            Staff = staff;
         }
     }
 }

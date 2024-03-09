@@ -121,4 +121,7 @@ void AddScoped()
     builder.Services.AddScoped<IUserBusiness, UserBusiness>();
 
     builder.Services.AddScoped<IPreviousMonthEmployeeRepository, PreviousMonthEmployeeRepository>();
+
+    builder.Services.AddScoped<IStaffBusiness, StaffBusiness>();
+    builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 }

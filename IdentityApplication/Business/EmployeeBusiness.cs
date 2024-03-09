@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using IdentityApplication.Business.Contracts;
 using IdentityApplication.Core.Contracts;
 using IdentityApplication.Core.Entities;
 using IdentityApplication.Core.ViewModel;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace IdentityApplication.Business
 {
