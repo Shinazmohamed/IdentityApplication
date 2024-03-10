@@ -364,6 +364,34 @@
                     Month: $('#month')[0].selectize.getValue()
                 };
 
+                if (formData.E2.length > 0 && formData.E1.length <= 0) {
+                    notyf.error({
+                        message: 'Please enter E1 before entering E2.',
+                        duration: 2000,
+                        position: {
+                            x: 'right',
+                            y: 'top',
+                        },
+                        dismissible: true,
+                    });
+                    e.preventDefault();
+                    return;
+                }
+
+                if (formData.M2.length > 0 && formData.M1.length <= 0) {
+                    notyf.error({
+                        message: 'Please enter M1 before entering M2.',
+                        duration: 2000,
+                        position: {
+                            x: 'right',
+                            y: 'top',
+                        },
+                        dismissible: true,
+                    });
+                    e.preventDefault();
+                    return;
+                }
+
                 if ((formData.E1.length > 0 && formData.E1.length !== 6) || 
                     (formData.E2.length > 0 && formData.E2.length !== 6) || 
                     (formData.M1.length > 0 && formData.M1.length !== 6) ||
