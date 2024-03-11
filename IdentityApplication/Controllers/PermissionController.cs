@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize]
     public class PermissionController : BaseController
     {
         private readonly RoleManager<IdentityRole> _roleManager;

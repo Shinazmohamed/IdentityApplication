@@ -24,7 +24,7 @@ namespace IdentityApplication.Core.Repositories
                 try
                 {
                     var existingMapping = _context.Staffs
-                        .FirstOrDefault(e => e.EmployeeCode == request.EmployeeCode);
+                        .FirstOrDefault(e => e.EmployeeCode == request.EmployeeCode && e.LocationId == request.LocationId);
                     if (existingMapping != null)
                     {
                         throw new ArgumentNullException(nameof(existingMapping));
@@ -44,11 +44,13 @@ namespace IdentityApplication.Core.Repositories
             }
         }
 
-        public async Task<PaginationResponse<Staff>> GetEntitiesWithFilters(PaginationFilter filter)
+        public async Task<PaginationResponse<ViewStaffResponse>> GetEntitiesWithFilters(PaginationFilter filter)
         {
             try
             {
-                var query = _context.Staffs.AsNoTracking().AsQueryable();
+                var query = _context.Staffs
+                    .Include(e => e.Team)
+                    .AsNoTracking().AsQueryable();
 
                 if (!string.IsNullOrEmpty(filter.location))
                     query = query.Where(e => e.LocationId == Guid.Parse(filter.location));
@@ -64,8 +66,15 @@ namespace IdentityApplication.Core.Repositories
 
                 filteredEntities = await query.ToListAsync();
 
-                return new PaginationResponse<Staff>(
-                    filteredEntities,
+                var resultViewModel = filteredEntities.Select(entity => new ViewStaffResponse
+                {
+                    StaffId = entity.StaffId,
+                    EmployeeCode = entity.EmployeeCode,
+                    Team = entity?.Team?.TeamName
+                }).ToList();
+
+                return new PaginationResponse<ViewStaffResponse>(
+                    resultViewModel,
                     totalCount,
                     filter.draw,
                     filter.length

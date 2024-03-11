@@ -10,11 +10,15 @@
                 <label asp-for="EmployeeCode" class="form-label">Employee Code</label>
                 <input asp-for="EmployeeCode" class="form-control" maxlength="6" />
             </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="SelectedStaffTeam" class="form-label">Team</label>
+                @Html.DropDownListFor(m => m.SelectedStaffTeam, Model.StaffTeamCollection, new { id = "SelectedStaffTeam" })
+            </div>
         </div>
         <br />
         <div class="row">
             <div class="col-md-6">
-                <button type="button" onclick="submitForm()" class="btn btn-primary">Submit</button>
+                <button type="button" onclick="submitForm()" class="btn btn-success">Submit</button>
             </div>
         </div>
     </form>
@@ -26,6 +30,7 @@
             <tr>
                 <th>Staff Id</th>
                 <th>Employee Code</th>
+                <th>Team</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -63,6 +68,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            $('select').selectize({
+                sortField: 'text'
+            });
+
             var table = $('#staffTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -85,6 +94,7 @@
                 columns: [
                     { data: 'staffId', visible: false },
                     { data: 'employeeCode' },
+                    { data: 'team' },
                     {
                         data: 'staffId',
                         render: function (data, type, row) {

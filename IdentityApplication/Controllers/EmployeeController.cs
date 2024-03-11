@@ -164,6 +164,17 @@ namespace IdentityApplication.Controllers
                     response.Departments = departments.Select(department =>
                             new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
                 }
+
+                var currentPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MonthPermission.Current);
+                var previousPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MonthPermission.Previous);
+
+                response.MonthItems = new List<SelectListItem>
+                {
+                    currentPermission.Succeeded ? new SelectListItem { Text = "Current", Value = "Current", Selected = true } : null,
+                    previousPermission.Succeeded ? new SelectListItem { Text = "Previous", Value = "Previous" } : null
+                }
+                .Where(item => item != null)
+                .ToList();
             }
             catch (Exception ex)
             {
@@ -180,6 +191,17 @@ namespace IdentityApplication.Controllers
             var response = new PaginationResponse<Employee>();
             try
             {
+                if (string.IsNullOrEmpty(filter.Month))
+                {
+                    _notyf.Error("No permission found for current or previous month.");
+                    return Json(new
+                    {
+                        filter.draw,
+                        recordsTotal = response.TotalCount,
+                        recordsFiltered = response.TotalCount
+                    });
+                }
+
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 if (!isAdminOrSuperDev()) filter.location = user?.LocationId.ToString();
 

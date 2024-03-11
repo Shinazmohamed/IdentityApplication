@@ -4,5 +4,6 @@
     {
         public Guid StaffId { get; set; }
         public string EmployeeCode { get; set; }
+        public string? Team { get; set; }
     }
 }

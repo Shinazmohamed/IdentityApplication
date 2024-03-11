@@ -25,6 +25,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<CategorySubCategory> CategorySubCategories { get; set; }
     public DbSet<PreviousMonthEmployee> PreviousMonthEmployees { get; set; }
     public DbSet<Staff> Staffs { get; set; }
+    public DbSet<Team> Teams { get; set; }
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -89,6 +90,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(u => u.Location)
             .WithMany()
             .HasForeignKey(u => u.LocationId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Entity<Staff>()
+            .HasOne(u => u.Team)
+            .WithMany(t => t.Staffs)
+            .HasForeignKey(u => u.TeamId)
             .OnDelete(DeleteBehavior.SetNull);
         #endregion
 

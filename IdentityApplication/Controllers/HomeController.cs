@@ -1,10 +1,12 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using IdentityApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize]
     public class HomeController : BaseController
     {
         private readonly INotyfService _notyf;

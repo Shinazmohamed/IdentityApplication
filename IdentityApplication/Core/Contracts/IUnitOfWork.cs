@@ -18,5 +18,6 @@
         IEntityRepository Entity { get; }
         IPreviousMonthEmployeeRepository PreviousMonthEmployee { get; }
         IStaffRepository Staff { get; }
+        ITeamRepository Team { get; }
     }
 }

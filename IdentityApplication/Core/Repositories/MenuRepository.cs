@@ -126,6 +126,7 @@ namespace IdentityApplication.Core.Repositories
                         Sort = (int)menu.Sort,
                         SubMenu = menu.SubMenus.Select(submenu => _mapper.Map<SubMenuViewModel>(submenu)).ToList()
                     })
+                    .OrderBy(e => e.DisplayName)
                     .ToList();
 
                 response.Data = filteredEntities;

@@ -124,4 +124,7 @@ void AddScoped()
 
     builder.Services.AddScoped<IStaffBusiness, StaffBusiness>();
     builder.Services.AddScoped<IStaffRepository, StaffRepository>();
+
+    builder.Services.AddScoped<ITeamBusiness, TeamBusiness>();
+    builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 }

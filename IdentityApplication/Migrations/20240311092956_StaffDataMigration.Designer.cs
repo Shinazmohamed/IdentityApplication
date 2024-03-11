@@ -4,6 +4,7 @@ using IdentityApplication.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240311092956_StaffDataMigration")]
+    partial class StaffDataMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,14 +362,9 @@ namespace IdentityApplication.Migrations
                     b.Property<Guid?>("LocationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TeamId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("StaffId");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("TeamId");
 
                     b.ToTable("Staffs");
                 });
@@ -425,21 +423,6 @@ namespace IdentityApplication.Migrations
                     b.HasKey("SubMenuId", "Id");
 
                     b.ToTable("SubMenuRoles");
-                });
-
-            modelBuilder.Entity("IdentityApplication.Core.Entities.Team", b =>
-                {
-                    b.Property<Guid>("TeamId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TeamName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TeamId");
-
-                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -645,14 +628,7 @@ namespace IdentityApplication.Migrations
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("IdentityApplication.Core.Entities.Team", "Team")
-                        .WithMany("Staffs")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Location");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenu", b =>
@@ -756,11 +732,6 @@ namespace IdentityApplication.Migrations
             modelBuilder.Entity("IdentityApplication.Core.Entities.SubMenu", b =>
                 {
                     b.Navigation("SubMenuRoles");
-                });
-
-            modelBuilder.Entity("IdentityApplication.Core.Entities.Team", b =>
-                {
-                    b.Navigation("Staffs");
                 });
 #pragma warning restore 612, 618
         }

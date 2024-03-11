@@ -52,10 +52,7 @@ namespace IdentityApplication.Business
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 filter.location = user.LocationId.ToString();
 
-                var result = await _unitOfWork.Staff.GetEntitiesWithFilters(filter);
-
-                response.Data = _mapper.Map<List<ViewStaffResponse>>(result.Data);
-
+                response = await _unitOfWork.Staff.GetEntitiesWithFilters(filter);
             }
             catch (Exception ex)
             {

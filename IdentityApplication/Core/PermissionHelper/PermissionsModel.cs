@@ -90,5 +90,16 @@
             public const string Edit = "Permissions.Menu.Edit";
             public const string Delete = "Permissions.Menu.Delete";
         }
+        public static class StaffPermission
+        {
+            public const string View = "Permissions.Staff.View";
+            public const string Create = "Permissions.Staff.Create";
+            public const string Delete = "Permissions.Staff.Delete";
+        }
+        public static class MonthPermission
+        {
+            public const string Current = "Permissions.Month.Current";
+            public const string Previous = "Permissions.Month.Previous";
+        }
     }
 }

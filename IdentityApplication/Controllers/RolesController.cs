@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApplication.Controllers
 {
+    [Authorize]
     public class RolesController : BaseController
     {
         private readonly IAuthorizationService _authorizationService;
