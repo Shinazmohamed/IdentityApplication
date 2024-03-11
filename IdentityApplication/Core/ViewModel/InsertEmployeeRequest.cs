@@ -52,6 +52,8 @@ namespace IdentityApplication.Core.ViewModel
         public List<SelectListItem> SubCategories { get; set; } = new List<SelectListItem>();
 
         public string Month { get; set; }
+
+        public List<SelectListItem> MonthItems { get; set; } = new List<SelectListItem>();
     }
 
 }

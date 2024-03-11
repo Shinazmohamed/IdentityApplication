@@ -1,7 +1,7 @@
 ﻿@using IdentityApplication.Core.ViewModel
 @model CreateStaffRequest
 <div class="container">
-    <h1>Staff</h1>
+    <h1>Staff Management</h1>
     <br />
 
     <form method="post" asp-controller="Staff" asp-action="Create" id="staffform">
@@ -11,8 +11,8 @@
                 <input asp-for="EmployeeCode" class="form-control" maxlength="6" />
             </div>
             <div class="col-md-6 mb-3">
-                <label asp-for="SelectedStaffTeam" class="form-label">Team</label>
-                @Html.DropDownListFor(m => m.SelectedStaffTeam, Model.StaffTeamCollection, new { id = "SelectedStaffTeam" })
+                <label asp-for="SelectedTeam" class="form-label">Team</label>
+                @Html.DropDownListFor(m => m.SelectedTeam, Model.TeamCollection, new { id = "SelectedStaffTeam" })
             </div>
         </div>
         <br />

@@ -96,10 +96,15 @@
             public const string Create = "Permissions.Staff.Create";
             public const string Delete = "Permissions.Staff.Delete";
         }
-        public static class MonthPermission
+        public static class CreateEmployeeMonthPermission
         {
-            public const string Current = "Permissions.Month.Current";
-            public const string Previous = "Permissions.Month.Previous";
+            public const string Current = "Permissions.CreateEmployee.CurrentMonth";
+            public const string Previous = "Permissions.CreateEmployee.PreviousMonth";
+        }
+        public static class ViewEmployeeMonthPermission
+        {
+            public const string Current = "Permissions.ViewEmployee.CurrentMonth";
+            public const string Previous = "Permissions.ViewEmployee.PreviousMonth";
         }
     }
 }

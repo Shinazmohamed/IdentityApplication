@@ -8,24 +8,24 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label asp-for="SelectedLocation" class="form-label">Location</label>
-                @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Select a location", new { @class = "form-select" })
+                @Html.DropDownListFor(m => m.SelectedLocation, Model.Locations, "Select a location")
             </div>
 
             <div class="col-md-6 mb-3">
                 <label asp-for="SelectedDepartment" class="form-label">Department</label>
-                @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Select a department", new { @class = "form-select", id = "departmentDropdown" })
+                @Html.DropDownListFor(m => m.SelectedDepartment, Model.Departments, "Select a department", new { id = "departmentDropdown" })
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label asp-for="SelectedCategory" class="form-label">Category</label>
-                @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Select a category", new { @class = "form-select", id = "categoryDropdown" })
+                @Html.DropDownListFor(m => m.SelectedCategory, Model.Categories, "Select a category", new { id = "categoryDropdown" })
             </div>
 
             <div class="col-md-6 mb-3">
                 <label asp-for="SelectedSubCategory" class="form-label">Subcategory</label>
-                @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { @class = "form-select", id = "subcategoryDropdown" })
+                @Html.DropDownListFor(m => m.SelectedSubCategory, Model.SubCategories, new { id = "subcategoryDropdown" })
             </div>
         </div>
 
@@ -54,11 +54,8 @@
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label asp-for="Month">Month</label>
-                <select asp-for="Month" class="form-select">
-                    <option value="Current">Current</option>
-                    <option value="Previous">Previous</option>
-                </select>
+                <label for="Month">Month :</label>
+                @Html.DropDownListFor(m => m.Month, Model.MonthItems, new { id = "Month" })
             </div>
         </div>
 
@@ -72,6 +69,10 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $('select').selectize({
+                sortField: 'text'
+            });
 
             $('#categoryDropdown').change(function () {
                 var selectedCategory = $(this).val();

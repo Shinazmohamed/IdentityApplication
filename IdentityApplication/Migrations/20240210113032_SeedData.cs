@@ -117,7 +117,7 @@ namespace IdentityApplication.Migrations
                 ('{roleMenu}', 'Roles', 7),
                 ('{permissionMenu}', 'Permission', 8),
                 ('{menuMenu}', 'Menu', 9),
-                ('{settingsMenu}', 'Settings', 10);");
+                ('{settingsMenu}', 'Settings', 99);");
         }
         private void SeedSubMenu(MigrationBuilder migrationBuilder)
         {

@@ -110,7 +110,7 @@ namespace IdentityApplication.Mapping
             CreateMap<InsertEmployeeRequest, PreviousMonthEmployee>();
 
             CreateMap<CreateStaffRequest, Staff>()
-                .ForMember(dest => dest.TeamId, opt => opt.MapFrom(src => src.SelectedStaffTeam));
+                .ForMember(dest => dest.TeamId, opt => opt.MapFrom(src => src.SelectedTeam));
 
             CreateMap<Staff, ViewStaffResponse>();
 

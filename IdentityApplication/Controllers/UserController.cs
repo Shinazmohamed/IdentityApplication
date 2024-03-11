@@ -103,8 +103,7 @@ namespace IdentityApplication.Controllers
                 _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
-
-            return RedirectToAction("Edit", new { userId = request.User.Id });
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -136,7 +135,7 @@ namespace IdentityApplication.Controllers
                 _logger.LogError(ex, "{Controller} All function error", typeof(UserController));
             }
 
-            return RedirectToAction("Edit", new { userId = request.User.Id });
+            return RedirectToAction("Index");
         }
 
         [Authorize(policy: $"{PermissionsModel.UserPermission.Profile}")]

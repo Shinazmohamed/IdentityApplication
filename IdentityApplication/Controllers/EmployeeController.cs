@@ -83,6 +83,17 @@ namespace IdentityApplication.Controllers
                     response.Categories = categories.Select(category =>
                         new SelectListItem(category.CategoryName, category.CategoryId.ToString(), false)).ToList();
                 }
+
+                var currentPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.CreateEmployeeMonthPermission.Current);
+                var previousPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.CreateEmployeeMonthPermission.Previous);
+
+                response.MonthItems = new List<SelectListItem>
+                {
+                    currentPermission.Succeeded ? new SelectListItem { Text = "Current", Value = "Current", Selected = true } : null,
+                    previousPermission.Succeeded ? new SelectListItem { Text = "Previous", Value = "Previous" } : null
+                }
+                .Where(item => item != null)
+                .ToList();
             }
             catch (Exception ex)
             {
@@ -165,8 +176,8 @@ namespace IdentityApplication.Controllers
                             new SelectListItem(department.DepartmentName, department.DepartmentId.ToString(), false)).ToList();
                 }
 
-                var currentPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MonthPermission.Current);
-                var previousPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.MonthPermission.Previous);
+                var currentPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.ViewEmployeeMonthPermission.Current);
+                var previousPermission = await _authorizationService.AuthorizeAsync(User, PermissionsModel.ViewEmployeeMonthPermission.Previous);
 
                 response.MonthItems = new List<SelectListItem>
                 {

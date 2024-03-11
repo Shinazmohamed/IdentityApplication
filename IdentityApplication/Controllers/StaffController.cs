@@ -29,8 +29,11 @@ namespace IdentityApplication.Controllers
         public IActionResult Index()
         {
             var response = new CreateStaffRequest();
-            
-            response.StaffTeamCollection = GetTeamsSelectCollection();
+
+            var teams = _teamBusiness.GetAll();
+
+            response.TeamCollection = teams.Select(team =>
+                new SelectListItem(team.TeamName, team.TeamId.ToString(), false)).ToList();
 
             return View(response);
         }
@@ -51,10 +54,7 @@ namespace IdentityApplication.Controllers
                 _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(StaffController));
             }
-
-
-            response.StaffTeamCollection = GetTeamsSelectCollection();
-            return View("Index", response);
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -94,17 +94,7 @@ namespace IdentityApplication.Controllers
                 _notyf.Error("Operation Failed. Please contact administrator");
                 _logger.LogError(ex, "{Controller} All function error", typeof(StaffController));
             }
-
-            response.StaffTeamCollection = GetTeamsSelectCollection();
-            return RedirectToAction("Index", response);
-        }
-
-        private List<SelectListItem> GetTeamsSelectCollection()
-        {
-            var teams = _teamBusiness.GetAll();
-
-            return teams.Select(team =>
-                new SelectListItem(team.TeamName, team.TeamId.ToString(), false)).ToList();
+            return RedirectToAction("Index");
         }
     }
 }
