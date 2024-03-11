@@ -200,24 +200,13 @@
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            var actionHtml = '<div class="btn-group btn-group-sm">' +
-                                '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                                '<div class="dropdown-menu dropdown-menu-sm shadow animated--grow-in">';
+                            var actionHtml = '';
                             if (hasEditPermission) {
-                                actionHtml +=
-                                    '<a class="dropdown-item">' +
-                                    '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
-                                    '</a>';
+                                actionHtml += '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ';
                             }
                             if (hasDeletePermission) {
-                                actionHtml +=
-                                    '<form class="d-inline">' +
-                                    '<a class="dropdown-item">' +
-                                    '<i class="fas fa-trash-alt btn-delete" data-id="' + data + '"> Delete</i>' +
-                                    '</a>' +
-                                    '</form>';
+                                actionHtml += '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>'
                             }
-                            actionHtml += '</div></div>';
                             return actionHtml;
                         }
                     }

@@ -205,28 +205,15 @@
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            var actionHtml = '<div class="btn-group">' +
-                                '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                                '<div class="dropdown-menu shadow animated--grow-in">';
-
+                            var actionHtml = '';
                             if (hasMenuEditPermission) {
-                                actionHtml +=
-                                    '<a class="dropdown-item">' +
-                                    '<i class="fas fa-pencil-alt btn-edit" data-id="' + data + '"> Edit</i>' +
-                                    '</a>';
+                                actionHtml += '<i class="fa fa-edit btn-edit" data-id="' + data + '"></i> ';
                             }
                             if (hasMenuDeletePermission) {
-                                actionHtml +=
-                                    '<form class="d-inline">' +
-                                    '<a class="dropdown-item">' +
-                                    '<i class="fas fa-trash-alt btn-delete" data-id="' + data + '"> Delete</i>' +
-                                    '</a>' +
-                                    '</form>';
+                                actionHtml += '<i class="fa fa-trash btn-delete" data-id="' + data + '"></i>'
                             }
-                            actionHtml += '</div></div>';
                             return actionHtml;
                         }
-
                     }
                 ]
             });
@@ -253,24 +240,14 @@
                             '<td>' + subMenu.method + '</td>' +
                             '<td>';
 
-                        var actionHtml = '<div class="btn-group">' +
-                            '<button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                            '<div class="dropdown-menu shadow animated--grow-in">';
-
+                        var actionHtml = '';
                         if (hasSubMenuEditPermission) {
-                            actionHtml +=
-                                '<a class="dropdown-item">' +
-                                '<i class="fas fa-pencil-alt btn-submenu-edit" data-id="' + subMenu.id + '"> Edit</i>' +
-                                '</a>';
+                            actionHtml += '<i class="fa fa-edit btn-submenu-edit" data-id="' + subMenu.id + '"></i> ';
                         }
                         if (hasSubMenuDeletePermission) {
-                            actionHtml +=
-                                '<form class="d-inline">' +
-                                '<a class="dropdown-item">' +
-                                '<i class="fas fa-trash-alt btn-submenu-delete" data-id="' + subMenu.id + '"> Delete</i>' +
-                                '</a>' +
-                                '</form>';
+                            actionHtml += '<i class="fa fa-trash btn-submenu-delete" data-id="' + subMenu.id + '"></i>'
                         }
+
                         actionHtml += '</div></div>';
 
                         subMenuTable += actionHtml + '</td></tr>';
